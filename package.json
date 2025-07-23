@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "prepare": "husky",
-    "build": "npx lerna run build && yes | cp ./plugin/README.md ./README.md",
+    "build": "npx lerna run build && cp ./plugin/README.md ./README.md && cp -r ./plugin/dist ./dist",
     "lint": "pnpm lerna run lint",
     "fmt": "pnpm lerna run fmt",
     "publish:cocoapod": "lerna run publish:cocoapod --concurrency 1",
