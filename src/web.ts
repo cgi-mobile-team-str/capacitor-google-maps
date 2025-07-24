@@ -2,7 +2,7 @@ import { WebPlugin } from '@capacitor/core';
 import type { Cluster, onClusterClickHandler } from '@googlemaps/markerclusterer';
 import { MarkerClusterer, SuperClusterAlgorithm } from '@googlemaps/markerclusterer';
 
-import type { Marker } from './definitions';
+import type { Marker, VisibleRegion } from './definitions';
 import { MapType, LatLngBounds } from './definitions';
 import type {
   AddMarkerArgs,
@@ -675,5 +675,8 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
     });
 
     return advancedMarker;
+  }
+  async getVisibleRegion(args: { id: string }): Promise<VisibleRegion> {
+    throw new Error('Method not supported on web.');
   }
 }
