@@ -12,6 +12,7 @@ import type {
   Marker,
   Polygon,
   Polyline,
+  VisibleRegion,
 } from './definitions';
 
 /**
@@ -202,6 +203,7 @@ export interface CapacitorGoogleMapsPlugin extends Plugin {
   fitBounds(args: FitBoundsArgs): Promise<void>;
   mapBoundsContains(args: MapBoundsContainsArgs): Promise<{ contains: boolean }>;
   mapBoundsExtend(args: MapBoundsExtendArgs): Promise<{ bounds: LatLngBounds }>;
+  getVisibleRegion(args: { id: string }): Promise<VisibleRegion>;
 }
 
 const CapacitorGoogleMaps = registerPlugin<CapacitorGoogleMapsPlugin>('CapacitorGoogleMaps', {

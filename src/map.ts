@@ -569,6 +569,10 @@ export class GoogleMap {
     );
   }
 
+  async getVisibleRegion(): Promise<VisibleRegion> {
+    return CapacitorGoogleMaps.getVisibleRegion({ id: this.id });
+  }
+
   async fitBounds(bounds: LatLngBounds, padding?: number): Promise<void> {
     return CapacitorGoogleMaps.fitBounds({
       id: this.id,
