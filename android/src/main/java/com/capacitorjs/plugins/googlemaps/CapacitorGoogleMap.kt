@@ -11,6 +11,7 @@ import android.widget.FrameLayout
 import com.getcapacitor.Bridge
 import com.getcapacitor.JSArray
 import com.getcapacitor.JSObject
+import com.getcapacitor.PluginCall
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.GoogleMap.*
 import com.google.android.gms.maps.model.*
@@ -242,6 +243,10 @@ class CapacitorGoogleMap(
         } catch (e: GoogleMapsError) {
             callback(Result.failure(e))
         }
+    }
+
+    fun getVisibleRegion(): VisibleRegion? {
+       return googleMap?.projection?.visibleRegion
     }
 
     fun addPolygons(newPolygons: List<CapacitorGoogleMapsPolygon>, callback: (ids: Result<List<String>>) -> Unit) {

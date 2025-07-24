@@ -14,6 +14,7 @@ import com.google.android.gms.maps.MapsInitializer
 import com.google.android.gms.maps.OnMapsSdkInitializedCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.VisibleRegion
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -180,6 +181,17 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
         } catch (e: Exception) {
             handleError(call, e)
         }
+    }
+
+    @PluginMethod
+    fun getVisibleRegion(call: PluginCall): VisibleRegion? {
+        val id = call.getString("id")
+        id ?: throw InvalidMapIdError()
+
+        val map = maps[id]
+        map ?: throw MapNotFoundError()
+
+        return map.getVisibleRegion()
     }
 
     @PluginMethod
