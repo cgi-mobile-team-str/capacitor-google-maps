@@ -184,7 +184,7 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
     }
 
     @PluginMethod
-    fun getVisibleRegion(call: PluginCall): VisibleRegion? {
+    fun getVisibleRegion(call: PluginCall) {
         val id = call.getString("id")
         id ?: throw InvalidMapIdError()
 

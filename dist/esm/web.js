@@ -530,5 +530,8 @@ export class CapacitorGoogleMapsWeb extends WebPlugin {
         });
         return advancedMarker;
     }
+    async getVisibleRegion() {
+        throw new Error('Method not supported on web.');
+    }
 }
 //# sourceMappingURL=web.js.map

@@ -490,6 +490,9 @@ class GoogleMap {
             id: this.id,
         }));
     }
+    async getVisibleRegion() {
+        return CapacitorGoogleMaps.getVisibleRegion({ id: this.id });
+    }
     async fitBounds(bounds, padding) {
         return CapacitorGoogleMaps.fitBounds({
             id: this.id,
@@ -1445,6 +1448,9 @@ class CapacitorGoogleMapsWeb extends core.WebPlugin {
             gmpDraggable: marker.draggable,
         });
         return advancedMarker;
+    }
+    async getVisibleRegion() {
+        throw new Error('Method not supported on web.');
     }
 }
 

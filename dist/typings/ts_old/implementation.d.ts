@@ -1,5 +1,5 @@
 import { Plugin } from '@capacitor/core';
-import { CameraConfig, Circle, GoogleMapConfig, LatLng, LatLngBounds, MapPadding, MapType, Marker, Polygon, Polyline } from './definitions';
+import { CameraConfig, Circle, GoogleMapConfig, LatLng, LatLngBounds, MapPadding, MapType, Marker, Polygon, Polyline, VisibleRegion } from './definitions';
 /**
  * An interface containing the options used when creating a map.
  */
@@ -194,6 +194,9 @@ export interface CapacitorGoogleMapsPlugin extends Plugin {
     mapBoundsExtend(args: MapBoundsExtendArgs): Promise<{
         bounds: LatLngBounds;
     }>;
+    getVisibleRegion(args: {
+        id: string;
+    }): Promise<VisibleRegion>;
 }
 declare const CapacitorGoogleMaps: CapacitorGoogleMapsPlugin;
 export { CapacitorGoogleMaps };

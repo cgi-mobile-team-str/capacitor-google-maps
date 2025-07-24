@@ -407,6 +407,9 @@ export class GoogleMap {
             id: this.id,
         }));
     }
+    async getVisibleRegion() {
+        return CapacitorGoogleMaps.getVisibleRegion({ id: this.id });
+    }
     async fitBounds(bounds, padding) {
         return CapacitorGoogleMaps.fitBounds({
             id: this.id,

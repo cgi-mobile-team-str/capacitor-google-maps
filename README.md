@@ -311,6 +311,7 @@ export default MyMap;
 * [`addPolylines(...)`](#addpolylines)
 * [`removePolylines(...)`](#removepolylines)
 * [`destroy()`](#destroy)
+* [`getVisibleRegion()`](#getvisibleregion)
 * [`setCamera(...)`](#setcamera)
 * [`getMapType()`](#getmaptype)
 * [`setMapType(...)`](#setmaptype)
@@ -547,6 +548,17 @@ removePolylines(ids: string[]) => Promise<void>
 ```typescript
 destroy() => Promise<void>
 ```
+
+--------------------
+
+
+### getVisibleRegion()
+
+```typescript
+getVisibleRegion() => Promise<VisibleRegion>
+```
+
+**Returns:** <code>Promise&lt;<a href="#visibleregion">VisibleRegion</a>&gt;</code>
 
 --------------------
 
@@ -1042,6 +1054,17 @@ Describes the style for some region of a polyline.
 | -------------- | ------------------- | --------------------------------------------------------------------------------- |
 | **`color`**    | <code>string</code> | The stroke color. All CSS3 colors are supported except for extended named colors. |
 | **`segments`** | <code>number</code> | The length of this span in number of segments.                                    |
+
+
+#### VisibleRegion
+
+| Prop               | Type                                      |
+| ------------------ | ----------------------------------------- |
+| **`nearLeft`**     | <code><a href="#latlng">LatLng</a></code> |
+| **`nearRight`**    | <code><a href="#latlng">LatLng</a></code> |
+| **`farLeft`**      | <code><a href="#latlng">LatLng</a></code> |
+| **`farRight`**     | <code><a href="#latlng">LatLng</a></code> |
+| **`latLngBounds`** | <code>LatLngBounds</code>                 |
 
 
 #### CameraConfig

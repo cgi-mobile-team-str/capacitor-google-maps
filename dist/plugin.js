@@ -468,6 +468,9 @@ var capacitorCapacitorGoogleMaps = (function (exports, core, markerclusterer) {
                 id: this.id,
             }));
         }
+        async getVisibleRegion() {
+            return CapacitorGoogleMaps.getVisibleRegion({ id: this.id });
+        }
         async fitBounds(bounds, padding) {
             return CapacitorGoogleMaps.fitBounds({
                 id: this.id,
@@ -1423,6 +1426,9 @@ var capacitorCapacitorGoogleMaps = (function (exports, core, markerclusterer) {
                 gmpDraggable: marker.draggable,
             });
             return advancedMarker;
+        }
+        async getVisibleRegion() {
+            throw new Error('Method not supported on web.');
         }
     }
 

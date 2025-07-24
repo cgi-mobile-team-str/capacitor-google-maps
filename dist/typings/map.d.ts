@@ -1,4 +1,4 @@
-import type { CameraConfig, Marker, MapPadding, MapListenerCallback, MapReadyCallbackData, CameraIdleCallbackData, CameraMoveStartedCallbackData, ClusterClickCallbackData, MapClickCallbackData, MarkerClickCallbackData, MyLocationButtonClickCallbackData, Polygon, PolygonClickCallbackData, Circle, CircleClickCallbackData, Polyline, PolylineCallbackData } from './definitions';
+import type { CameraConfig, Marker, MapPadding, MapListenerCallback, MapReadyCallbackData, CameraIdleCallbackData, CameraMoveStartedCallbackData, ClusterClickCallbackData, MapClickCallbackData, MarkerClickCallbackData, MyLocationButtonClickCallbackData, Polygon, PolygonClickCallbackData, Circle, CircleClickCallbackData, Polyline, PolylineCallbackData, VisibleRegion } from './definitions';
 import { LatLngBounds, MapType } from './definitions';
 import type { CreateMapArgs } from './implementation';
 export interface GoogleMapInterface {
@@ -22,6 +22,7 @@ export interface GoogleMapInterface {
     addPolylines(polylines: Polyline[]): Promise<string[]>;
     removePolylines(ids: string[]): Promise<void>;
     destroy(): Promise<void>;
+    getVisibleRegion(): Promise<VisibleRegion>;
     setCamera(config: CameraConfig): Promise<void>;
     /**
      * Get current map type
@@ -214,6 +215,7 @@ export declare class GoogleMap {
      * @returns {LatLngBounds}
      */
     getMapBounds(): Promise<LatLngBounds>;
+    getVisibleRegion(): Promise<VisibleRegion>;
     fitBounds(bounds: LatLngBounds, padding?: number): Promise<void>;
     initScrolling(): void;
     disableScrolling(): void;

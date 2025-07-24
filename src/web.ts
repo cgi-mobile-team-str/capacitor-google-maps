@@ -676,7 +676,7 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
 
     return advancedMarker;
   }
-  async getVisibleRegion(args: { id: string }): Promise<VisibleRegion> {
+  async getVisibleRegion(): Promise<VisibleRegion> {
     throw new Error('Method not supported on web.');
   }
 }
