@@ -19,6 +19,7 @@ import type {
   CircleClickCallbackData,
   Polyline,
   PolylineCallbackData,
+  VisibleRegion,
 } from './definitions';
 import { LatLngBounds, MapType } from './definitions';
 import type { CreateMapArgs } from './implementation';
@@ -46,6 +47,7 @@ export interface GoogleMapInterface {
   addPolylines(polylines: Polyline[]): Promise<string[]>;
   removePolylines(ids: string[]): Promise<void>;
   destroy(): Promise<void>;
+  getVisibleRegion(): Promise<VisibleRegion>;
   setCamera(config: CameraConfig): Promise<void>;
   /**
    * Get current map type

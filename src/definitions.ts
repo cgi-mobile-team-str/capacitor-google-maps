@@ -461,3 +461,11 @@ export interface CircleClickCallbackData {
 export interface MyLocationButtonClickCallbackData {
   mapId: string;
 }
+
+export interface VisibleRegion {
+  nearLeft: LatLng;
+  nearRight: LatLng;
+  farLeft: LatLng;
+  farRight: LatLng;
+  latLngBounds: LatLngBounds;
+}
