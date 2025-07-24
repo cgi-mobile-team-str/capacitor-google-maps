@@ -245,7 +245,7 @@ class CapacitorGoogleMap(
         }
     }
 
-    fun getVisibleRegion() {
+    fun getVisibleRegion(): VisibleRegion? {
        return googleMap?.projection?.visibleRegion
     }
 
