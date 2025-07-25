@@ -1,5 +1,5 @@
 import { WebPlugin } from '@capacitor/core';
-import { VisibleRegion } from './definitions';
+import { MapPadding, VisibleRegion } from './definitions';
 import { LatLngBounds } from './definitions';
 import { AddMarkerArgs, CameraArgs, AddMarkersArgs, CapacitorGoogleMapsPlugin, CreateMapArgs, CurrentLocArgs, DestroyMapArgs, MapTypeArgs, PaddingArgs, RemoveMarkerArgs, TrafficLayerArgs, RemoveMarkersArgs, MapBoundsContainsArgs, EnableClusteringArgs, FitBoundsArgs, MapBoundsExtendArgs, AddPolygonsArgs, RemovePolygonsArgs, AddCirclesArgs, RemoveCirclesArgs, AddPolylinesArgs, RemovePolylinesArgs } from './implementation';
 export declare class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogleMapsPlugin {
@@ -82,4 +82,33 @@ export declare class CapacitorGoogleMapsWeb extends WebPlugin implements Capacit
     setMapListeners(mapId: string): Promise<void>;
     private buildMarkerOpts;
     getVisibleRegion(): Promise<VisibleRegion>;
+    enableCompass(_args: {
+        id: string;
+        isEnabled: boolean;
+    }): Promise<void>;
+    enableToolbar(_args: {
+        id: string;
+        isEnabled: boolean;
+    }): Promise<void>;
+    enableMyLocation(_args: {
+        id: string;
+        isEnabled: boolean;
+    }): Promise<void>;
+    enableAllGestures(_args: {
+        id: string;
+        isEnabled: boolean;
+    }): Promise<void>;
+    enableTiltGesture(_args: {
+        id: string;
+        isEnabled: boolean;
+    }): Promise<void>;
+    enableTiltRotateGesture(_args: {
+        id: string;
+        isEnabled: boolean;
+    }): Promise<void>;
+    setMapPreferences(_args: {
+        id: string;
+        padding?: MapPadding;
+        isBuildingsEnabled?: boolean;
+    }): Promise<void>;
 }

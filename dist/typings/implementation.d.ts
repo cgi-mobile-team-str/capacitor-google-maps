@@ -197,6 +197,35 @@ export interface CapacitorGoogleMapsPlugin extends Plugin {
     getVisibleRegion(args: {
         id: string;
     }): Promise<VisibleRegion>;
+    enableCompass(args: {
+        id: string;
+        isEnabled: boolean;
+    }): Promise<void>;
+    enableToolbar(args: {
+        id: string;
+        isEnabled: boolean;
+    }): Promise<void>;
+    enableMyLocation(args: {
+        id: string;
+        isEnabled: boolean;
+    }): Promise<void>;
+    enableAllGestures(args: {
+        id: string;
+        isEnabled: boolean;
+    }): Promise<void>;
+    enableTiltGesture(args: {
+        id: string;
+        isEnabled: boolean;
+    }): Promise<void>;
+    enableTiltRotateGesture(args: {
+        id: string;
+        isEnabled: boolean;
+    }): Promise<void>;
+    setMapPreferences(args: {
+        id: string;
+        padding?: MapPadding;
+        isBuildingsEnabled?: boolean;
+    }): Promise<void>;
 }
 declare const CapacitorGoogleMaps: CapacitorGoogleMapsPlugin;
 export { CapacitorGoogleMaps };

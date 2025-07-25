@@ -1398,13 +1398,22 @@
           "type": "LatLng"
         },
         {
-          "name": "latLngBounds",
+          "name": "southwest",
           "tags": [],
           "docs": "",
           "complexTypes": [
-            "LatLngBounds"
+            "LatLng"
           ],
-          "type": "LatLngBounds"
+          "type": "LatLng"
+        },
+        {
+          "name": "northeast",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [
+            "LatLng"
+          ],
+          "type": "LatLng"
         }
       ]
     },

@@ -573,6 +573,38 @@ export class GoogleMap {
     return CapacitorGoogleMaps.getVisibleRegion({ id: this.id });
   }
 
+  async enableCompass(isEnabled: boolean): Promise<void> {
+    return CapacitorGoogleMaps.enableCompass({ id: this.id, isEnabled });
+  }
+
+  async enableToolbar(isEnabled: boolean): Promise<void> {
+    return CapacitorGoogleMaps.enableToolbar({ id: this.id, isEnabled });
+  }
+
+  async enableMyLocation(isEnabled: boolean): Promise<void> {
+    return CapacitorGoogleMaps.enableMyLocation({ id: this.id, isEnabled });
+  }
+
+  async enableAllGestures(isEnabled: boolean): Promise<void> {
+    return CapacitorGoogleMaps.enableAllGestures({ id: this.id, isEnabled });
+  }
+
+  async enableTiltGesture(isEnabled: boolean): Promise<void> {
+    return CapacitorGoogleMaps.enableTiltGesture({ id: this.id, isEnabled });
+  }
+
+  async enableTiltRotateGesture(isEnabled: boolean): Promise<void> {
+    return CapacitorGoogleMaps.enableTiltRotateGesture({ id: this.id, isEnabled });
+  }
+
+  async setMapPreferences(padding?: MapPadding, isBuildingsEnabled?: boolean): Promise<void> {
+    return CapacitorGoogleMaps.setMapPreferences({
+      id: this.id,
+      padding,
+      isBuildingsEnabled,
+    });
+  }
+
   async fitBounds(bounds: LatLngBounds, padding?: number): Promise<void> {
     return CapacitorGoogleMaps.fitBounds({
       id: this.id,

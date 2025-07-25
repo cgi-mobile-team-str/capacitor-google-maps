@@ -214,6 +214,193 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
     }
 
     @PluginMethod
+    fun enableCompass(call: PluginCall) {
+        try {
+            val id = call.getString("id")
+            id ?: throw InvalidMapIdError()
+
+            val isEnabled = call.getBoolean("isEnabled", false)
+            isEnabled ?: throw InvalidArgumentsError("isEnabled arg of enableCompass is missing")
+
+            val map = maps[id]
+            map ?: throw MapNotFoundError()
+
+            map.enableCompass(isEnabled) { err ->
+                if (err != null) {
+                    throw err
+                }
+                call.resolve()
+            }
+        }
+        catch (e: GoogleMapsError) {
+            handleError(call, e)
+        } catch (e: Exception) {
+            handleError(call, e)
+        }
+    }
+
+    @PluginMethod
+    fun enableToolbar(call: PluginCall) {
+        try {
+            val id = call.getString("id")
+            id ?: throw InvalidMapIdError()
+
+            val isEnabled = call.getBoolean("isEnabled", false)
+            isEnabled ?: throw InvalidArgumentsError("isEnabled arg of enableToolbar is missing")
+
+            val map = maps[id]
+            map ?: throw MapNotFoundError()
+
+            map.enableToolbar(isEnabled) { err ->
+                if (err != null) {
+                    throw err
+                }
+                call.resolve()
+            }
+        }
+        catch (e: GoogleMapsError) {
+            handleError(call, e)
+        } catch (e: Exception) {
+            handleError(call, e)
+        }
+    }
+
+    @PluginMethod
+    fun enableMyLocation(call: PluginCall) {
+        try {
+            val id = call.getString("id")
+            id ?: throw InvalidMapIdError()
+
+            val isEnabled = call.getBoolean("isEnabled", false)
+            isEnabled ?: throw InvalidArgumentsError("isEnabled arg of enableMyLocation is missing")
+
+            val map = maps[id]
+            map ?: throw MapNotFoundError()
+
+            map.enableMyLocation(isEnabled) { err ->
+                if (err != null) {
+                    throw err
+                }
+                call.resolve()
+            }
+        }
+        catch (e: GoogleMapsError) {
+            handleError(call, e)
+        } catch (e: Exception) {
+            handleError(call, e)
+        }
+    }
+
+    @PluginMethod
+    fun enableAllGestures(call: PluginCall) {
+        try {
+            val id = call.getString("id")
+            id ?: throw InvalidMapIdError()
+
+            val isEnabled = call.getBoolean("isEnabled", false)
+            isEnabled ?: throw InvalidArgumentsError("isEnabled arg of enableAllGestures is missing")
+
+            val map = maps[id]
+            map ?: throw MapNotFoundError()
+
+            map.enableAllGestures(isEnabled) { err ->
+                if (err != null) {
+                    throw err
+                }
+                call.resolve()
+            }
+        }
+        catch (e: GoogleMapsError) {
+            handleError(call, e)
+        } catch (e: Exception) {
+            handleError(call, e)
+        }
+    }
+
+    @PluginMethod
+    fun enableTiltGesture(call: PluginCall) {
+        try {
+            val id = call.getString("id")
+            id ?: throw InvalidMapIdError()
+
+            val isEnabled = call.getBoolean("isEnabled", false)
+            isEnabled ?: throw InvalidArgumentsError("isEnabled arg of enableTiltGesture is missing")
+
+            val map = maps[id]
+            map ?: throw MapNotFoundError()
+
+            map.enableTiltGesture(isEnabled) { err ->
+                if (err != null) {
+                    throw err
+                }
+                call.resolve()
+            }
+        }
+        catch (e: GoogleMapsError) {
+            handleError(call, e)
+        } catch (e: Exception) {
+            handleError(call, e)
+        }
+    }
+
+    @PluginMethod
+    fun enableTiltRotateGesture(call: PluginCall) {
+        try {
+            val id = call.getString("id")
+            id ?: throw InvalidMapIdError()
+
+            val isEnabled = call.getBoolean("isEnabled", false)
+            isEnabled ?: throw InvalidArgumentsError("isEnabled arg of enableTiltRotateGesture is missing")
+
+            val map = maps[id]
+            map ?: throw MapNotFoundError()
+
+            map.enableTiltRotateGesture(isEnabled) { err ->
+                if (err != null) {
+                    throw err
+                }
+                call.resolve()
+            }
+        }
+        catch (e: GoogleMapsError) {
+            handleError(call, e)
+        } catch (e: Exception) {
+            handleError(call, e)
+        }
+    }
+
+    @PluginMethod
+    fun setMapPreferences(call: PluginCall) {
+        try {
+            val id = call.getString("id")
+            id ?: throw InvalidMapIdError()
+
+            val paddingObj = call.getObject("padding", null)
+            val isBuildingsEnabled = call.getBoolean("isBuildingsEnabled", false)
+
+            val map = maps[id]
+            map ?: throw MapNotFoundError()
+
+            var padding: GoogleMapPadding? = null
+            if(paddingObj != null) {
+                 padding = GoogleMapPadding(paddingObj)
+            }
+
+            map.setMapPreferences(padding, isBuildingsEnabled) { err ->
+                if (err != null) {
+                    throw err
+                }
+                call.resolve()
+            }
+        }
+        catch (e: GoogleMapsError) {
+            handleError(call, e)
+        } catch (e: Exception) {
+            handleError(call, e)
+        }
+    }
+
+    @PluginMethod
     fun enableTouch(call: PluginCall) {
         try {
             val id = call.getString("id")

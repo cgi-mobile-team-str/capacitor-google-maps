@@ -1058,13 +1058,14 @@ Describes the style for some region of a polyline.
 
 #### VisibleRegion
 
-| Prop               | Type                                      |
-| ------------------ | ----------------------------------------- |
-| **`nearLeft`**     | <code><a href="#latlng">LatLng</a></code> |
-| **`nearRight`**    | <code><a href="#latlng">LatLng</a></code> |
-| **`farLeft`**      | <code><a href="#latlng">LatLng</a></code> |
-| **`farRight`**     | <code><a href="#latlng">LatLng</a></code> |
-| **`latLngBounds`** | <code>LatLngBounds</code>                 |
+| Prop            | Type                                      |
+| --------------- | ----------------------------------------- |
+| **`nearLeft`**  | <code><a href="#latlng">LatLng</a></code> |
+| **`nearRight`** | <code><a href="#latlng">LatLng</a></code> |
+| **`farLeft`**   | <code><a href="#latlng">LatLng</a></code> |
+| **`farRight`**  | <code><a href="#latlng">LatLng</a></code> |
+| **`southwest`** | <code><a href="#latlng">LatLng</a></code> |
+| **`northeast`** | <code><a href="#latlng">LatLng</a></code> |
 
 
 #### CameraConfig

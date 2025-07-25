@@ -248,7 +248,6 @@ class CapacitorGoogleMap(
     fun getVisibleRegion(callback: (region: VisibleRegion?, error: GoogleMapsError?) -> Unit) {
         try {
             googleMap ?: throw GoogleMapNotAvailable()
-
             CoroutineScope(Dispatchers.Main).launch {
                 val visibleRegion = googleMap?.projection?.visibleRegion
                 if (visibleRegion != null) {
@@ -260,6 +259,98 @@ class CapacitorGoogleMap(
         } catch (e: GoogleMapsError) {
             callback(null, e)
         }
+    }
+
+    fun enableCompass(isEnabled: Boolean, callback: (error: GoogleMapsError?) -> Unit) {
+        try {
+            googleMap ?: throw GoogleMapNotAvailable()
+            CoroutineScope(Dispatchers.Main).launch {
+                googleMap?.uiSettings?.isCompassEnabled = isEnabled
+                callback(null)
+            }
+        } catch (e: GoogleMapsError) {
+            callback(e)
+        }
+    }
+
+    fun enableToolbar(isEnabled: Boolean, callback: (error: GoogleMapsError?) -> Unit) {
+        try {
+            googleMap ?: throw GoogleMapNotAvailable()
+            CoroutineScope(Dispatchers.Main).launch {
+                googleMap?.uiSettings?.isMapToolbarEnabled = isEnabled
+                callback(null)
+            }
+        } catch (e: GoogleMapsError) {
+            callback(e)
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    fun enableMyLocation(isEnabled: Boolean, callback: (error: GoogleMapsError?) -> Unit) {
+        try {
+            googleMap ?: throw GoogleMapNotAvailable()
+            CoroutineScope(Dispatchers.Main).launch {
+                googleMap?.isMyLocationEnabled = isEnabled
+                callback(null)
+            }
+        } catch (e: GoogleMapsError) {
+            callback(e)
+        }
+    }
+
+    fun enableAllGestures(isEnabled: Boolean, callback: (error: GoogleMapsError?) -> Unit) {
+        try {
+            googleMap ?: throw GoogleMapNotAvailable()
+            CoroutineScope(Dispatchers.Main).launch {
+                googleMap?.uiSettings?.setAllGesturesEnabled(isEnabled)
+                callback(null)
+            }
+        } catch (e: GoogleMapsError) {
+            callback(e)
+        }
+    }
+
+    fun enableTiltGesture(isEnabled: Boolean, callback: (error: GoogleMapsError?) -> Unit) {
+        try {
+            googleMap ?: throw GoogleMapNotAvailable()
+            CoroutineScope(Dispatchers.Main).launch {
+                googleMap?.uiSettings?.isTiltGesturesEnabled = isEnabled
+                callback(null)
+            }
+        } catch (e: GoogleMapsError) {
+            callback(e)
+        }
+    }
+
+    fun enableTiltRotateGesture(isEnabled: Boolean, callback: (error: GoogleMapsError?) -> Unit) {
+        try {
+            googleMap ?: throw GoogleMapNotAvailable()
+            CoroutineScope(Dispatchers.Main).launch {
+                googleMap?.uiSettings?.isRotateGesturesEnabled = isEnabled
+
+                callback(null)
+            }
+        } catch (e: GoogleMapsError) {
+            callback(e)
+        }
+    }
+
+    fun setMapPreferences(padding: GoogleMapPadding?, isBuildingsEnabled: Boolean?, callback: (error: GoogleMapsError?) -> Unit) {
+        try {
+            googleMap ?: throw GoogleMapNotAvailable()
+            CoroutineScope(Dispatchers.Main).launch {
+                if(padding != null) {
+                    googleMap?.setPadding(padding.left, padding.top, padding.right, padding.bottom)
+                }
+                if(isBuildingsEnabled!= null) {
+                    googleMap?.isBuildingsEnabled = isBuildingsEnabled
+                }
+                callback(null)
+            }
+        } catch (e: GoogleMapsError) {
+            callback(e)
+        }
+
     }
 
     fun addPolygons(newPolygons: List<CapacitorGoogleMapsPolygon>, callback: (ids: Result<List<String>>) -> Unit) {
@@ -1093,6 +1184,7 @@ class CapacitorGoogleMap(
 
         delegate.notify("onCircleClick", data)
     }
+
 }
 
 fun getLatLngBoundsJSObject(bounds: LatLngBounds): JSObject {

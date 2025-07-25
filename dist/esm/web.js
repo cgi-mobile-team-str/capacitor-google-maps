@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { WebPlugin } from '@capacitor/core';
 import { MarkerClusterer, SuperClusterAlgorithm } from '@googlemaps/markerclusterer';
 import { MapType, LatLngBounds } from './definitions';
@@ -530,8 +531,30 @@ export class CapacitorGoogleMapsWeb extends WebPlugin {
         });
         return advancedMarker;
     }
+    //TODO A IMPLEMENTER PAR LA SUITE !!!
     async getVisibleRegion() {
-        throw new Error('Method not supported on web.');
+        throw new Error('Method not implemented.');
+    }
+    async enableCompass(_args) {
+        throw new Error('Method not implemented.');
+    }
+    async enableToolbar(_args) {
+        throw new Error('Method not implemented.');
+    }
+    async enableMyLocation(_args) {
+        throw new Error('Method not implemented.');
+    }
+    async enableAllGestures(_args) {
+        throw new Error('Method not implemented.');
+    }
+    async enableTiltGesture(_args) {
+        throw new Error('Method not implemented.');
+    }
+    async enableTiltRotateGesture(_args) {
+        throw new Error('Method not implemented.');
+    }
+    async setMapPreferences(_args) {
+        throw new Error('Method not implemented.');
     }
 }
 //# sourceMappingURL=web.js.map

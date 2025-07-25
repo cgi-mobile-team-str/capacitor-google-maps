@@ -216,6 +216,13 @@ export declare class GoogleMap {
      */
     getMapBounds(): Promise<LatLngBounds>;
     getVisibleRegion(): Promise<VisibleRegion>;
+    enableCompass(isEnabled: boolean): Promise<void>;
+    enableToolbar(isEnabled: boolean): Promise<void>;
+    enableMyLocation(isEnabled: boolean): Promise<void>;
+    enableAllGestures(isEnabled: boolean): Promise<void>;
+    enableTiltGesture(isEnabled: boolean): Promise<void>;
+    enableTiltRotateGesture(isEnabled: boolean): Promise<void>;
+    setMapPreferences(padding?: MapPadding, isBuildingsEnabled?: boolean): Promise<void>;
     fitBounds(bounds: LatLngBounds, padding?: number): Promise<void>;
     initScrolling(): void;
     disableScrolling(): void;

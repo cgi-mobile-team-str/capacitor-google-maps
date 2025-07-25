@@ -467,5 +467,6 @@ export interface VisibleRegion {
   nearRight: LatLng;
   farLeft: LatLng;
   farRight: LatLng;
-  latLngBounds: LatLngBounds;
+  southwest: LatLng;
+  northeast: LatLng;
 }

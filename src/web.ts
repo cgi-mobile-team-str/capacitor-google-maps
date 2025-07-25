@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { WebPlugin } from '@capacitor/core';
 import type { Cluster, onClusterClickHandler } from '@googlemaps/markerclusterer';
 import { MarkerClusterer, SuperClusterAlgorithm } from '@googlemaps/markerclusterer';
 
-import type { Marker, VisibleRegion } from './definitions';
+import type { MapPadding, Marker, VisibleRegion } from './definitions';
 import { MapType, LatLngBounds } from './definitions';
 import type {
   AddMarkerArgs,
@@ -223,6 +224,7 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
       }
     }
   }
+
   async setPadding(_args: PaddingArgs): Promise<void> {
     const bounds = this.maps[_args.id].map.getBounds();
 
@@ -676,7 +678,37 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
 
     return advancedMarker;
   }
+
+  //TODO A IMPLEMENTER PAR LA SUITE !!!
   async getVisibleRegion(): Promise<VisibleRegion> {
-    throw new Error('Method not supported on web.');
+    throw new Error('Method not implemented.');
+  }
+
+  async enableCompass(_args: { id: string; isEnabled: boolean }): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+
+  async enableToolbar(_args: { id: string; isEnabled: boolean }): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+
+  async enableMyLocation(_args: { id: string; isEnabled: boolean }): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+
+  async enableAllGestures(_args: { id: string; isEnabled: boolean }): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+
+  async enableTiltGesture(_args: { id: string; isEnabled: boolean }): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+
+  async enableTiltRotateGesture(_args: { id: string; isEnabled: boolean }): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+
+  async setMapPreferences(_args: { id: string; padding?: MapPadding; isBuildingsEnabled?: boolean }): Promise<void> {
+    throw new Error('Method not implemented.');
   }
 }

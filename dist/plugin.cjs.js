@@ -493,6 +493,31 @@ class GoogleMap {
     async getVisibleRegion() {
         return CapacitorGoogleMaps.getVisibleRegion({ id: this.id });
     }
+    async enableCompass(isEnabled) {
+        return CapacitorGoogleMaps.enableCompass({ id: this.id, isEnabled });
+    }
+    async enableToolbar(isEnabled) {
+        return CapacitorGoogleMaps.enableToolbar({ id: this.id, isEnabled });
+    }
+    async enableMyLocation(isEnabled) {
+        return CapacitorGoogleMaps.enableMyLocation({ id: this.id, isEnabled });
+    }
+    async enableAllGestures(isEnabled) {
+        return CapacitorGoogleMaps.enableAllGestures({ id: this.id, isEnabled });
+    }
+    async enableTiltGesture(isEnabled) {
+        return CapacitorGoogleMaps.enableTiltGesture({ id: this.id, isEnabled });
+    }
+    async enableTiltRotateGesture(isEnabled) {
+        return CapacitorGoogleMaps.enableTiltRotateGesture({ id: this.id, isEnabled });
+    }
+    async setMapPreferences(padding, isBuildingsEnabled) {
+        return CapacitorGoogleMaps.setMapPreferences({
+            id: this.id,
+            padding,
+            isBuildingsEnabled,
+        });
+    }
     async fitBounds(bounds, padding) {
         return CapacitorGoogleMaps.fitBounds({
             id: this.id,
@@ -920,6 +945,7 @@ class GoogleMap {
     }
 }
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
 class CapacitorGoogleMapsWeb extends core.WebPlugin {
     constructor() {
         super(...arguments);
@@ -1449,8 +1475,30 @@ class CapacitorGoogleMapsWeb extends core.WebPlugin {
         });
         return advancedMarker;
     }
+    //TODO A IMPLEMENTER PAR LA SUITE !!!
     async getVisibleRegion() {
-        throw new Error('Method not supported on web.');
+        throw new Error('Method not implemented.');
+    }
+    async enableCompass(_args) {
+        throw new Error('Method not implemented.');
+    }
+    async enableToolbar(_args) {
+        throw new Error('Method not implemented.');
+    }
+    async enableMyLocation(_args) {
+        throw new Error('Method not implemented.');
+    }
+    async enableAllGestures(_args) {
+        throw new Error('Method not implemented.');
+    }
+    async enableTiltGesture(_args) {
+        throw new Error('Method not implemented.');
+    }
+    async enableTiltRotateGesture(_args) {
+        throw new Error('Method not implemented.');
+    }
+    async setMapPreferences(_args) {
+        throw new Error('Method not implemented.');
     }
 }
 
