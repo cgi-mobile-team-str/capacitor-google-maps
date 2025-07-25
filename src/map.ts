@@ -576,10 +576,20 @@ export class GoogleMap {
     );
   }
 
+  /**
+   * Get the current Viewport
+   *
+   * @returns {VisibleRegion}
+   */
   async getVisibleRegion(): Promise<VisibleRegion> {
     return CapacitorGoogleMaps.getVisibleRegion({ id: this.id });
   }
 
+  /**
+   * Enable or disable the compass
+   *
+   * @returns
+   */
   async enableCompass(enabled: boolean): Promise<void> {
     return CapacitorGoogleMaps.enableCompass({ id: this.id, enabled });
   }

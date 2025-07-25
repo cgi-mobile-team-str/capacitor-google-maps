@@ -222,7 +222,17 @@ export declare class GoogleMap {
      * @returns {LatLngBounds}
      */
     getMapBounds(): Promise<LatLngBounds>;
+    /**
+     * Get the current Viewport
+     *
+     * @returns {VisibleRegion}
+     */
     getVisibleRegion(): Promise<VisibleRegion>;
+    /**
+     * Enable or disable the compass
+     *
+     * @returns
+     */
     enableCompass(enabled: boolean): Promise<void>;
     enableToolbar(isEnabled: boolean): Promise<void>;
     enableMyLocation(isEnabled: boolean): Promise<void>;

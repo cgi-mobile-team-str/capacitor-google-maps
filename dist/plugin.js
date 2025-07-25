@@ -468,9 +468,19 @@ var capacitorCapacitorGoogleMaps = (function (exports, core, markerclusterer) {
                 id: this.id,
             }));
         }
+        /**
+         * Get the current Viewport
+         *
+         * @returns {VisibleRegion}
+         */
         async getVisibleRegion() {
             return CapacitorGoogleMaps.getVisibleRegion({ id: this.id });
         }
+        /**
+         * Enable or disable the compass
+         *
+         * @returns
+         */
         async enableCompass(enabled) {
             return CapacitorGoogleMaps.enableCompass({ id: this.id, enabled });
         }
