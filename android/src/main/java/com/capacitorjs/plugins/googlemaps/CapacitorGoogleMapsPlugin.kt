@@ -197,7 +197,12 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
                     throw err
                 }
                 val data = JSObject()
-                data.put("region", region)
+                data.put("nearLeft", latLngToJSObject(region?.nearLeft))
+                data.put("nearRight", latLngToJSObject(region?.nearRight))
+                data.put("farLeft", latLngToJSObject(region?.farLeft))
+                data.put("farRight", latLngToJSObject(region?.farRight))
+                data.put("southwest", latLngToJSObject(region?.latLngBounds?.southwest))
+                data.put("northeast", latLngToJSObject(region?.latLngBounds?.northeast))
                 call.resolve(data)
             }
         }
@@ -1104,5 +1109,12 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
         val y = jsonObject.getDouble("y")
 
         return RectF(x.toFloat(), y.toFloat(), (x + width).toFloat(), (y + height).toFloat())
+    }
+
+    private fun latLngToJSObject(latLng: LatLng?): JSObject {
+        val obj = JSObject()
+        obj.put("lat", latLng?.latitude)
+        obj.put("lng", latLng?.longitude)
+        return obj
     }
 }
