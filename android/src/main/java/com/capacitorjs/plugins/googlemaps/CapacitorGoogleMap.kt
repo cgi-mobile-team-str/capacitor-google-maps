@@ -245,8 +245,21 @@ class CapacitorGoogleMap(
         }
     }
 
-    fun getVisibleRegion(): VisibleRegion? {
-       return googleMap?.projection?.visibleRegion
+    fun getVisibleRegion(callback: (region: VisibleRegion?, error: GoogleMapsError?) -> Unit) {
+        try {
+            googleMap ?: throw GoogleMapNotAvailable()
+
+            CoroutineScope(Dispatchers.Main).launch {
+                val visibleRegion = googleMap?.projection?.visibleRegion
+                if (visibleRegion != null) {
+                    callback(visibleRegion, null)
+                } else {
+                    callback(null,GoogleMapsError("Visible region is null") )
+                }
+            }
+        } catch (e: GoogleMapsError) {
+            callback(null, e)
+        }
     }
 
     fun addPolygons(newPolygons: List<CapacitorGoogleMapsPolygon>, callback: (ids: Result<List<String>>) -> Unit) {
