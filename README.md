@@ -311,7 +311,6 @@ export default MyMap;
 * [`addPolylines(...)`](#addpolylines)
 * [`removePolylines(...)`](#removepolylines)
 * [`destroy()`](#destroy)
-* [`getVisibleRegion()`](#getvisibleregion)
 * [`setCamera(...)`](#setcamera)
 * [`getMapType()`](#getmaptype)
 * [`setMapType(...)`](#setmaptype)
@@ -338,6 +337,14 @@ export default MyMap;
 * [`setOnMarkerDragEndListener(...)`](#setonmarkerdragendlistener)
 * [`setOnMyLocationButtonClickListener(...)`](#setonmylocationbuttonclicklistener)
 * [`setOnMyLocationClickListener(...)`](#setonmylocationclicklistener)
+* [`getVisibleRegion()`](#getvisibleregion)
+* [`enableCompass(...)`](#enablecompass)
+* [`enableToolbar(...)`](#enabletoolbar)
+* [`enableMyLocation(...)`](#enablemylocation)
+* [`enableAllGestures(...)`](#enableallgestures)
+* [`enableTiltGesture(...)`](#enabletiltgesture)
+* [`enableTiltRotateGesture(...)`](#enabletiltrotategesture)
+* [`setMapPreferences(...)`](#setmappreferences)
 * [Interfaces](#interfaces)
 * [Type Aliases](#type-aliases)
 * [Enums](#enums)
@@ -548,17 +555,6 @@ removePolylines(ids: string[]) => Promise<void>
 ```typescript
 destroy() => Promise<void>
 ```
-
---------------------
-
-
-### getVisibleRegion()
-
-```typescript
-getVisibleRegion() => Promise<VisibleRegion>
-```
-
-**Returns:** <code>Promise&lt;<a href="#visibleregion">VisibleRegion</a>&gt;</code>
 
 --------------------
 
@@ -904,6 +900,109 @@ setOnMyLocationClickListener(callback?: MapListenerCallback<MapClickCallbackData
 --------------------
 
 
+### getVisibleRegion()
+
+```typescript
+getVisibleRegion() => Promise<VisibleRegion>
+```
+
+**Returns:** <code>Promise&lt;<a href="#visibleregion">VisibleRegion</a>&gt;</code>
+
+--------------------
+
+
+### enableCompass(...)
+
+```typescript
+enableCompass(isEnabled: boolean) => Promise<void>
+```
+
+| Param           | Type                 |
+| --------------- | -------------------- |
+| **`isEnabled`** | <code>boolean</code> |
+
+--------------------
+
+
+### enableToolbar(...)
+
+```typescript
+enableToolbar(isEnabled: boolean) => Promise<void>
+```
+
+| Param           | Type                 |
+| --------------- | -------------------- |
+| **`isEnabled`** | <code>boolean</code> |
+
+--------------------
+
+
+### enableMyLocation(...)
+
+```typescript
+enableMyLocation(isEnabled: boolean) => Promise<void>
+```
+
+| Param           | Type                 |
+| --------------- | -------------------- |
+| **`isEnabled`** | <code>boolean</code> |
+
+--------------------
+
+
+### enableAllGestures(...)
+
+```typescript
+enableAllGestures(isEnabled: boolean) => Promise<void>
+```
+
+| Param           | Type                 |
+| --------------- | -------------------- |
+| **`isEnabled`** | <code>boolean</code> |
+
+--------------------
+
+
+### enableTiltGesture(...)
+
+```typescript
+enableTiltGesture(isEnabled: boolean) => Promise<void>
+```
+
+| Param           | Type                 |
+| --------------- | -------------------- |
+| **`isEnabled`** | <code>boolean</code> |
+
+--------------------
+
+
+### enableTiltRotateGesture(...)
+
+```typescript
+enableTiltRotateGesture(isEnabled: boolean) => Promise<void>
+```
+
+| Param           | Type                 |
+| --------------- | -------------------- |
+| **`isEnabled`** | <code>boolean</code> |
+
+--------------------
+
+
+### setMapPreferences(...)
+
+```typescript
+setMapPreferences(padding?: MapPadding | undefined, isBuildingsEnabled?: boolean | undefined) => Promise<void>
+```
+
+| Param                    | Type                                              |
+| ------------------------ | ------------------------------------------------- |
+| **`padding`**            | <code><a href="#mappadding">MapPadding</a></code> |
+| **`isBuildingsEnabled`** | <code>boolean</code>                              |
+
+--------------------
+
+
 ### Interfaces
 
 
@@ -1056,18 +1155,6 @@ Describes the style for some region of a polyline.
 | **`segments`** | <code>number</code> | The length of this span in number of segments.                                    |
 
 
-#### VisibleRegion
-
-| Prop            | Type                                      |
-| --------------- | ----------------------------------------- |
-| **`nearLeft`**  | <code><a href="#latlng">LatLng</a></code> |
-| **`nearRight`** | <code><a href="#latlng">LatLng</a></code> |
-| **`farLeft`**   | <code><a href="#latlng">LatLng</a></code> |
-| **`farRight`**  | <code><a href="#latlng">LatLng</a></code> |
-| **`southwest`** | <code><a href="#latlng">LatLng</a></code> |
-| **`northeast`** | <code><a href="#latlng">LatLng</a></code> |
-
-
 #### CameraConfig
 
 Configuration properties for a Google Map Camera
@@ -1184,6 +1271,18 @@ Controls for setting padding on the 'visible' region of the view.
 | Prop        | Type                |
 | ----------- | ------------------- |
 | **`mapId`** | <code>string</code> |
+
+
+#### VisibleRegion
+
+| Prop            | Type                                      |
+| --------------- | ----------------------------------------- |
+| **`nearLeft`**  | <code><a href="#latlng">LatLng</a></code> |
+| **`nearRight`** | <code><a href="#latlng">LatLng</a></code> |
+| **`farLeft`**   | <code><a href="#latlng">LatLng</a></code> |
+| **`farRight`**  | <code><a href="#latlng">LatLng</a></code> |
+| **`southwest`** | <code><a href="#latlng">LatLng</a></code> |
+| **`northeast`** | <code><a href="#latlng">LatLng</a></code> |
 
 
 ### Type Aliases

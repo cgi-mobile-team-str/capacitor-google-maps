@@ -258,18 +258,6 @@
         "slug": "destroy"
       },
       {
-        "name": "getVisibleRegion",
-        "signature": "() => Promise<VisibleRegion>",
-        "parameters": [],
-        "returns": "Promise<VisibleRegion>",
-        "tags": [],
-        "docs": "",
-        "complexTypes": [
-          "VisibleRegion"
-        ],
-        "slug": "getvisibleregion"
-      },
-      {
         "name": "setCamera",
         "signature": "(config: CameraConfig) => Promise<void>",
         "parameters": [
@@ -750,6 +738,137 @@
           "MapClickCallbackData"
         ],
         "slug": "setonmylocationclicklistener"
+      },
+      {
+        "name": "getVisibleRegion",
+        "signature": "() => Promise<VisibleRegion>",
+        "parameters": [],
+        "returns": "Promise<VisibleRegion>",
+        "tags": [],
+        "docs": "",
+        "complexTypes": [
+          "VisibleRegion"
+        ],
+        "slug": "getvisibleregion"
+      },
+      {
+        "name": "enableCompass",
+        "signature": "(isEnabled: boolean) => Promise<void>",
+        "parameters": [
+          {
+            "name": "isEnabled",
+            "docs": "",
+            "type": "boolean"
+          }
+        ],
+        "returns": "Promise<void>",
+        "tags": [],
+        "docs": "",
+        "complexTypes": [],
+        "slug": "enablecompass"
+      },
+      {
+        "name": "enableToolbar",
+        "signature": "(isEnabled: boolean) => Promise<void>",
+        "parameters": [
+          {
+            "name": "isEnabled",
+            "docs": "",
+            "type": "boolean"
+          }
+        ],
+        "returns": "Promise<void>",
+        "tags": [],
+        "docs": "",
+        "complexTypes": [],
+        "slug": "enabletoolbar"
+      },
+      {
+        "name": "enableMyLocation",
+        "signature": "(isEnabled: boolean) => Promise<void>",
+        "parameters": [
+          {
+            "name": "isEnabled",
+            "docs": "",
+            "type": "boolean"
+          }
+        ],
+        "returns": "Promise<void>",
+        "tags": [],
+        "docs": "",
+        "complexTypes": [],
+        "slug": "enablemylocation"
+      },
+      {
+        "name": "enableAllGestures",
+        "signature": "(isEnabled: boolean) => Promise<void>",
+        "parameters": [
+          {
+            "name": "isEnabled",
+            "docs": "",
+            "type": "boolean"
+          }
+        ],
+        "returns": "Promise<void>",
+        "tags": [],
+        "docs": "",
+        "complexTypes": [],
+        "slug": "enableallgestures"
+      },
+      {
+        "name": "enableTiltGesture",
+        "signature": "(isEnabled: boolean) => Promise<void>",
+        "parameters": [
+          {
+            "name": "isEnabled",
+            "docs": "",
+            "type": "boolean"
+          }
+        ],
+        "returns": "Promise<void>",
+        "tags": [],
+        "docs": "",
+        "complexTypes": [],
+        "slug": "enabletiltgesture"
+      },
+      {
+        "name": "enableTiltRotateGesture",
+        "signature": "(isEnabled: boolean) => Promise<void>",
+        "parameters": [
+          {
+            "name": "isEnabled",
+            "docs": "",
+            "type": "boolean"
+          }
+        ],
+        "returns": "Promise<void>",
+        "tags": [],
+        "docs": "",
+        "complexTypes": [],
+        "slug": "enabletiltrotategesture"
+      },
+      {
+        "name": "setMapPreferences",
+        "signature": "(padding?: MapPadding | undefined, isBuildingsEnabled?: boolean | undefined) => Promise<void>",
+        "parameters": [
+          {
+            "name": "padding",
+            "docs": "",
+            "type": "MapPadding | undefined"
+          },
+          {
+            "name": "isBuildingsEnabled",
+            "docs": "",
+            "type": "boolean | undefined"
+          }
+        ],
+        "returns": "Promise<void>",
+        "tags": [],
+        "docs": "",
+        "complexTypes": [
+          "MapPadding"
+        ],
+        "slug": "setmappreferences"
       }
     ],
     "properties": []
@@ -1355,69 +1474,6 @@
       ]
     },
     {
-      "name": "VisibleRegion",
-      "slug": "visibleregion",
-      "docs": "",
-      "tags": [],
-      "methods": [],
-      "properties": [
-        {
-          "name": "nearLeft",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [
-            "LatLng"
-          ],
-          "type": "LatLng"
-        },
-        {
-          "name": "nearRight",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [
-            "LatLng"
-          ],
-          "type": "LatLng"
-        },
-        {
-          "name": "farLeft",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [
-            "LatLng"
-          ],
-          "type": "LatLng"
-        },
-        {
-          "name": "farRight",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [
-            "LatLng"
-          ],
-          "type": "LatLng"
-        },
-        {
-          "name": "southwest",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [
-            "LatLng"
-          ],
-          "type": "LatLng"
-        },
-        {
-          "name": "northeast",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [
-            "LatLng"
-          ],
-          "type": "LatLng"
-        }
-      ]
-    },
-    {
       "name": "CameraConfig",
       "slug": "cameraconfig",
       "docs": "Configuration properties for a Google Map Camera",
@@ -1837,6 +1893,69 @@
           "docs": "",
           "complexTypes": [],
           "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "VisibleRegion",
+      "slug": "visibleregion",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "nearLeft",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [
+            "LatLng"
+          ],
+          "type": "LatLng"
+        },
+        {
+          "name": "nearRight",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [
+            "LatLng"
+          ],
+          "type": "LatLng"
+        },
+        {
+          "name": "farLeft",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [
+            "LatLng"
+          ],
+          "type": "LatLng"
+        },
+        {
+          "name": "farRight",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [
+            "LatLng"
+          ],
+          "type": "LatLng"
+        },
+        {
+          "name": "southwest",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [
+            "LatLng"
+          ],
+          "type": "LatLng"
+        },
+        {
+          "name": "northeast",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [
+            "LatLng"
+          ],
+          "type": "LatLng"
         }
       ]
     }
