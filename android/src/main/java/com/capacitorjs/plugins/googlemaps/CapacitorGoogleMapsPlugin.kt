@@ -184,14 +184,28 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
     }
 
     @PluginMethod
-    fun getVisibleRegion(call: PluginCall): VisibleRegion? {
-        val id = call.getString("id")
-        id ?: throw InvalidMapIdError()
+    fun getVisibleRegion(call: PluginCall) {
+        try {
+            val id = call.getString("id")
+            id ?: throw InvalidMapIdError()
 
-        val map = maps[id]
-        map ?: throw MapNotFoundError()
+            val map = maps[id]
+            map ?: throw MapNotFoundError()
 
-        return map.getVisibleRegion()
+            map.getVisibleRegion() {region, err ->
+                if (err != null) {
+                    throw err
+                }
+                val data = JSObject()
+                data.put("region", region)
+                call.resolve(data)
+            }
+        }
+        catch (e: GoogleMapsError) {
+            handleError(call, e)
+        } catch (e: Exception) {
+            handleError(call, e)
+        }
     }
 
     @PluginMethod
