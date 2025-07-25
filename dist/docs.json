@@ -753,10 +753,10 @@
       },
       {
         "name": "enableCompass",
-        "signature": "(isEnabled: boolean) => Promise<void>",
+        "signature": "(enabled: boolean) => Promise<void>",
         "parameters": [
           {
-            "name": "isEnabled",
+            "name": "enabled",
             "docs": "",
             "type": "boolean"
           }

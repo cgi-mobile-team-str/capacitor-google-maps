@@ -28,6 +28,7 @@ import type {
   RemoveCirclesArgs,
   AddPolylinesArgs,
   RemovePolylinesArgs,
+  EnableCompassArgs,
 } from './implementation';
 
 export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogleMapsPlugin {
@@ -684,8 +685,8 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
     throw new Error('Method not implemented.');
   }
 
-  async enableCompass(_args: { id: string; isEnabled: boolean }): Promise<void> {
-    throw new Error('Method not implemented.');
+  async enableCompass(_args: EnableCompassArgs): Promise<void> {
+    console.log('test');
   }
 
   async enableToolbar(_args: { id: string; isEnabled: boolean }): Promise<void> {

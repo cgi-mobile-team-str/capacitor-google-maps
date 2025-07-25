@@ -261,11 +261,11 @@ class CapacitorGoogleMap(
         }
     }
 
-    fun enableCompass(isEnabled: Boolean, callback: (error: GoogleMapsError?) -> Unit) {
+    fun enableCompass(enabled: Boolean, callback: (error: GoogleMapsError?) -> Unit) {
         try {
             googleMap ?: throw GoogleMapNotAvailable()
             CoroutineScope(Dispatchers.Main).launch {
-                googleMap?.uiSettings?.isCompassEnabled = isEnabled
+                googleMap?.uiSettings?.isCompassEnabled = enabled
                 callback(null)
             }
         } catch (e: GoogleMapsError) {

@@ -1,7 +1,7 @@
 import { WebPlugin } from '@capacitor/core';
 import { MapPadding, VisibleRegion } from './definitions';
 import { LatLngBounds } from './definitions';
-import { AddMarkerArgs, CameraArgs, AddMarkersArgs, CapacitorGoogleMapsPlugin, CreateMapArgs, CurrentLocArgs, DestroyMapArgs, MapTypeArgs, PaddingArgs, RemoveMarkerArgs, TrafficLayerArgs, RemoveMarkersArgs, MapBoundsContainsArgs, EnableClusteringArgs, FitBoundsArgs, MapBoundsExtendArgs, AddPolygonsArgs, RemovePolygonsArgs, AddCirclesArgs, RemoveCirclesArgs, AddPolylinesArgs, RemovePolylinesArgs } from './implementation';
+import { AddMarkerArgs, CameraArgs, AddMarkersArgs, CapacitorGoogleMapsPlugin, CreateMapArgs, CurrentLocArgs, DestroyMapArgs, MapTypeArgs, PaddingArgs, RemoveMarkerArgs, TrafficLayerArgs, RemoveMarkersArgs, MapBoundsContainsArgs, EnableClusteringArgs, FitBoundsArgs, MapBoundsExtendArgs, AddPolygonsArgs, RemovePolygonsArgs, AddCirclesArgs, RemoveCirclesArgs, AddPolylinesArgs, RemovePolylinesArgs, EnableCompassArgs } from './implementation';
 export declare class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogleMapsPlugin {
     private gMapsRef;
     private AdvancedMarkerElement;
@@ -82,10 +82,7 @@ export declare class CapacitorGoogleMapsWeb extends WebPlugin implements Capacit
     setMapListeners(mapId: string): Promise<void>;
     private buildMarkerOpts;
     getVisibleRegion(): Promise<VisibleRegion>;
-    enableCompass(_args: {
-        id: string;
-        isEnabled: boolean;
-    }): Promise<void>;
+    enableCompass(_args: EnableCompassArgs): Promise<void>;
     enableToolbar(_args: {
         id: string;
         isEnabled: boolean;

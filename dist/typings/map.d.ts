@@ -62,7 +62,7 @@ export interface GoogleMapInterface {
     setOnMyLocationButtonClickListener(callback?: MapListenerCallback<MyLocationButtonClickCallbackData>): Promise<void>;
     setOnMyLocationClickListener(callback?: MapListenerCallback<MapClickCallbackData>): Promise<void>;
     getVisibleRegion(): Promise<VisibleRegion>;
-    enableCompass(isEnabled: boolean): Promise<void>;
+    enableCompass(enabled: boolean): Promise<void>;
     enableToolbar(isEnabled: boolean): Promise<void>;
     enableMyLocation(isEnabled: boolean): Promise<void>;
     enableAllGestures(isEnabled: boolean): Promise<void>;
@@ -223,7 +223,7 @@ export declare class GoogleMap {
      */
     getMapBounds(): Promise<LatLngBounds>;
     getVisibleRegion(): Promise<VisibleRegion>;
-    enableCompass(isEnabled: boolean): Promise<void>;
+    enableCompass(enabled: boolean): Promise<void>;
     enableToolbar(isEnabled: boolean): Promise<void>;
     enableMyLocation(isEnabled: boolean): Promise<void>;
     enableAllGestures(isEnabled: boolean): Promise<void>;

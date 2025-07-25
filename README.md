@@ -914,12 +914,12 @@ getVisibleRegion() => Promise<VisibleRegion>
 ### enableCompass(...)
 
 ```typescript
-enableCompass(isEnabled: boolean) => Promise<void>
+enableCompass(enabled: boolean) => Promise<void>
 ```
 
-| Param           | Type                 |
-| --------------- | -------------------- |
-| **`isEnabled`** | <code>boolean</code> |
+| Param         | Type                 |
+| ------------- | -------------------- |
+| **`enabled`** | <code>boolean</code> |
 
 --------------------
 

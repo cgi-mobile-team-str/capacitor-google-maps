@@ -87,7 +87,7 @@ export interface GoogleMapInterface {
   setOnMyLocationButtonClickListener(callback?: MapListenerCallback<MyLocationButtonClickCallbackData>): Promise<void>;
   setOnMyLocationClickListener(callback?: MapListenerCallback<MapClickCallbackData>): Promise<void>;
   getVisibleRegion(): Promise<VisibleRegion>;
-  enableCompass(isEnabled: boolean): Promise<void>;
+  enableCompass(enabled: boolean): Promise<void>;
   enableToolbar(isEnabled: boolean): Promise<void>;
   enableMyLocation(isEnabled: boolean): Promise<void>;
   enableAllGestures(isEnabled: boolean): Promise<void>;
@@ -580,8 +580,8 @@ export class GoogleMap {
     return CapacitorGoogleMaps.getVisibleRegion({ id: this.id });
   }
 
-  async enableCompass(isEnabled: boolean): Promise<void> {
-    return CapacitorGoogleMaps.enableCompass({ id: this.id, isEnabled });
+  async enableCompass(enabled: boolean): Promise<void> {
+    return CapacitorGoogleMaps.enableCompass({ id: this.id, enabled });
   }
 
   async enableToolbar(isEnabled: boolean): Promise<void> {

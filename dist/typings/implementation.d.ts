@@ -134,7 +134,7 @@ export interface FitBoundsArgs {
 }
 export interface EnableCompassArgs {
     id: string;
-    isEnabled: boolean;
+    enabled: boolean;
 }
 export interface EnableToolbarArgs {
     id: string;

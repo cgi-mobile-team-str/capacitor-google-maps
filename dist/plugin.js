@@ -471,8 +471,8 @@ var capacitorCapacitorGoogleMaps = (function (exports, core, markerclusterer) {
         async getVisibleRegion() {
             return CapacitorGoogleMaps.getVisibleRegion({ id: this.id });
         }
-        async enableCompass(isEnabled) {
-            return CapacitorGoogleMaps.enableCompass({ id: this.id, isEnabled });
+        async enableCompass(enabled) {
+            return CapacitorGoogleMaps.enableCompass({ id: this.id, enabled });
         }
         async enableToolbar(isEnabled) {
             return CapacitorGoogleMaps.enableToolbar({ id: this.id, isEnabled });
@@ -1458,7 +1458,7 @@ var capacitorCapacitorGoogleMaps = (function (exports, core, markerclusterer) {
             throw new Error('Method not implemented.');
         }
         async enableCompass(_args) {
-            throw new Error('Method not implemented.');
+            console.log('test');
         }
         async enableToolbar(_args) {
             throw new Error('Method not implemented.');
