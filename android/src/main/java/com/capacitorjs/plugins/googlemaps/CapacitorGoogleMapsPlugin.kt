@@ -219,11 +219,10 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
             val id = call.getString("id")
             id ?: throw InvalidMapIdError()
 
-            val isEnabled = call.getBoolean("isEnabled", false)
-            isEnabled ?: throw InvalidArgumentsError("isEnabled arg of enableCompass is missing")
-
             val map = maps[id]
             map ?: throw MapNotFoundError()
+
+            val isEnabled = call.getBoolean("isEnabled") ?: throw InvalidArgumentsError("isEnabled arg of enableCompass is missing")
 
             map.enableCompass(isEnabled) { err ->
                 if (err != null) {
