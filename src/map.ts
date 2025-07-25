@@ -47,7 +47,6 @@ export interface GoogleMapInterface {
   addPolylines(polylines: Polyline[]): Promise<string[]>;
   removePolylines(ids: string[]): Promise<void>;
   destroy(): Promise<void>;
-  getVisibleRegion(): Promise<VisibleRegion>;
   setCamera(config: CameraConfig): Promise<void>;
   /**
    * Get current map type
@@ -87,6 +86,14 @@ export interface GoogleMapInterface {
   setOnMarkerDragEndListener(callback?: MapListenerCallback<MarkerClickCallbackData>): Promise<void>;
   setOnMyLocationButtonClickListener(callback?: MapListenerCallback<MyLocationButtonClickCallbackData>): Promise<void>;
   setOnMyLocationClickListener(callback?: MapListenerCallback<MapClickCallbackData>): Promise<void>;
+  getVisibleRegion(): Promise<VisibleRegion>;
+  enableCompass(isEnabled: boolean): Promise<void>;
+  enableToolbar(isEnabled: boolean): Promise<void>;
+  enableMyLocation(isEnabled: boolean): Promise<void>;
+  enableAllGestures(isEnabled: boolean): Promise<void>;
+  enableTiltGesture(isEnabled: boolean): Promise<void>;
+  enableTiltRotateGesture(isEnabled: boolean): Promise<void>;
+  setMapPreferences(padding?: MapPadding, isBuildingsEnabled?: boolean): Promise<void>;
 }
 
 class MapCustomElement extends HTMLElement {
