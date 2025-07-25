@@ -170,6 +170,40 @@ export interface FitBoundsArgs {
   padding?: number;
 }
 
+export interface EnableCompassArgs {
+  id: string;
+  isEnabled: boolean;
+}
+
+export interface EnableToolbarArgs {
+  id: string;
+  isEnabled: boolean;
+}
+
+export interface EnableMyLocationArgs {
+  id: string;
+  isEnabled: boolean;
+}
+
+export interface EnableAllGesturesArgs {
+  id: string;
+  isEnabled: boolean;
+}
+
+export interface EnableTiltGestureArgs {
+  id: string;
+  isEnabled: boolean;
+}
+
+export interface EnableTiltRotateGestureArgs {
+  id: string;
+  isEnabled: boolean;
+}
+export interface SetMapPreferencesArgs {
+  id: string;
+  padding?: MapPadding;
+  isBuildingsEnabled?: boolean;
+}
 export interface CapacitorGoogleMapsPlugin extends Plugin {
   create(options: CreateMapArgs): Promise<void>;
   enableTouch(args: { id: string }): Promise<void>;
@@ -204,13 +238,13 @@ export interface CapacitorGoogleMapsPlugin extends Plugin {
   mapBoundsContains(args: MapBoundsContainsArgs): Promise<{ contains: boolean }>;
   mapBoundsExtend(args: MapBoundsExtendArgs): Promise<{ bounds: LatLngBounds }>;
   getVisibleRegion(args: { id: string }): Promise<VisibleRegion>;
-  enableCompass(args: { id: string; isEnabled: boolean }): Promise<void>;
-  enableToolbar(args: { id: string; isEnabled: boolean }): Promise<void>;
-  enableMyLocation(args: { id: string; isEnabled: boolean }): Promise<void>;
-  enableAllGestures(args: { id: string; isEnabled: boolean }): Promise<void>;
-  enableTiltGesture(args: { id: string; isEnabled: boolean }): Promise<void>;
-  enableTiltRotateGesture(args: { id: string; isEnabled: boolean }): Promise<void>;
-  setMapPreferences(args: { id: string; padding?: MapPadding; isBuildingsEnabled?: boolean }): Promise<void>;
+  enableCompass(args: EnableCompassArgs): Promise<void>;
+  enableToolbar(args: EnableToolbarArgs): Promise<void>;
+  enableMyLocation(args: EnableMyLocationArgs): Promise<void>;
+  enableAllGestures(args: EnableAllGesturesArgs): Promise<void>;
+  enableTiltGesture(args: EnableTiltGestureArgs): Promise<void>;
+  enableTiltRotateGesture(args: EnableTiltRotateGestureArgs): Promise<void>;
+  setMapPreferences(args: SetMapPreferencesArgs): Promise<void>;
 }
 
 const CapacitorGoogleMaps = registerPlugin<CapacitorGoogleMapsPlugin>('CapacitorGoogleMaps', {
