@@ -813,6 +813,36 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
             handleError(call, error: error)
         }
     }
+    
+    @objc func getVisibleRegion(_ call: CAPPluginCall) {
+        do {
+            guard let id = call.getString("id") else {
+                throw GoogleMapErrors.invalidMapId
+            }
+
+            guard let map = self.maps[id] else {
+                throw GoogleMapErrors.mapNotFound
+            }
+
+            try DispatchQueue.main.sync {
+                guard let bounds = map.getMapLatLngBounds() else {
+                    throw GoogleMapErrors.unhandledError("Google Map Bounds could not be found.")
+                }
+                guard let visibleRegion = map.getVisibleRegion() else {
+                    throw GoogleMapErrors.unhandledError("Google Visible Region could not be found.")
+                }
+
+                call.resolve(
+                    formatVisibleRegionForResponse(
+                        visibleRegion: visibleRegion,
+                        bounds: bounds
+                    )
+                )
+            }
+        } catch {
+            handleError(call, error: error)
+        }
+    }
 
     @objc func mapBoundsContains(_ call: CAPPluginCall) {
         do {
@@ -927,6 +957,35 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
         ]
     }
 
+    private func formatVisibleRegionForResponse(visibleRegion: GMSVisibleRegion?, bounds: GMSCoordinateBounds?) -> PluginCallResultData {
+        return [
+            "nearLeft": [
+                "lat": visibleRegion?.nearLeft.latitude,
+                "lng": visibleRegion?.nearLeft.longitude
+            ],
+            "nearRight": [
+                "lat": visibleRegion?.nearRight.latitude,
+                "lng": visibleRegion?.nearRight.longitude
+            ],
+            "farLeft": [
+                "lat": visibleRegion?.farLeft.latitude,
+                "lng": visibleRegion?.farLeft.longitude
+            ],
+            "farRight": [
+                "lat": visibleRegion?.farRight.latitude,
+                "lng": visibleRegion?.farRight.longitude
+            ],
+            "southwest": [
+                "lat": bounds?.southWest.latitude,
+                "lng": bounds?.southWest.longitude
+            ],
+            "northeast": [
+                "lat": bounds?.northEast.latitude,
+                "lng": bounds?.northEast.longitude
+            ]
+        ]
+    }
+    
     private func formatMapBoundsForResponse(_ bounds: GMSCoordinateBounds) -> PluginCallResultData {
         let centerLatitude = (bounds.southWest.latitude + bounds.northEast.latitude) / 2.0
         let centerLongitude = (bounds.southWest.longitude + bounds.northEast.longitude) / 2.0
@@ -968,7 +1027,7 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
         let mapId = self.findMapIdByMapView(mapView)
         let map = self.maps[mapId]
         let bounds = map?.getMapLatLngBounds()
-
+        
         let data: PluginCallResultData = [
             "mapId": mapId,
             "bounds": formatMapBoundsForResponse(

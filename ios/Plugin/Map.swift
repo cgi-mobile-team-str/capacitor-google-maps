@@ -495,6 +495,10 @@ public class Map {
             self.mapViewController.GMapView.animate(with: cameraUpdate)
         }
     }
+    
+    func getVisibleRegion() -> GMSVisibleRegion? {
+        return self.mapViewController.GMapView.projection.visibleRegion()
+    }
 
     private func getFrameOverflowBounds(frame: CGRect, mapBounds: CGRect) -> [CGRect] {
         var intersections: [CGRect] = []
