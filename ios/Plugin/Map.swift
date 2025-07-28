@@ -505,6 +505,33 @@ public class Map {
             self.mapViewController.GMapView.settings.compassButton = enabled
         }
     }
+    
+    func enableMyLocation(enabled: Bool) throws {
+        DispatchQueue.main.sync {
+            self.mapViewController.GMapView.settings.myLocationButton = enabled
+        }
+    }
+    
+    func enableTiltGesture(enabled: Bool) throws {
+        DispatchQueue.main.sync {
+            self.mapViewController.GMapView.settings.tiltGestures = enabled
+        }
+    }
+    
+    func enableTiltRotateGesture(enabled: Bool) throws {
+        DispatchQueue.main.sync {
+            self.mapViewController.GMapView.settings.rotateGestures = enabled
+        }
+    }
+    
+    func setMapPreferences(padding: GoogleMapPadding?, isBuildingsEnabled: Bool?) throws {
+        DispatchQueue.main.sync {
+                let mapInsets = UIEdgeInsets(top: CGFloat(padding?.top ?? 0), left: CGFloat(padding?.left  ?? 0), bottom: CGFloat(padding?.bottom  ?? 0), right: CGFloat(padding?.right  ?? 0))
+                self.mapViewController.GMapView.padding = mapInsets
+                self.mapViewController.GMapView.isBuildingsEnabled = isBuildingsEnabled ?? false
+            
+        }
+    }
 
     private func getFrameOverflowBounds(frame: CGRect, mapBounds: CGRect) -> [CGRect] {
         var intersections: [CGRect] = []
