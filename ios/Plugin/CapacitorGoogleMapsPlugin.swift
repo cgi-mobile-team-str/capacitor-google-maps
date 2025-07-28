@@ -876,11 +876,11 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
                 throw GoogleMapErrors.mapNotFound
             }
 
-            guard let enabled = call.getBool("enabled") else {
-                throw GoogleMapErrors.invalidArguments("enabled is missing")
+            guard let isEnabled = call.getBool("isEnabled") else {
+                throw GoogleMapErrors.invalidArguments("isEnabled is missing")
             }
 
-            try map.enableMyLocation(enabled: enabled)
+            try map.enableMyLocation(isEnabled: isEnabled)
 
             call.resolve()
         } catch {
@@ -898,11 +898,11 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
                 throw GoogleMapErrors.mapNotFound
             }
 
-            guard let enabled = call.getBool("enabled") else {
-                throw GoogleMapErrors.invalidArguments("enabled is missing")
+            guard let isEnabled = call.getBool("isEnabled") else {
+                throw GoogleMapErrors.invalidArguments("isEnabled is missing")
             }
 
-            try map.enableTiltGesture(enabled: enabled)
+            try map.enableTiltGesture(isEnabled: isEnabled)
 
             call.resolve()
         } catch {
@@ -920,11 +920,11 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
                 throw GoogleMapErrors.mapNotFound
             }
 
-            guard let enabled = call.getBool("enabled") else {
-                throw GoogleMapErrors.invalidArguments("enabled is missing")
+            guard let isEnabled = call.getBool("isEnabled") else {
+                throw GoogleMapErrors.invalidArguments("isEnabled is missing")
             }
 
-            try map.enableTiltRotateGesture(enabled: enabled)
+            try map.enableTiltRotateGesture(isEnabled: isEnabled)
 
             call.resolve()
         } catch {

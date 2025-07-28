@@ -506,21 +506,21 @@ public class Map {
         }
     }
     
-    func enableMyLocation(enabled: Bool) throws {
+    func enableMyLocation(isEnabled: Bool) throws {
         DispatchQueue.main.sync {
-            self.mapViewController.GMapView.settings.myLocationButton = enabled
+            self.mapViewController.GMapView.settings.myLocationButton = isEnabled
         }
     }
     
-    func enableTiltGesture(enabled: Bool) throws {
+    func enableTiltGesture(isEnabled: Bool) throws {
         DispatchQueue.main.sync {
-            self.mapViewController.GMapView.settings.tiltGestures = enabled
+            self.mapViewController.GMapView.settings.tiltGestures = isEnabled
         }
     }
     
-    func enableTiltRotateGesture(enabled: Bool) throws {
+    func enableTiltRotateGesture(isEnabled: Bool) throws {
         DispatchQueue.main.sync {
-            self.mapViewController.GMapView.settings.rotateGestures = enabled
+            self.mapViewController.GMapView.settings.rotateGestures = isEnabled
         }
     }
     
