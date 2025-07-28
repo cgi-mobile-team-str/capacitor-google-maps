@@ -508,7 +508,7 @@ public class Map {
     
     func enableMyLocation(isEnabled: Bool) throws {
         DispatchQueue.main.sync {
-            self.mapViewController.GMapView.settings.myLocationButton = isEnabled
+            self.mapViewController.GMapView.isMyLocationEnabled = isEnabled
         }
     }
     

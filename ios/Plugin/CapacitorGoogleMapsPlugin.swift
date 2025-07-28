@@ -945,7 +945,9 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
             let isBuildingsEnabled = call.getBool("isBuildingsEnabled")
             let paddingObj = call.getObject("padding")
             var padding: GoogleMapPadding? = nil
+            if(paddingObj != nil) {
                 padding = try GoogleMapPadding.init(fromJSObject: paddingObj!)
+            }
             try map.setMapPreferences(padding: padding, isBuildingsEnabled: isBuildingsEnabled)
             call.resolve()
         } catch {
