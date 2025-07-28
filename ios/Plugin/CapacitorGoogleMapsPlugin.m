@@ -36,4 +36,5 @@ CAP_PLUGIN(CapacitorGoogleMapsPlugin, "CapacitorGoogleMaps",
    CAP_PLUGIN_METHOD(mapBoundsContains, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(mapBoundsExtend, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(getVisibleRegion, CAPPluginReturnPromise);
+   CAP_PLUGIN_METHOD(enableCompass, CAPPluginReturnPromise);
 )

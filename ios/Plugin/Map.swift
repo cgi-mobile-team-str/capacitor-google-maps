@@ -499,6 +499,12 @@ public class Map {
     func getVisibleRegion() -> GMSVisibleRegion? {
         return self.mapViewController.GMapView.projection.visibleRegion()
     }
+    
+    func enableCompass(enabled: Bool) throws {
+        DispatchQueue.main.sync {
+            self.mapViewController.GMapView.settings.compassButton = enabled
+        }
+    }
 
     private func getFrameOverflowBounds(frame: CGRect, mapBounds: CGRect) -> [CGRect] {
         var intersections: [CGRect] = []
