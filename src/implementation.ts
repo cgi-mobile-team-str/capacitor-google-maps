@@ -204,6 +204,11 @@ export interface SetMapPreferencesArgs {
   padding?: MapPadding;
   isBuildingsEnabled?: boolean;
 }
+
+export interface CameraBearingArgs {
+  id: string;
+  bearing: number;
+}
 export interface CapacitorGoogleMapsPlugin extends Plugin {
   create(options: CreateMapArgs): Promise<void>;
   enableTouch(args: { id: string }): Promise<void>;
@@ -245,6 +250,7 @@ export interface CapacitorGoogleMapsPlugin extends Plugin {
   enableTiltGesture(args: EnableTiltGestureArgs): Promise<void>;
   enableTiltRotateGesture(args: EnableTiltRotateGestureArgs): Promise<void>;
   setMapPreferences(args: SetMapPreferencesArgs): Promise<void>;
+  setCameraBearing(args: CameraBearingArgs): Promise<void>;
 }
 
 const CapacitorGoogleMaps = registerPlugin<CapacitorGoogleMapsPlugin>('CapacitorGoogleMaps', {

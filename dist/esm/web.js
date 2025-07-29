@@ -536,7 +536,7 @@ export class CapacitorGoogleMapsWeb extends WebPlugin {
         throw new Error('Method not implemented.');
     }
     async enableCompass(_args) {
-        console.log('test');
+        throw new Error('Method not implemented.');
     }
     async enableToolbar(_args) {
         throw new Error('Method not implemented.');
@@ -554,6 +554,9 @@ export class CapacitorGoogleMapsWeb extends WebPlugin {
         throw new Error('Method not implemented.');
     }
     async setMapPreferences(_args) {
+        throw new Error('Method not implemented.');
+    }
+    async setCameraBearing(_args) {
         throw new Error('Method not implemented.');
     }
 }

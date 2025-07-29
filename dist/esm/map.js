@@ -319,6 +319,18 @@ export class GoogleMap {
             config,
         });
     }
+    /**
+     * Update the map camera bearing
+     *
+     * @param bearing
+     * @returns
+     */
+    async setCameraBearing(bearing) {
+        return CapacitorGoogleMaps.setCameraBearing({
+            id: this.id,
+            bearing,
+        });
+    }
     async getMapType() {
         const { type } = await CapacitorGoogleMaps.getMapType({ id: this.id });
         return MapType[type];

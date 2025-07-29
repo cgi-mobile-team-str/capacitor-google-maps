@@ -686,7 +686,7 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
   }
 
   async enableCompass(_args: EnableCompassArgs): Promise<void> {
-    console.log('test');
+    throw new Error('Method not implemented.');
   }
 
   async enableToolbar(_args: { id: string; isEnabled: boolean }): Promise<void> {
@@ -710,6 +710,10 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
   }
 
   async setMapPreferences(_args: { id: string; padding?: MapPadding; isBuildingsEnabled?: boolean }): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+
+  async setCameraBearing(_args: { id: string; bearing: number }): Promise<void> {
     throw new Error('Method not implemented.');
   }
 }

@@ -685,6 +685,23 @@ class CapacitorGoogleMap(
         }
     }
 
+    fun setCameraBearing(bearing: Double, callback: (error: GoogleMapsError?) -> Unit) {
+        try {
+            googleMap ?: throw GoogleMapNotAvailable()
+            CoroutineScope(Dispatchers.Main).launch {
+                val updatedPosition =
+                    CameraPosition.Builder()
+                        .bearing(bearing.toFloat())
+                        .build()
+
+                    googleMap?.animateCamera(CameraUpdateFactory.newCameraPosition(updatedPosition))
+                callback(null)
+            }
+        } catch (e: GoogleMapsError) {
+            callback(e)
+        }
+    }
+
     fun getMapType(callback: (type: String, error: GoogleMapsError?) -> Unit) {
         try {
             googleMap ?: throw GoogleMapNotAvailable()

@@ -171,6 +171,13 @@ export declare class GoogleMap {
      * @returns
      */
     setCamera(config: CameraConfig): Promise<void>;
+    /**
+     * Update the map camera bearing
+     *
+     * @param bearing
+     * @returns
+     */
+    setCameraBearing(bearing: number): Promise<void>;
     getMapType(): Promise<MapType>;
     /**
      * Sets the type of map tiles that should be displayed.

@@ -108,4 +108,8 @@ export declare class CapacitorGoogleMapsWeb extends WebPlugin implements Capacit
         padding?: MapPadding;
         isBuildingsEnabled?: boolean;
     }): Promise<void>;
+    setCameraBearing(_args: {
+        id: string;
+        bearing: number;
+    }): Promise<void>;
 }

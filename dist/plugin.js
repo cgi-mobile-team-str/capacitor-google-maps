@@ -380,6 +380,18 @@ var capacitorCapacitorGoogleMaps = (function (exports, core, markerclusterer) {
                 config,
             });
         }
+        /**
+         * Update the map camera bearing
+         *
+         * @param bearing
+         * @returns
+         */
+        async setCameraBearing(bearing) {
+            return CapacitorGoogleMaps.setCameraBearing({
+                id: this.id,
+                bearing,
+            });
+        }
         async getMapType() {
             const { type } = await CapacitorGoogleMaps.getMapType({ id: this.id });
             return exports.MapType[type];
@@ -1468,7 +1480,7 @@ var capacitorCapacitorGoogleMaps = (function (exports, core, markerclusterer) {
             throw new Error('Method not implemented.');
         }
         async enableCompass(_args) {
-            console.log('test');
+            throw new Error('Method not implemented.');
         }
         async enableToolbar(_args) {
             throw new Error('Method not implemented.');
@@ -1486,6 +1498,9 @@ var capacitorCapacitorGoogleMaps = (function (exports, core, markerclusterer) {
             throw new Error('Method not implemented.');
         }
         async setMapPreferences(_args) {
+            throw new Error('Method not implemented.');
+        }
+        async setCameraBearing(_args) {
             throw new Error('Method not implemented.');
         }
     }
