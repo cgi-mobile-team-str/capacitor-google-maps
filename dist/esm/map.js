@@ -331,6 +331,12 @@ export class GoogleMap {
             bearing,
         });
     }
+    async setOptions(config) {
+        return CapacitorGoogleMaps.setOptions({
+            id: this.id,
+            config,
+        });
+    }
     async getMapType() {
         const { type } = await CapacitorGoogleMaps.getMapType({ id: this.id });
         return MapType[type];

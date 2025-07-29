@@ -1,5 +1,4 @@
 import { CapacitorGoogleMaps } from './implementation';
-import { GoogleMap } from './map';
 
 /**
  * An interface representing the viewports latitude and longitude bounds.

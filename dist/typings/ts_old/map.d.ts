@@ -1,4 +1,4 @@
-import { CameraConfig, Marker, MapPadding, MapListenerCallback, MapReadyCallbackData, CameraIdleCallbackData, CameraMoveStartedCallbackData, ClusterClickCallbackData, MapClickCallbackData, MarkerClickCallbackData, MyLocationButtonClickCallbackData, Polygon, PolygonClickCallbackData, Circle, CircleClickCallbackData, Polyline, PolylineCallbackData, VisibleRegion } from './definitions';
+import { CameraConfig, Marker, MapPadding, MapListenerCallback, MapReadyCallbackData, CameraIdleCallbackData, CameraMoveStartedCallbackData, ClusterClickCallbackData, MapClickCallbackData, MarkerClickCallbackData, MyLocationButtonClickCallbackData, Polygon, PolygonClickCallbackData, Circle, CircleClickCallbackData, Polyline, PolylineCallbackData, VisibleRegion, GoogleMapsOptions } from './definitions';
 import { LatLngBounds, MapType } from './definitions';
 import { CreateMapArgs } from './implementation';
 export interface GoogleMapInterface {
@@ -70,6 +70,7 @@ export interface GoogleMapInterface {
     enableTiltRotateGesture(isEnabled: boolean): Promise<void>;
     setMapPreferences(padding?: MapPadding, isBuildingsEnabled?: boolean): Promise<void>;
     setCameraBearing(bearing: number): Promise<void>;
+    setOptions(options: GoogleMapsOptions): Promise<void>;
 }
 export declare class GoogleMap {
     private id;
@@ -179,6 +180,7 @@ export declare class GoogleMap {
      * @returns
      */
     setCameraBearing(bearing: number): Promise<void>;
+    setOptions(config: GoogleMapsOptions): Promise<void>;
     getMapType(): Promise<MapType>;
     /**
      * Sets the type of map tiles that should be displayed.

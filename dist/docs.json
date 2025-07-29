@@ -885,6 +885,24 @@
         "docs": "",
         "complexTypes": [],
         "slug": "setcamerabearing"
+      },
+      {
+        "name": "setOptions",
+        "signature": "(options: GoogleMapsOptions) => Promise<void>",
+        "parameters": [
+          {
+            "name": "options",
+            "docs": "",
+            "type": "GoogleMapsOptions"
+          }
+        ],
+        "returns": "Promise<void>",
+        "tags": [],
+        "docs": "",
+        "complexTypes": [
+          "GoogleMapsOptions"
+        ],
+        "slug": "setoptions"
       }
     ],
     "properties": []
@@ -1981,6 +1999,221 @@
             "LatLng"
           ],
           "type": "LatLng"
+        }
+      ]
+    },
+    {
+      "name": "GoogleMapsOptions",
+      "slug": "googlemapsoptions",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "mapType",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [
+            "MapType"
+          ],
+          "type": "MapType"
+        },
+        {
+          "name": "controls",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [
+            "GoogleMapControls"
+          ],
+          "type": "GoogleMapControls"
+        },
+        {
+          "name": "gestures",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [
+            "GoogleMapGestures"
+          ],
+          "type": "GoogleMapGestures"
+        },
+        {
+          "name": "styles",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "any[] | undefined"
+        },
+        {
+          "name": "camera",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [
+            "CameraConfig"
+          ],
+          "type": "CameraConfig"
+        },
+        {
+          "name": "preferences",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [
+            "GoogleMapPreferences"
+          ],
+          "type": "GoogleMapPreferences"
+        }
+      ]
+    },
+    {
+      "name": "GoogleMapControls",
+      "slug": "googlemapcontrols",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "compass",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "myLocationButton",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "myLocation",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "indoorPicker",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "zoom",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "mapToolbar",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "boolean | undefined"
+        }
+      ]
+    },
+    {
+      "name": "GoogleMapGestures",
+      "slug": "googlemapgestures",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "scroll",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "zoom",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "tilt",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "rotate",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "boolean | undefined"
+        }
+      ]
+    },
+    {
+      "name": "GoogleMapPreferences",
+      "slug": "googlemappreferences",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "padding",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [
+            "MapPadding"
+          ],
+          "type": "MapPadding"
+        },
+        {
+          "name": "isBuildingsEnabled",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "gestureBounds",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [
+            "LatLng"
+          ],
+          "type": "LatLng[] | undefined"
+        },
+        {
+          "name": "zoom",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [
+            "GoogleMapZoomOptions"
+          ],
+          "type": "GoogleMapZoomOptions"
+        }
+      ]
+    },
+    {
+      "name": "GoogleMapZoomOptions",
+      "slug": "googlemapzoomoptions",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "minZoom",
+          "tags": [],
+          "docs": "The minimum zoom level of the map.",
+          "complexTypes": [],
+          "type": "number | undefined"
+        },
+        {
+          "name": "maxZoom",
+          "tags": [],
+          "docs": "The maximum zoom level of the map.",
+          "complexTypes": [],
+          "type": "number | undefined"
         }
       ]
     }

@@ -346,6 +346,7 @@ export default MyMap;
 * [`enableTiltRotateGesture(...)`](#enabletiltrotategesture)
 * [`setMapPreferences(...)`](#setmappreferences)
 * [`setCameraBearing(...)`](#setcamerabearing)
+* [`setOptions(...)`](#setoptions)
 * [Interfaces](#interfaces)
 * [Type Aliases](#type-aliases)
 * [Enums](#enums)
@@ -1017,6 +1018,19 @@ setCameraBearing(bearing: number) => Promise<void>
 --------------------
 
 
+### setOptions(...)
+
+```typescript
+setOptions(options: GoogleMapsOptions) => Promise<void>
+```
+
+| Param         | Type                                                            |
+| ------------- | --------------------------------------------------------------- |
+| **`options`** | <code><a href="#googlemapsoptions">GoogleMapsOptions</a></code> |
+
+--------------------
+
+
 ### Interfaces
 
 
@@ -1298,6 +1312,58 @@ Controls for setting padding on the 'visible' region of the view.
 | **`farRight`**  | <code><a href="#latlng">LatLng</a></code> |
 | **`southwest`** | <code><a href="#latlng">LatLng</a></code> |
 | **`northeast`** | <code><a href="#latlng">LatLng</a></code> |
+
+
+#### GoogleMapsOptions
+
+| Prop              | Type                                                                  |
+| ----------------- | --------------------------------------------------------------------- |
+| **`mapType`**     | <code><a href="#maptype">MapType</a></code>                           |
+| **`controls`**    | <code><a href="#googlemapcontrols">GoogleMapControls</a></code>       |
+| **`gestures`**    | <code><a href="#googlemapgestures">GoogleMapGestures</a></code>       |
+| **`styles`**      | <code>any[]</code>                                                    |
+| **`camera`**      | <code><a href="#cameraconfig">CameraConfig</a></code>                 |
+| **`preferences`** | <code><a href="#googlemappreferences">GoogleMapPreferences</a></code> |
+
+
+#### GoogleMapControls
+
+| Prop                   | Type                 |
+| ---------------------- | -------------------- |
+| **`compass`**          | <code>boolean</code> |
+| **`myLocationButton`** | <code>boolean</code> |
+| **`myLocation`**       | <code>boolean</code> |
+| **`indoorPicker`**     | <code>boolean</code> |
+| **`zoom`**             | <code>boolean</code> |
+| **`mapToolbar`**       | <code>boolean</code> |
+
+
+#### GoogleMapGestures
+
+| Prop         | Type                 |
+| ------------ | -------------------- |
+| **`scroll`** | <code>boolean</code> |
+| **`zoom`**   | <code>boolean</code> |
+| **`tilt`**   | <code>boolean</code> |
+| **`rotate`** | <code>boolean</code> |
+
+
+#### GoogleMapPreferences
+
+| Prop                     | Type                                                                  |
+| ------------------------ | --------------------------------------------------------------------- |
+| **`padding`**            | <code><a href="#mappadding">MapPadding</a></code>                     |
+| **`isBuildingsEnabled`** | <code>boolean</code>                                                  |
+| **`gestureBounds`**      | <code>LatLng[]</code>                                                 |
+| **`zoom`**               | <code><a href="#googlemapzoomoptions">GoogleMapZoomOptions</a></code> |
+
+
+#### GoogleMapZoomOptions
+
+| Prop          | Type                | Description                        |
+| ------------- | ------------------- | ---------------------------------- |
+| **`minZoom`** | <code>number</code> | The minimum zoom level of the map. |
+| **`maxZoom`** | <code>number</code> | The maximum zoom level of the map. |
 
 
 ### Type Aliases

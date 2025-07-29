@@ -1,5 +1,5 @@
 import type { Plugin } from '@capacitor/core';
-import type { CameraConfig, Circle, GoogleMapConfig, LatLng, LatLngBounds, MapPadding, MapType, Marker, Polygon, Polyline, VisibleRegion } from './definitions';
+import type { CameraConfig, Circle, GoogleMapConfig, GoogleMapsOptions, LatLng, LatLngBounds, MapPadding, MapType, Marker, Polygon, Polyline, VisibleRegion } from './definitions';
 /**
  * An interface containing the options used when creating a map.
  */
@@ -117,6 +117,10 @@ export interface MapBoundsArgs {
         width: number;
         height: number;
     };
+}
+export interface MapOptionsArgs {
+    id: string;
+    config: GoogleMapsOptions;
 }
 export interface MapBoundsContainsArgs {
     bounds: LatLngBounds;
@@ -238,6 +242,7 @@ export interface CapacitorGoogleMapsPlugin extends Plugin {
     enableTiltRotateGesture(args: EnableTiltRotateGestureArgs): Promise<void>;
     setMapPreferences(args: SetMapPreferencesArgs): Promise<void>;
     setCameraBearing(args: CameraBearingArgs): Promise<void>;
+    setOptions(args: MapOptionsArgs): Promise<void>;
 }
 declare const CapacitorGoogleMaps: CapacitorGoogleMapsPlugin;
 export { CapacitorGoogleMaps };

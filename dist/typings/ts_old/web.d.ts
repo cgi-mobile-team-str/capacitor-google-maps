@@ -1,7 +1,7 @@
 import { WebPlugin } from '@capacitor/core';
 import { MapPadding, VisibleRegion } from './definitions';
 import { LatLngBounds } from './definitions';
-import { AddMarkerArgs, CameraArgs, AddMarkersArgs, CapacitorGoogleMapsPlugin, CreateMapArgs, CurrentLocArgs, DestroyMapArgs, MapTypeArgs, PaddingArgs, RemoveMarkerArgs, TrafficLayerArgs, RemoveMarkersArgs, MapBoundsContainsArgs, EnableClusteringArgs, FitBoundsArgs, MapBoundsExtendArgs, AddPolygonsArgs, RemovePolygonsArgs, AddCirclesArgs, RemoveCirclesArgs, AddPolylinesArgs, RemovePolylinesArgs, EnableCompassArgs } from './implementation';
+import { AddMarkerArgs, CameraArgs, AddMarkersArgs, CapacitorGoogleMapsPlugin, CreateMapArgs, CurrentLocArgs, DestroyMapArgs, MapTypeArgs, PaddingArgs, RemoveMarkerArgs, TrafficLayerArgs, RemoveMarkersArgs, MapBoundsContainsArgs, EnableClusteringArgs, FitBoundsArgs, MapBoundsExtendArgs, AddPolygonsArgs, RemovePolygonsArgs, AddCirclesArgs, RemoveCirclesArgs, AddPolylinesArgs, RemovePolylinesArgs, EnableCompassArgs, MapOptionsArgs } from './implementation';
 export declare class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogleMapsPlugin {
     private gMapsRef;
     private AdvancedMarkerElement;
@@ -112,4 +112,5 @@ export declare class CapacitorGoogleMapsWeb extends WebPlugin implements Capacit
         id: string;
         bearing: number;
     }): Promise<void>;
+    setOptions(_args: MapOptionsArgs): Promise<void>;
 }

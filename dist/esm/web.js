@@ -559,5 +559,8 @@ export class CapacitorGoogleMapsWeb extends WebPlugin {
     async setCameraBearing(_args) {
         throw new Error('Method not implemented.');
     }
+    async setOptions(_args) {
+        throw new Error('Method not implemented.');
+    }
 }
 //# sourceMappingURL=web.js.map

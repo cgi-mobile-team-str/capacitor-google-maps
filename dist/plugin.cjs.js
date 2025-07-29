@@ -414,6 +414,12 @@ class GoogleMap {
             bearing,
         });
     }
+    async setOptions(config) {
+        return CapacitorGoogleMaps.setOptions({
+            id: this.id,
+            config,
+        });
+    }
     async getMapType() {
         const { type } = await CapacitorGoogleMaps.getMapType({ id: this.id });
         return exports.MapType[type];
@@ -1523,6 +1529,9 @@ class CapacitorGoogleMapsWeb extends core.WebPlugin {
         throw new Error('Method not implemented.');
     }
     async setCameraBearing(_args) {
+        throw new Error('Method not implemented.');
+    }
+    async setOptions(_args) {
         throw new Error('Method not implemented.');
     }
 }
