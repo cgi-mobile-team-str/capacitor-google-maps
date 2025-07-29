@@ -345,6 +345,7 @@ export default MyMap;
 * [`enableTiltGesture(...)`](#enabletiltgesture)
 * [`enableTiltRotateGesture(...)`](#enabletiltrotategesture)
 * [`setMapPreferences(...)`](#setmappreferences)
+* [`setCameraBearing(...)`](#setcamerabearing)
 * [Interfaces](#interfaces)
 * [Type Aliases](#type-aliases)
 * [Enums](#enums)
@@ -999,6 +1000,19 @@ setMapPreferences(padding?: MapPadding | undefined, isBuildingsEnabled?: boolean
 | ------------------------ | ------------------------------------------------- |
 | **`padding`**            | <code><a href="#mappadding">MapPadding</a></code> |
 | **`isBuildingsEnabled`** | <code>boolean</code>                              |
+
+--------------------
+
+
+### setCameraBearing(...)
+
+```typescript
+setCameraBearing(bearing: number) => Promise<void>
+```
+
+| Param         | Type                |
+| ------------- | ------------------- |
+| **`bearing`** | <code>number</code> |
 
 --------------------
 

@@ -869,6 +869,22 @@
           "MapPadding"
         ],
         "slug": "setmappreferences"
+      },
+      {
+        "name": "setCameraBearing",
+        "signature": "(bearing: number) => Promise<void>",
+        "parameters": [
+          {
+            "name": "bearing",
+            "docs": "",
+            "type": "number"
+          }
+        ],
+        "returns": "Promise<void>",
+        "tags": [],
+        "docs": "",
+        "complexTypes": [],
+        "slug": "setcamerabearing"
       }
     ],
     "properties": []

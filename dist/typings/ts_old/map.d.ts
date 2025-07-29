@@ -69,6 +69,7 @@ export interface GoogleMapInterface {
     enableTiltGesture(isEnabled: boolean): Promise<void>;
     enableTiltRotateGesture(isEnabled: boolean): Promise<void>;
     setMapPreferences(padding?: MapPadding, isBuildingsEnabled?: boolean): Promise<void>;
+    setCameraBearing(bearing: number): Promise<void>;
 }
 export declare class GoogleMap {
     private id;
