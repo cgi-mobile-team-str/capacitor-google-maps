@@ -1042,7 +1042,7 @@ class CapacitorGoogleMapsWeb extends core.WebPlugin {
         this.maps[_args.id].map.moveCamera({
             center: _args.config.coordinate,
             heading: _args.config.bearing,
-            tilt: _args.config.angle,
+            tilt: _args.config.tilt,
             zoom: _args.config.zoom,
         });
     }

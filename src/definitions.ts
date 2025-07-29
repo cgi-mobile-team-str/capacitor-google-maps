@@ -232,6 +232,10 @@ export interface CameraConfig {
    */
   coordinate?: LatLng;
   /**
+   * Multiple locations towards which the camera points in the center.
+   */
+  coordinates?: LatLng[];
+  /**
    * Sets the zoom of the map.
    */
   zoom?: number;
@@ -248,7 +252,7 @@ export interface CameraConfig {
    *
    * @default 0
    */
-  angle?: number;
+  tilt?: number;
   /**
    * Animate the transition to the new Camera properties.
    *
@@ -259,7 +263,7 @@ export interface CameraConfig {
   /**
    * This configuration option is not being used.
    */
-  animationDuration?: number;
+  duration?: number;
 }
 
 export enum MapType {

@@ -1159,14 +1159,15 @@ Describes the style for some region of a polyline.
 
 Configuration properties for a Google Map Camera
 
-| Prop                    | Type                                      | Description                                                                                                            | Default            |
-| ----------------------- | ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | ------------------ |
-| **`coordinate`**        | <code><a href="#latlng">LatLng</a></code> | Location on the Earth towards which the camera points.                                                                 |                    |
-| **`zoom`**              | <code>number</code>                       | Sets the zoom of the map.                                                                                              |                    |
-| **`bearing`**           | <code>number</code>                       | Bearing of the camera, in degrees clockwise from true north.                                                           | <code>0</code>     |
-| **`angle`**             | <code>number</code>                       | The angle, in degrees, of the camera from the nadir (directly facing the Earth). The only allowed values are 0 and 45. | <code>0</code>     |
-| **`animate`**           | <code>boolean</code>                      | Animate the transition to the new Camera properties.                                                                   | <code>false</code> |
-| **`animationDuration`** | <code>number</code>                       | This configuration option is not being used.                                                                           |                    |
+| Prop              | Type                                      | Description                                                                                                            | Default            |
+| ----------------- | ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | ------------------ |
+| **`coordinate`**  | <code><a href="#latlng">LatLng</a></code> | Location on the Earth towards which the camera points.                                                                 |                    |
+| **`coordinates`** | <code>LatLng[]</code>                     | Multiple locations towards which the camera points in the center.                                                      |                    |
+| **`zoom`**        | <code>number</code>                       | Sets the zoom of the map.                                                                                              |                    |
+| **`bearing`**     | <code>number</code>                       | Bearing of the camera, in degrees clockwise from true north.                                                           | <code>0</code>     |
+| **`tilt`**        | <code>number</code>                       | The angle, in degrees, of the camera from the nadir (directly facing the Earth). The only allowed values are 0 and 45. | <code>0</code>     |
+| **`animate`**     | <code>boolean</code>                      | Animate the transition to the new Camera properties.                                                                   | <code>false</code> |
+| **`duration`**    | <code>number</code>                       | This configuration option is not being used.                                                                           |                    |
 
 
 #### MapPadding

@@ -5,19 +5,20 @@ import org.json.JSONObject
 
 class GoogleMapCameraConfig(fromJSONObject: JSONObject) {
     var coordinate: LatLng? = null
+    var coordinates: Array<LatLng>? = null
     var zoom: Double? = null
-    var angle: Double? = null
+    var tilt: Double? = null
     var bearing: Double? = null
     var animate: Boolean? = null
-    var animationDuration: Double? = null
+    var duration: Double? = null
 
     init {
         if (fromJSONObject.has("zoom")) {
             zoom = fromJSONObject.getDouble("zoom")
         }
 
-        if(fromJSONObject.has("angle")) {
-            angle = fromJSONObject.getDouble("angle")
+        if(fromJSONObject.has("tilt")) {
+            tilt = fromJSONObject.getDouble("tilt")
         }
 
         if (fromJSONObject.has("bearing")) {
@@ -28,8 +29,8 @@ class GoogleMapCameraConfig(fromJSONObject: JSONObject) {
             animate = fromJSONObject.getBoolean("animate")
         }
 
-        if (fromJSONObject.has("animationDuration")) {
-            animationDuration = fromJSONObject.getDouble("animationDuration")
+        if (fromJSONObject.has("duration")) {
+            duration = fromJSONObject.getDouble("duration")
         }
 
         if (fromJSONObject.has("coordinate")) {
@@ -43,6 +44,24 @@ class GoogleMapCameraConfig(fromJSONObject: JSONObject) {
             coordinate = LatLng(lat, lng)
         } else {
             coordinate = null
+        }
+
+        if (fromJSONObject.has("coordinates")) {
+            val coordinatesJSONArray = fromJSONObject.getJSONArray("coordinates")
+            val list = mutableListOf<LatLng>()
+            for (i in 0 until coordinatesJSONArray.length()) {
+                val coordObj = coordinatesJSONArray.getJSONObject(i)
+                if (!coordObj.has("lat") || !coordObj.has("lng")) {
+                    throw InvalidArgumentsError("One of the LatLng objects is missing 'lat' and/or 'lng'")
+                }
+                val lat = coordObj.getDouble("lat")
+                val lng = coordObj.getDouble("lng")
+                list.add(LatLng(lat, lng))
+            }
+            coordinates = list.toTypedArray()
+        }
+        else {
+            coordinates = null
         }
     }
 

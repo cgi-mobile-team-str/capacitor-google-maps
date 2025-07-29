@@ -625,8 +625,17 @@ class CapacitorGoogleMap(
             googleMap ?: throw GoogleMapNotAvailable()
             CoroutineScope(Dispatchers.Main).launch {
                 val currentPosition = googleMap!!.cameraPosition
+                var updatedTarget: LatLng? = null
+                val configCoordinates = config.coordinates
 
-                var updatedTarget = config.coordinate
+                if(config.coordinate != null) {
+                    updatedTarget = config.coordinate
+
+                }
+                if (!configCoordinates.isNullOrEmpty()) {
+                  val latlngBounds = createLatLngBoundsFromLatLngArray(configCoordinates)
+                    updatedTarget = latlngBounds.center
+                }
                 if (updatedTarget == null) {
                     updatedTarget = currentPosition.target
                 }
@@ -641,9 +650,9 @@ class CapacitorGoogleMap(
                     bearing = currentPosition.bearing.toDouble()
                 }
 
-                var angle = config.angle
-                if (angle == null) {
-                    angle = currentPosition.tilt.toDouble()
+                var tilt = config.tilt
+                if (tilt == null) {
+                    tilt = currentPosition.tilt.toDouble()
                 }
 
                 var animate = config.animate
@@ -651,16 +660,21 @@ class CapacitorGoogleMap(
                     animate = false
                 }
 
+                var duration = config.duration
+                if (duration == null) {
+                    duration = 0.0
+                }
+
                 val updatedPosition =
                         CameraPosition.Builder()
                                 .target(updatedTarget)
                                 .zoom(zoom.toFloat())
                                 .bearing(bearing.toFloat())
-                                .tilt(angle.toFloat())
+                                .tilt(tilt.toFloat())
                                 .build()
 
                 if (animate) {
-                    googleMap?.animateCamera(CameraUpdateFactory.newCameraPosition(updatedPosition))
+                    googleMap?.animateCamera(CameraUpdateFactory.newCameraPosition(updatedPosition),duration.toInt(), null)
                 } else {
                     googleMap?.moveCamera(CameraUpdateFactory.newCameraPosition(updatedPosition))
                 }
@@ -785,6 +799,14 @@ class CapacitorGoogleMap(
     fun fitBounds(bounds: LatLngBounds, padding: Int) {
         val cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding)
         googleMap?.animateCamera(cameraUpdate)
+    }
+
+    private fun createLatLngBoundsFromLatLngArray(latLngArray: Array<LatLng>): LatLngBounds {
+        val builder = LatLngBounds.Builder()
+        for (latLng in latLngArray) {
+            builder.include(latLng)
+        }
+        return builder.build()
     }
 
     private fun getScaledPixels(bridge: Bridge, pixels: Int): Int {

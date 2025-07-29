@@ -1490,6 +1490,15 @@
           "type": "LatLng"
         },
         {
+          "name": "coordinates",
+          "tags": [],
+          "docs": "Multiple locations towards which the camera points in the center.",
+          "complexTypes": [
+            "LatLng"
+          ],
+          "type": "LatLng[] | undefined"
+        },
+        {
           "name": "zoom",
           "tags": [],
           "docs": "Sets the zoom of the map.",
@@ -1509,7 +1518,7 @@
           "type": "number | undefined"
         },
         {
-          "name": "angle",
+          "name": "tilt",
           "tags": [
             {
               "text": "0",
@@ -1533,7 +1542,7 @@
           "type": "boolean | undefined"
         },
         {
-          "name": "animationDuration",
+          "name": "duration",
           "tags": [],
           "docs": "This configuration option is not being used.",
           "complexTypes": [],
