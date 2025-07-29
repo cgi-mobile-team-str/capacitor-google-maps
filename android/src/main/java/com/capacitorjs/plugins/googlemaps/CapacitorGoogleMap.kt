@@ -689,12 +689,12 @@ class CapacitorGoogleMap(
         try {
             googleMap ?: throw GoogleMapNotAvailable()
             CoroutineScope(Dispatchers.Main).launch {
+                val currentPosition = googleMap!!.cameraPosition
                 val updatedPosition =
-                    CameraPosition.Builder()
+                    CameraPosition.Builder(currentPosition)
                         .bearing(bearing.toFloat())
                         .build()
-
-                    googleMap?.animateCamera(CameraUpdateFactory.newCameraPosition(updatedPosition))
+                googleMap?.animateCamera(CameraUpdateFactory.newCameraPosition(updatedPosition))
                 callback(null)
             }
         } catch (e: GoogleMapsError) {
