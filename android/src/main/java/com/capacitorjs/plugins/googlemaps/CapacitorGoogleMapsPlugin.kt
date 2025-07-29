@@ -903,6 +903,35 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
     }
 
     @PluginMethod
+    fun setOptions(call: PluginCall) {
+        try {
+            val id = call.getString("id")
+            id ?: throw InvalidMapIdError()
+
+            val map = maps[id]
+            map ?: throw MapNotFoundError()
+
+            val optionsObject =
+                call.getObject("config")
+                    ?: throw InvalidArgumentsError("config object is missing")
+
+            val config = GoogleMapsOptions(optionsObject)
+
+            map.setOptions(config) { err ->
+                if (err != null) {
+                    throw err
+                }
+
+                call.resolve()
+            }
+        } catch (e: GoogleMapsError) {
+            handleError(call, e)
+        } catch (e: Exception) {
+            handleError(call, e)
+        }
+    }
+
+    @PluginMethod
     fun getMapType(call: PluginCall) {
         try {
             val id = call.getString("id")

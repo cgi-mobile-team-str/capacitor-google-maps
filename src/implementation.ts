@@ -5,6 +5,7 @@ import type {
   CameraConfig,
   Circle,
   GoogleMapConfig,
+  GoogleMapsOptions,
   LatLng,
   LatLngBounds,
   MapPadding,
@@ -152,6 +153,11 @@ export interface MapBoundsArgs {
   };
 }
 
+export interface MapOptionsArgs {
+  id: string;
+  config: GoogleMapsOptions;
+}
+
 export interface MapBoundsContainsArgs {
   bounds: LatLngBounds;
   point: LatLng;
@@ -251,6 +257,7 @@ export interface CapacitorGoogleMapsPlugin extends Plugin {
   enableTiltRotateGesture(args: EnableTiltRotateGestureArgs): Promise<void>;
   setMapPreferences(args: SetMapPreferencesArgs): Promise<void>;
   setCameraBearing(args: CameraBearingArgs): Promise<void>;
+  setOptions(args: MapOptionsArgs): Promise<void>;
 }
 
 const CapacitorGoogleMaps = registerPlugin<CapacitorGoogleMapsPlugin>('CapacitorGoogleMaps', {

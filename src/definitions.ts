@@ -1,4 +1,5 @@
 import { CapacitorGoogleMaps } from './implementation';
+import { GoogleMap } from './map';
 
 /**
  * An interface representing the viewports latitude and longitude bounds.
@@ -473,4 +474,45 @@ export interface VisibleRegion {
   farRight: LatLng;
   southwest: LatLng;
   northeast: LatLng;
+}
+
+export interface GoogleMapZoomOptions {
+  /**
+   * The minimum zoom level of the map.
+   */
+  minZoom?: number;
+  /**
+   * The maximum zoom level of the map.
+   */
+  maxZoom?: number;
+}
+export interface GoogleMapControls {
+  compass?: boolean;
+  myLocationButton?: boolean;
+  myLocation?: boolean;
+  indoorPicker?: boolean;
+  zoom?: boolean;
+  mapToolbar?: boolean;
+}
+
+export interface GoogleMapGestures {
+  scroll?: boolean;
+  zoom?: boolean;
+  tilt?: boolean;
+  rotate?: boolean;
+}
+
+export interface GoogleMapPreferences {
+  padding?: MapPadding;
+  isBuildingsEnabled?: boolean;
+  gestureBounds?: LatLng[];
+  zoom: GoogleMapZoomOptions;
+}
+export interface GoogleMapsOptions {
+  mapType?: MapType;
+  controls?: GoogleMapControls;
+  gestures?: GoogleMapGestures;
+  styles?: any[];
+  camera?: CameraConfig;
+  preferences?: GoogleMapPreferences;
 }

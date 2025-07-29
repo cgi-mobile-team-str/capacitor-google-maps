@@ -624,60 +624,89 @@ class CapacitorGoogleMap(
         try {
             googleMap ?: throw GoogleMapNotAvailable()
             CoroutineScope(Dispatchers.Main).launch {
+                setGoogleCamera(config)
+                callback(null)
+            }
+        } catch (e: GoogleMapsError) {
+            callback(e)
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    fun setOptions(config: GoogleMapsOptions, callback: (error: GoogleMapsError?) -> Unit) {
+        try {
+            googleMap ?: throw GoogleMapNotAvailable()
+            CoroutineScope(Dispatchers.Main).launch {
                 val currentPosition = googleMap!!.cameraPosition
-                var updatedTarget: LatLng? = null
-                val configCoordinates = config.coordinates
-
-                if(config.coordinate != null) {
-                    updatedTarget = config.coordinate
-
-                }
-                if (!configCoordinates.isNullOrEmpty()) {
-                  val latlngBounds = createLatLngBoundsFromLatLngArray(configCoordinates)
-                    updatedTarget = latlngBounds.center
-                }
-                if (updatedTarget == null) {
-                    updatedTarget = currentPosition.target
+                if(config.mapType != null) {
+                    googleMap?.mapType = getMapTypeInt(config.mapType!!)
                 }
 
-                var zoom = config.zoom
-                if (zoom == null) {
-                    zoom = currentPosition.zoom.toDouble()
+                if(config.controls != null) {
+                    if( config.controls?.compass != null) {
+                        googleMap?.uiSettings?.isCompassEnabled = config.controls?.compass!!
+                    }
+                    if( config.controls?.myLocationButton != null) {
+                        googleMap?.uiSettings?.isMyLocationButtonEnabled = config.controls?.myLocationButton!!
+                    }
+                    if( config.controls?.myLocation != null) {
+                        googleMap?.isMyLocationEnabled = config.controls?.myLocation!!
+                    }
+                    if( config.controls?.indoorPicker != null) {
+                        googleMap?.uiSettings?.isIndoorLevelPickerEnabled = config.controls?.indoorPicker!!
+                    }
+                    if( config.controls?.mapToolbar != null) {
+                        googleMap?.uiSettings?.isMapToolbarEnabled = config.controls?.mapToolbar!!
+                    }
+                    if( config.controls?.zoom != null) {
+                        googleMap?.uiSettings?.isZoomControlsEnabled = config.controls?.zoom!!
+                    }
                 }
 
-                var bearing = config.bearing
-                if (bearing == null) {
-                    bearing = currentPosition.bearing.toDouble()
+                if(config.gestures != null) {
+                    if(config.gestures?.tilt != null) {
+                        googleMap?.uiSettings?.isTiltGesturesEnabled = config.gestures?.tilt!!
+                    }
+                    if(config.gestures?.zoom != null) {
+                        googleMap?.uiSettings?.isZoomGesturesEnabled = config.gestures?.zoom!!
+                    }
+                    if(config.gestures?.rotate != null) {
+                        googleMap?.uiSettings?.isRotateGesturesEnabled = config.gestures?.rotate!!
+                    }
+                    if(config.gestures?.scroll != null) {
+                        googleMap?.uiSettings?.isScrollGesturesEnabled = config.gestures?.scroll!!
+                    }
                 }
 
-                var tilt = config.tilt
-                if (tilt == null) {
-                    tilt = currentPosition.tilt.toDouble()
+                if(config.preferences != null) {
+                    if(config.preferences?.building != null) {
+                        googleMap?.isBuildingsEnabled = config.preferences?.building!!
+                    }
+                    if(config.preferences?.zoom != null) {
+                        if(config.preferences?.zoom?.maxZoom !=null) {
+                            googleMap?.setMaxZoomPreference(config.preferences?.zoom?.maxZoom!!.toFloat())
+                        }
+                        if(config.preferences?.zoom?.minZoom !=null) {
+                            googleMap?.setMinZoomPreference(config.preferences?.zoom?.minZoom!!.toFloat())
+                        }
+                    }
+                    if(config.preferences?.padding != null) {
+                        googleMap?.setPadding(config.preferences?.padding?.left ?:0,config.preferences?.padding?.top ?:0, config.preferences?.padding?.right ?:0, config.preferences?.padding?.bottom ?:0 )
+                    }
+                    if(!config.preferences?.gestureBounds.isNullOrEmpty()) {
+                        val latlngBounds = createLatLngBoundsFromLatLngArray(config.preferences?.gestureBounds!!)
+                        googleMap?.setLatLngBoundsForCameraTarget(latlngBounds)
+                    }
                 }
 
-                var animate = config.animate
-                if (animate == null) {
-                    animate = false
+                if(config.styles != null) {
+                    googleMap?.setMapStyle(config.styles!!)
                 }
 
-                var duration = config.duration
-                if (duration == null) {
-                    duration = 0.0
+                if(config.camera != null) {
+                    setGoogleCamera(config.camera!!)
                 }
 
-                val updatedPosition =
-                        CameraPosition.Builder()
-                                .target(updatedTarget)
-                                .zoom(zoom.toFloat())
-                                .bearing(bearing.toFloat())
-                                .tilt(tilt.toFloat())
-                                .build()
-
-                if (animate) {
-                    googleMap?.animateCamera(CameraUpdateFactory.newCameraPosition(updatedPosition),duration.toInt(), null)
-                } else {
-                    googleMap?.moveCamera(CameraUpdateFactory.newCameraPosition(updatedPosition))
-                }
                 callback(null)
             }
         } catch (e: GoogleMapsError) {
@@ -727,23 +756,7 @@ class CapacitorGoogleMap(
         try {
             googleMap ?: throw GoogleMapNotAvailable()
             CoroutineScope(Dispatchers.Main).launch {
-                val mapTypeInt: Int =
-                        when (mapType) {
-                            "Normal" -> MAP_TYPE_NORMAL
-                            "Hybrid" -> MAP_TYPE_HYBRID
-                            "Satellite" -> MAP_TYPE_SATELLITE
-                            "Terrain" -> MAP_TYPE_TERRAIN
-                            "None" -> MAP_TYPE_NONE
-                            else -> {
-                                Log.w(
-                                        "CapacitorGoogleMaps",
-                                        "unknown mapView type '$mapType'  Defaulting to normal."
-                                )
-                                MAP_TYPE_NORMAL
-                            }
-                        }
-
-                googleMap?.mapType = mapTypeInt
+                googleMap?.mapType = getMapTypeInt(mapType)
                 callback(null)
             }
         } catch (e: GoogleMapsError) {
@@ -816,6 +829,83 @@ class CapacitorGoogleMap(
     fun fitBounds(bounds: LatLngBounds, padding: Int) {
         val cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding)
         googleMap?.animateCamera(cameraUpdate)
+    }
+
+    private fun getMapTypeInt(mapType: String): Int {
+        val mapTypeInt: Int =
+            when (mapType) {
+                "Normal" -> MAP_TYPE_NORMAL
+                "Hybrid" -> MAP_TYPE_HYBRID
+                "Satellite" -> MAP_TYPE_SATELLITE
+                "Terrain" -> MAP_TYPE_TERRAIN
+                "None" -> MAP_TYPE_NONE
+                else -> {
+                    Log.w(
+                        "CapacitorGoogleMaps",
+                        "unknown mapView type '$mapType'  Defaulting to normal."
+                    )
+                    MAP_TYPE_NORMAL
+                }
+            }
+        return mapTypeInt
+    }
+
+    private fun setGoogleCamera(config :GoogleMapCameraConfig) {
+        val currentPosition = googleMap!!.cameraPosition
+        var updatedTarget: LatLng? = null
+        val configCoordinates = config.coordinates
+
+        if(config.coordinate != null) {
+            updatedTarget = config.coordinate
+
+        }
+        if (!configCoordinates.isNullOrEmpty()) {
+            val latlngBounds = createLatLngBoundsFromLatLngArray(configCoordinates)
+            updatedTarget = latlngBounds.center
+        }
+
+        if (updatedTarget == null) {
+            updatedTarget = currentPosition.target
+        }
+
+        var zoom = config.zoom
+        if (zoom == null) {
+            zoom = currentPosition.zoom.toDouble()
+        }
+
+        var bearing = config.bearing
+        if (bearing == null) {
+            bearing = currentPosition.bearing.toDouble()
+        }
+
+        var tilt = config.tilt
+        if (tilt == null) {
+            tilt = currentPosition.tilt.toDouble()
+        }
+
+        var animate = config.animate
+        if (animate == null) {
+            animate = false
+        }
+
+        var duration = config.duration
+        if (duration == null) {
+            duration = 0.0
+        }
+
+        val updatedPosition =
+            CameraPosition.Builder()
+                .target(updatedTarget)
+                .zoom(zoom.toFloat())
+                .bearing(bearing.toFloat())
+                .tilt(tilt.toFloat())
+                .build()
+
+        if (animate) {
+            googleMap?.animateCamera(CameraUpdateFactory.newCameraPosition(updatedPosition),duration.toInt(), null)
+        } else {
+            googleMap?.moveCamera(CameraUpdateFactory.newCameraPosition(updatedPosition))
+        }
     }
 
     private fun createLatLngBoundsFromLatLngArray(latLngArray: Array<LatLng>): LatLngBounds {

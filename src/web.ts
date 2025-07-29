@@ -29,6 +29,7 @@ import type {
   AddPolylinesArgs,
   RemovePolylinesArgs,
   EnableCompassArgs,
+  MapOptionsArgs,
 } from './implementation';
 
 export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogleMapsPlugin {
@@ -714,6 +715,10 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
   }
 
   async setCameraBearing(_args: { id: string; bearing: number }): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+
+  async setOptions(_args: MapOptionsArgs): Promise<void> {
     throw new Error('Method not implemented.');
   }
 }

@@ -20,6 +20,7 @@ import type {
   Polyline,
   PolylineCallbackData,
   VisibleRegion,
+  GoogleMapsOptions,
 } from './definitions';
 import { LatLngBounds, MapType } from './definitions';
 import type { CreateMapArgs } from './implementation';
@@ -95,6 +96,7 @@ export interface GoogleMapInterface {
   enableTiltRotateGesture(isEnabled: boolean): Promise<void>;
   setMapPreferences(padding?: MapPadding, isBuildingsEnabled?: boolean): Promise<void>;
   setCameraBearing(bearing: number): Promise<void>;
+  setOptions(options: GoogleMapsOptions): Promise<void>;
 }
 
 class MapCustomElement extends HTMLElement {
@@ -489,6 +491,13 @@ export class GoogleMap {
     return CapacitorGoogleMaps.setCameraBearing({
       id: this.id,
       bearing,
+    });
+  }
+
+  async setOptions(config: GoogleMapsOptions): Promise<void> {
+    return CapacitorGoogleMaps.setOptions({
+      id: this.id,
+      config,
     });
   }
 
