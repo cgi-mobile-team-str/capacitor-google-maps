@@ -888,10 +888,10 @@
       },
       {
         "name": "setOptions",
-        "signature": "(options: GoogleMapsOptions) => Promise<void>",
+        "signature": "(config: GoogleMapsOptions) => Promise<void>",
         "parameters": [
           {
-            "name": "options",
+            "name": "config",
             "docs": "",
             "type": "GoogleMapsOptions"
           }

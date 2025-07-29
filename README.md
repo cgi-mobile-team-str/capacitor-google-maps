@@ -1021,12 +1021,12 @@ setCameraBearing(bearing: number) => Promise<void>
 ### setOptions(...)
 
 ```typescript
-setOptions(options: GoogleMapsOptions) => Promise<void>
+setOptions(config: GoogleMapsOptions) => Promise<void>
 ```
 
-| Param         | Type                                                            |
-| ------------- | --------------------------------------------------------------- |
-| **`options`** | <code><a href="#googlemapsoptions">GoogleMapsOptions</a></code> |
+| Param        | Type                                                            |
+| ------------ | --------------------------------------------------------------- |
+| **`config`** | <code><a href="#googlemapsoptions">GoogleMapsOptions</a></code> |
 
 --------------------
 

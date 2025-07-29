@@ -96,7 +96,7 @@ export interface GoogleMapInterface {
   enableTiltRotateGesture(isEnabled: boolean): Promise<void>;
   setMapPreferences(padding?: MapPadding, isBuildingsEnabled?: boolean): Promise<void>;
   setCameraBearing(bearing: number): Promise<void>;
-  setOptions(options: GoogleMapsOptions): Promise<void>;
+  setOptions(config: GoogleMapsOptions): Promise<void>;
 }
 
 class MapCustomElement extends HTMLElement {
