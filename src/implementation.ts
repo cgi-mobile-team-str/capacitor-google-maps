@@ -232,8 +232,10 @@ export interface CapacitorGoogleMapsPlugin extends Plugin {
   enableClustering(args: EnableClusteringArgs): Promise<void>;
   disableClustering(args: { id: string }): Promise<void>;
   destroy(args: DestroyMapArgs): Promise<void>;
-  setCamera(args: CameraArgs): Promise<void>;
+  animateCamera(args: CameraArgs): Promise<void>;
+  moveCamera(args: CameraArgs): Promise<void>;
   getMapType(args: { id: string }): Promise<{ type: string }>;
+  getCameraZoom(args: { id: string }): Promise<{ zoom: number }>;
   setMapType(args: MapTypeArgs): Promise<void>;
   enableIndoorMaps(args: IndoorMapArgs): Promise<void>;
   enableTrafficLayer(args: TrafficLayerArgs): Promise<void>;

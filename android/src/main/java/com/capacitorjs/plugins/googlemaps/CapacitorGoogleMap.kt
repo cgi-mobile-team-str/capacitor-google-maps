@@ -620,11 +620,23 @@ class CapacitorGoogleMap(
         }
     }
 
-    fun setCamera(config: GoogleMapCameraConfig, callback: (error: GoogleMapsError?) -> Unit) {
+    fun animateCamera(config: GoogleMapCameraConfig, callback: (error: GoogleMapsError?) -> Unit) {
         try {
             googleMap ?: throw GoogleMapNotAvailable()
             CoroutineScope(Dispatchers.Main).launch {
-                setGoogleCamera(config)
+                animateGoogleCamera(config)
+                callback(null)
+            }
+        } catch (e: GoogleMapsError) {
+            callback(e)
+        }
+    }
+
+    fun moveCamera(config: GoogleMapCameraConfig, callback: (error: GoogleMapsError?) -> Unit) {
+        try {
+            googleMap ?: throw GoogleMapNotAvailable()
+            CoroutineScope(Dispatchers.Main).launch {
+                moveGoogleCamera(config)
                 callback(null)
             }
         } catch (e: GoogleMapsError) {
@@ -704,7 +716,7 @@ class CapacitorGoogleMap(
                 }
 
                 if(config.camera != null) {
-                    setGoogleCamera(config.camera!!)
+                    animateGoogleCamera(config.camera!!)
                 }
 
                 callback(null)
@@ -714,7 +726,7 @@ class CapacitorGoogleMap(
         }
     }
 
-    fun setCameraBearing(bearing: Double, callback: (error: GoogleMapsError?) -> Unit) {
+    fun setCameraBearing(bearing: Double ,callback: (error: GoogleMapsError?) -> Unit) {
         try {
             googleMap ?: throw GoogleMapNotAvailable()
             CoroutineScope(Dispatchers.Main).launch {
@@ -728,6 +740,19 @@ class CapacitorGoogleMap(
             }
         } catch (e: GoogleMapsError) {
             callback(e)
+        }
+    }
+
+    fun getCameraZoom(callback: (cameraZoom: Float, error: GoogleMapsError?) -> Unit) {
+        try {
+            googleMap ?: throw GoogleMapNotAvailable()
+            CoroutineScope(Dispatchers.Main).launch {
+                val cameraZoom = googleMap!!.cameraPosition.zoom
+
+                callback(cameraZoom, null)
+            }
+        } catch (e: GoogleMapsError) {
+            callback(-1F, e)
         }
     }
 
@@ -850,7 +875,21 @@ class CapacitorGoogleMap(
         return mapTypeInt
     }
 
-    private fun setGoogleCamera(config :GoogleMapCameraConfig) {
+    private fun animateGoogleCamera(config :GoogleMapCameraConfig) {
+        val updatedPosition = setUpCameraPosition(config)
+        var duration = config.duration
+        if (duration == null) {
+            duration = 0.0
+        }
+        googleMap?.animateCamera(CameraUpdateFactory.newCameraPosition(updatedPosition),duration.toInt(), null)
+    }
+
+    private fun moveGoogleCamera(config :GoogleMapCameraConfig) {
+        val updatedPosition = setUpCameraPosition(config)
+        googleMap?.moveCamera(CameraUpdateFactory.newCameraPosition(updatedPosition))
+    }
+
+    private fun setUpCameraPosition(config: GoogleMapCameraConfig): CameraPosition {
         val currentPosition = googleMap!!.cameraPosition
         var updatedTarget: LatLng? = null
         val configCoordinates = config.coordinates
@@ -883,16 +922,6 @@ class CapacitorGoogleMap(
             tilt = currentPosition.tilt.toDouble()
         }
 
-        var animate = config.animate
-        if (animate == null) {
-            animate = false
-        }
-
-        var duration = config.duration
-        if (duration == null) {
-            duration = 0.0
-        }
-
         val updatedPosition =
             CameraPosition.Builder()
                 .target(updatedTarget)
@@ -900,14 +929,8 @@ class CapacitorGoogleMap(
                 .bearing(bearing.toFloat())
                 .tilt(tilt.toFloat())
                 .build()
-
-        if (animate) {
-            googleMap?.animateCamera(CameraUpdateFactory.newCameraPosition(updatedPosition),duration.toInt(), null)
-        } else {
-            googleMap?.moveCamera(CameraUpdateFactory.newCameraPosition(updatedPosition))
-        }
+        return updatedPosition
     }
-
     private fun createLatLngBoundsFromLatLngArray(latLngArray: Array<LatLng>): LatLngBounds {
         val builder = LatLngBounds.Builder()
         for (latLng in latLngArray) {

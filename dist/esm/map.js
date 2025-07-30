@@ -308,13 +308,25 @@ export class GoogleMap {
         });
     }
     /**
-     * Update the map camera configuration
+     * Update the map camera configuration with animation
      *
      * @param config
      * @returns
      */
-    async setCamera(config) {
-        return CapacitorGoogleMaps.setCamera({
+    async animateCamera(config) {
+        return CapacitorGoogleMaps.animateCamera({
+            id: this.id,
+            config,
+        });
+    }
+    /**
+     * Update the map camera configuration without animation
+     *
+     * @param config
+     * @returns
+     */
+    async moveCamera(config) {
+        return CapacitorGoogleMaps.moveCamera({
             id: this.id,
             config,
         });
@@ -340,6 +352,10 @@ export class GoogleMap {
     async getMapType() {
         const { type } = await CapacitorGoogleMaps.getMapType({ id: this.id });
         return MapType[type];
+    }
+    async getCameraZoom() {
+        const { zoom } = await CapacitorGoogleMaps.getCameraZoom({ id: this.id });
+        return zoom;
     }
     /**
      * Sets the type of map tiles that should be displayed.

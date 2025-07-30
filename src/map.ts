@@ -48,7 +48,9 @@ export interface GoogleMapInterface {
   addPolylines(polylines: Polyline[]): Promise<string[]>;
   removePolylines(ids: string[]): Promise<void>;
   destroy(): Promise<void>;
-  setCamera(config: CameraConfig): Promise<void>;
+  moveCamera(config: CameraConfig): Promise<void>;
+  animateCamera(config: CameraConfig): Promise<void>;
+
   /**
    * Get current map type
    */
@@ -97,6 +99,7 @@ export interface GoogleMapInterface {
   setMapPreferences(padding?: MapPadding, isBuildingsEnabled?: boolean): Promise<void>;
   setCameraBearing(bearing: number): Promise<void>;
   setOptions(config: GoogleMapsOptions): Promise<void>;
+  getCameraZoom(): Promise<number>;
 }
 
 class MapCustomElement extends HTMLElement {
@@ -469,13 +472,26 @@ export class GoogleMap {
   }
 
   /**
-   * Update the map camera configuration
+   * Update the map camera configuration with animation
    *
    * @param config
    * @returns
    */
-  async setCamera(config: CameraConfig): Promise<void> {
-    return CapacitorGoogleMaps.setCamera({
+  async animateCamera(config: CameraConfig): Promise<void> {
+    return CapacitorGoogleMaps.animateCamera({
+      id: this.id,
+      config,
+    });
+  }
+
+  /**
+   * Update the map camera configuration without animation
+   *
+   * @param config
+   * @returns
+   */
+  async moveCamera(config: CameraConfig): Promise<void> {
+    return CapacitorGoogleMaps.moveCamera({
       id: this.id,
       config,
     });
@@ -504,6 +520,11 @@ export class GoogleMap {
   async getMapType(): Promise<MapType> {
     const { type } = await CapacitorGoogleMaps.getMapType({ id: this.id });
     return MapType[type as keyof typeof MapType];
+  }
+
+  async getCameraZoom(): Promise<number> {
+    const { zoom } = await CapacitorGoogleMaps.getCameraZoom({ id: this.id });
+    return zoom;
   }
 
   /**

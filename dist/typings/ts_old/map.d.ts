@@ -22,7 +22,8 @@ export interface GoogleMapInterface {
     addPolylines(polylines: Polyline[]): Promise<string[]>;
     removePolylines(ids: string[]): Promise<void>;
     destroy(): Promise<void>;
-    setCamera(config: CameraConfig): Promise<void>;
+    moveCamera(config: CameraConfig): Promise<void>;
+    animateCamera(config: CameraConfig): Promise<void>;
     /**
      * Get current map type
      */
@@ -71,6 +72,7 @@ export interface GoogleMapInterface {
     setMapPreferences(padding?: MapPadding, isBuildingsEnabled?: boolean): Promise<void>;
     setCameraBearing(bearing: number): Promise<void>;
     setOptions(config: GoogleMapsOptions): Promise<void>;
+    getCameraZoom(): Promise<number>;
 }
 export declare class GoogleMap {
     private id;
@@ -167,12 +169,19 @@ export declare class GoogleMap {
      */
     destroy(): Promise<void>;
     /**
-     * Update the map camera configuration
+     * Update the map camera configuration with animation
      *
      * @param config
      * @returns
      */
-    setCamera(config: CameraConfig): Promise<void>;
+    animateCamera(config: CameraConfig): Promise<void>;
+    /**
+     * Update the map camera configuration without animation
+     *
+     * @param config
+     * @returns
+     */
+    moveCamera(config: CameraConfig): Promise<void>;
     /**
      * Update the map camera bearing
      *
@@ -182,6 +191,7 @@ export declare class GoogleMap {
     setCameraBearing(bearing: number): Promise<void>;
     setOptions(config: GoogleMapsOptions): Promise<void>;
     getMapType(): Promise<MapType>;
+    getCameraZoom(): Promise<number>;
     /**
      * Sets the type of map tiles that should be displayed.
      *

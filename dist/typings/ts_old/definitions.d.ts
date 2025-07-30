@@ -219,12 +219,6 @@ export interface CameraConfig {
      */
     tilt?: number;
     /**
-     * Animate the transition to the new Camera properties.
-     *
-     * @default false
-     */
-    animate?: boolean;
-    /**
      * This configuration option is not being used.
      */
     duration?: number;

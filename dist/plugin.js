@@ -369,13 +369,25 @@ var capacitorCapacitorGoogleMaps = (function (exports, core, markerclusterer) {
             });
         }
         /**
-         * Update the map camera configuration
+         * Update the map camera configuration with animation
          *
          * @param config
          * @returns
          */
-        async setCamera(config) {
-            return CapacitorGoogleMaps.setCamera({
+        async animateCamera(config) {
+            return CapacitorGoogleMaps.animateCamera({
+                id: this.id,
+                config,
+            });
+        }
+        /**
+         * Update the map camera configuration without animation
+         *
+         * @param config
+         * @returns
+         */
+        async moveCamera(config) {
+            return CapacitorGoogleMaps.moveCamera({
                 id: this.id,
                 config,
             });
@@ -401,6 +413,10 @@ var capacitorCapacitorGoogleMaps = (function (exports, core, markerclusterer) {
         async getMapType() {
             const { type } = await CapacitorGoogleMaps.getMapType({ id: this.id });
             return exports.MapType[type];
+        }
+        async getCameraZoom() {
+            const { zoom } = await CapacitorGoogleMaps.getCameraZoom({ id: this.id });
+            return zoom;
         }
         /**
          * Sets the type of map tiles that should be displayed.
@@ -1033,7 +1049,16 @@ var capacitorCapacitorGoogleMaps = (function (exports, core, markerclusterer) {
         async disableTouch(_args) {
             this.maps[_args.id].map.setOptions({ gestureHandling: 'none' });
         }
-        async setCamera(_args) {
+        async moveCamera(_args) {
+            // Animation not supported yet...
+            this.maps[_args.id].map.moveCamera({
+                center: _args.config.coordinate,
+                heading: _args.config.bearing,
+                tilt: _args.config.tilt,
+                zoom: _args.config.zoom,
+            });
+        }
+        async animateCamera(_args) {
             // Animation not supported yet...
             this.maps[_args.id].map.moveCamera({
                 center: _args.config.coordinate,
@@ -1510,6 +1535,9 @@ var capacitorCapacitorGoogleMaps = (function (exports, core, markerclusterer) {
             throw new Error('Method not implemented.');
         }
         async setOptions(_args) {
+            throw new Error('Method not implemented.');
+        }
+        async getCameraZoom(_args) {
             throw new Error('Method not implemented.');
         }
     }

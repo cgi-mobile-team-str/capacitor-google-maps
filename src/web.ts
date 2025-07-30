@@ -148,7 +148,17 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
     this.maps[_args.id].map.setOptions({ gestureHandling: 'none' });
   }
 
-  async setCamera(_args: CameraArgs): Promise<void> {
+  async moveCamera(_args: CameraArgs): Promise<void> {
+    // Animation not supported yet...
+    this.maps[_args.id].map.moveCamera({
+      center: _args.config.coordinate,
+      heading: _args.config.bearing,
+      tilt: _args.config.tilt,
+      zoom: _args.config.zoom,
+    });
+  }
+
+  async animateCamera(_args: CameraArgs): Promise<void> {
     // Animation not supported yet...
     this.maps[_args.id].map.moveCamera({
       center: _args.config.coordinate,
@@ -719,6 +729,10 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
   }
 
   async setOptions(_args: MapOptionsArgs): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+
+  async getCameraZoom(_args: { id: string }): Promise<{ zoom: number }> {
     throw new Error('Method not implemented.');
   }
 }

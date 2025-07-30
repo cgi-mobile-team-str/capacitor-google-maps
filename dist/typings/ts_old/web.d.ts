@@ -22,7 +22,8 @@ export declare class CapacitorGoogleMapsWeb extends WebPlugin implements Capacit
     disableTouch(_args: {
         id: string;
     }): Promise<void>;
-    setCamera(_args: CameraArgs): Promise<void>;
+    moveCamera(_args: CameraArgs): Promise<void>;
+    animateCamera(_args: CameraArgs): Promise<void>;
     getMapType(_args: {
         id: string;
     }): Promise<{
@@ -113,4 +114,9 @@ export declare class CapacitorGoogleMapsWeb extends WebPlugin implements Capacit
         bearing: number;
     }): Promise<void>;
     setOptions(_args: MapOptionsArgs): Promise<void>;
+    getCameraZoom(_args: {
+        id: string;
+    }): Promise<{
+        zoom: number;
+    }>;
 }

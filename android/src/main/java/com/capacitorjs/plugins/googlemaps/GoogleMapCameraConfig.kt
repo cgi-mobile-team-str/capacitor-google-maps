@@ -9,7 +9,6 @@ class GoogleMapCameraConfig(fromJSONObject: JSONObject) {
     var zoom: Double? = null
     var tilt: Double? = null
     var bearing: Double? = null
-    var animate: Boolean? = null
     var duration: Double? = null
 
     init {
@@ -23,10 +22,6 @@ class GoogleMapCameraConfig(fromJSONObject: JSONObject) {
 
         if (fromJSONObject.has("bearing")) {
             bearing = fromJSONObject.getDouble("bearing")
-        }
-
-        if (fromJSONObject.has("animate")) {
-            animate = fromJSONObject.getBoolean("animate")
         }
 
         if (fromJSONObject.has("duration")) {

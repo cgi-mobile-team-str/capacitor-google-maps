@@ -258,7 +258,7 @@
         "slug": "destroy"
       },
       {
-        "name": "setCamera",
+        "name": "moveCamera",
         "signature": "(config: CameraConfig) => Promise<void>",
         "parameters": [
           {
@@ -273,7 +273,25 @@
         "complexTypes": [
           "CameraConfig"
         ],
-        "slug": "setcamera"
+        "slug": "movecamera"
+      },
+      {
+        "name": "animateCamera",
+        "signature": "(config: CameraConfig) => Promise<void>",
+        "parameters": [
+          {
+            "name": "config",
+            "docs": "",
+            "type": "CameraConfig"
+          }
+        ],
+        "returns": "Promise<void>",
+        "tags": [],
+        "docs": "",
+        "complexTypes": [
+          "CameraConfig"
+        ],
+        "slug": "animatecamera"
       },
       {
         "name": "getMapType",
@@ -903,6 +921,16 @@
           "GoogleMapsOptions"
         ],
         "slug": "setoptions"
+      },
+      {
+        "name": "getCameraZoom",
+        "signature": "() => Promise<number>",
+        "parameters": [],
+        "returns": "Promise<number>",
+        "tags": [],
+        "docs": "",
+        "complexTypes": [],
+        "slug": "getcamerazoom"
       }
     ],
     "properties": []
@@ -1562,18 +1590,6 @@
           "docs": "The angle, in degrees, of the camera from the nadir (directly facing the Earth).\n\nThe only allowed values are 0 and 45.",
           "complexTypes": [],
           "type": "number | undefined"
-        },
-        {
-          "name": "animate",
-          "tags": [
-            {
-              "text": "false",
-              "name": "default"
-            }
-          ],
-          "docs": "Animate the transition to the new Camera properties.",
-          "complexTypes": [],
-          "type": "boolean | undefined"
         },
         {
           "name": "duration",

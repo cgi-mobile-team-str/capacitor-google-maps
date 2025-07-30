@@ -83,7 +83,16 @@ export class CapacitorGoogleMapsWeb extends WebPlugin {
     async disableTouch(_args) {
         this.maps[_args.id].map.setOptions({ gestureHandling: 'none' });
     }
-    async setCamera(_args) {
+    async moveCamera(_args) {
+        // Animation not supported yet...
+        this.maps[_args.id].map.moveCamera({
+            center: _args.config.coordinate,
+            heading: _args.config.bearing,
+            tilt: _args.config.tilt,
+            zoom: _args.config.zoom,
+        });
+    }
+    async animateCamera(_args) {
         // Animation not supported yet...
         this.maps[_args.id].map.moveCamera({
             center: _args.config.coordinate,
@@ -560,6 +569,9 @@ export class CapacitorGoogleMapsWeb extends WebPlugin {
         throw new Error('Method not implemented.');
     }
     async setOptions(_args) {
+        throw new Error('Method not implemented.');
+    }
+    async getCameraZoom(_args) {
         throw new Error('Method not implemented.');
     }
 }

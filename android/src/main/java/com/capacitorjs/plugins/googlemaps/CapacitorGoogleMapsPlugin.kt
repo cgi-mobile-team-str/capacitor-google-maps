@@ -848,7 +848,7 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
     }
 
     @PluginMethod
-    fun setCamera(call: PluginCall) {
+    fun animateCamera(call: PluginCall) {
         try {
             val id = call.getString("id")
             id ?: throw InvalidMapIdError()
@@ -862,7 +862,36 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
 
             val config = GoogleMapCameraConfig(cameraConfigObject)
 
-            map.setCamera(config) { err ->
+            map.animateCamera(config) { err ->
+                if (err != null) {
+                    throw err
+                }
+
+                call.resolve()
+            }
+        } catch (e: GoogleMapsError) {
+            handleError(call, e)
+        } catch (e: Exception) {
+            handleError(call, e)
+        }
+    }
+
+    @PluginMethod
+    fun moveCamera(call: PluginCall) {
+        try {
+            val id = call.getString("id")
+            id ?: throw InvalidMapIdError()
+
+            val map = maps[id]
+            map ?: throw MapNotFoundError()
+
+            val cameraConfigObject =
+                call.getObject("config")
+                    ?: throw InvalidArgumentsError("config object is missing")
+
+            val config = GoogleMapCameraConfig(cameraConfigObject)
+
+            map.moveCamera(config) { err ->
                 if (err != null) {
                     throw err
                 }
@@ -923,6 +952,31 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
                 }
 
                 call.resolve()
+            }
+        } catch (e: GoogleMapsError) {
+            handleError(call, e)
+        } catch (e: Exception) {
+            handleError(call, e)
+        }
+    }
+
+    @PluginMethod
+    fun getCameraZoom(call: PluginCall) {
+        try {
+            val id = call.getString("id")
+            id ?: throw InvalidMapIdError()
+
+            val map = maps[id]
+            map ?: throw MapNotFoundError()
+
+            map.getCameraZoom() { cameraZoom, err ->
+
+                if (err != null) {
+                    throw err
+                }
+                val data = JSObject()
+                data.put("cameraZoom", cameraZoom)
+                call.resolve(data)
             }
         } catch (e: GoogleMapsError) {
             handleError(call, e)
