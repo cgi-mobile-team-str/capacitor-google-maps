@@ -732,7 +732,7 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
     throw new Error('Method not implemented.');
   }
 
-  async getCameraZoom(_args: { id: string }): Promise<{ zoom: number }> {
+  async getCameraZoom(_args: { id: string }): Promise<{ cameraZoom: number }> {
     throw new Error('Method not implemented.');
   }
 }

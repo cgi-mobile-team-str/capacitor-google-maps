@@ -523,8 +523,8 @@ export class GoogleMap {
   }
 
   async getCameraZoom(): Promise<number> {
-    const { zoom } = await CapacitorGoogleMaps.getCameraZoom({ id: this.id });
-    return zoom;
+    const { cameraZoom } = await CapacitorGoogleMaps.getCameraZoom({ id: this.id });
+    return cameraZoom;
   }
 
   /**

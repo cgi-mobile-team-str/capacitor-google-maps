@@ -212,7 +212,7 @@ export interface CapacitorGoogleMapsPlugin extends Plugin {
     getCameraZoom(args: {
         id: string;
     }): Promise<{
-        zoom: number;
+        cameraZoom: number;
     }>;
     setMapType(args: MapTypeArgs): Promise<void>;
     enableIndoorMaps(args: IndoorMapArgs): Promise<void>;

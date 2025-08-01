@@ -117,6 +117,6 @@ export declare class CapacitorGoogleMapsWeb extends WebPlugin implements Capacit
     getCameraZoom(_args: {
         id: string;
     }): Promise<{
-        zoom: number;
+        cameraZoom: number;
     }>;
 }

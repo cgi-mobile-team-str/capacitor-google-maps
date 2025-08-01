@@ -437,8 +437,8 @@ class GoogleMap {
         return exports.MapType[type];
     }
     async getCameraZoom() {
-        const { zoom } = await CapacitorGoogleMaps.getCameraZoom({ id: this.id });
-        return zoom;
+        const { cameraZoom } = await CapacitorGoogleMaps.getCameraZoom({ id: this.id });
+        return cameraZoom;
     }
     /**
      * Sets the type of map tiles that should be displayed.
