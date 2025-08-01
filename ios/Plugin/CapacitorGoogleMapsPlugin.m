@@ -20,7 +20,6 @@ CAP_PLUGIN(CapacitorGoogleMapsPlugin, "CapacitorGoogleMaps",
    CAP_PLUGIN_METHOD(enableClustering, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(disableClustering, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(destroy, CAPPluginReturnPromise);
-   CAP_PLUGIN_METHOD(setCamera, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(getMapType, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(setMapType, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(enableIndoorMaps, CAPPluginReturnPromise);
@@ -41,4 +40,9 @@ CAP_PLUGIN(CapacitorGoogleMapsPlugin, "CapacitorGoogleMaps",
    CAP_PLUGIN_METHOD(enableTiltGesture, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(enableTiltRotateGesture, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(setMapPreferences, CAPPluginReturnPromise);
+   CAP_PLUGIN_METHOD(animateCamera, CAPPluginReturnPromise);
+   CAP_PLUGIN_METHOD(moveCamera, CAPPluginReturnPromise);
+   CAP_PLUGIN_METHOD(setCameraBearing, CAPPluginReturnPromise);
+   CAP_PLUGIN_METHOD(getCameraZoom, CAPPluginReturnPromise);
+   CAP_PLUGIN_METHOD(setOptions, CAPPluginReturnPromise)
 )

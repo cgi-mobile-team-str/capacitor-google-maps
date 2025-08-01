@@ -512,7 +512,7 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
         }
     }
 
-    @objc func setCamera(_ call: CAPPluginCall) {
+    @objc func animateCamera(_ call: CAPPluginCall) {
         do {
             guard let id = call.getString("id") else {
                 throw GoogleMapErrors.invalidMapId
@@ -528,9 +528,53 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
 
             let config = try GoogleMapCameraConfig(fromJSObject: configObj)
 
-            try map.setCamera(config: config)
+            try map.animateCamera(config: config)
 
             call.resolve()
+        } catch {
+            handleError(call, error: error)
+        }
+    }
+    
+    @objc func moveCamera(_ call: CAPPluginCall) {
+        do {
+            guard let id = call.getString("id") else {
+                throw GoogleMapErrors.invalidMapId
+            }
+
+            guard let map = self.maps[id] else {
+                throw GoogleMapErrors.mapNotFound
+            }
+
+            guard let configObj = call.getObject("config") else {
+                throw GoogleMapErrors.invalidArguments("config object is missing")
+            }
+
+            let config = try GoogleMapCameraConfig(fromJSObject: configObj)
+
+            try map.moveCamera(config: config)
+
+            call.resolve()
+        } catch {
+            handleError(call, error: error)
+        }
+    }
+    
+    @objc func getCameraZoom(_ call: CAPPluginCall) {
+        do {
+            guard let id = call.getString("id") else {
+                throw GoogleMapErrors.invalidMapId
+            }
+
+            guard let map = self.maps[id] else {
+                throw GoogleMapErrors.mapNotFound
+            }
+
+            let cameraZoom = map.getCameraZoom()
+
+            call.resolve([
+                "cameraZoom": cameraZoom
+            ])
         } catch {
             handleError(call, error: error)
         }
@@ -551,6 +595,52 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
             call.resolve([
                 "type": mapType
             ])
+        } catch {
+            handleError(call, error: error)
+        }
+    }
+    
+    @objc func setCameraBearing(_ call: CAPPluginCall) {
+        do {
+            guard let id = call.getString("id") else {
+                throw GoogleMapErrors.invalidMapId
+            }
+
+            guard let map = self.maps[id] else {
+                throw GoogleMapErrors.mapNotFound
+            }
+
+            guard let bearing = call.getDouble("bearing") else {
+                throw GoogleMapErrors.invalidArguments("bearing is missing")
+            }
+            
+            try map.setCameraBearing(bearing: bearing)
+
+            call.resolve()
+        } catch {
+            handleError(call, error: error)
+        }
+    }
+    
+    @objc func setOptions(_ call: CAPPluginCall) {
+        do {
+            guard let id = call.getString("id") else {
+                throw GoogleMapErrors.invalidMapId
+            }
+
+            guard let map = self.maps[id] else {
+                throw GoogleMapErrors.mapNotFound
+            }
+
+            guard let configObj = call.getObject("config") else {
+                throw GoogleMapErrors.invalidArguments("config object is missing")
+            }
+
+            let config = try GoogleMapsOptions(fromJSObject: configObj)
+
+            try map.setOptions(config: config)
+            
+            call.resolve()
         } catch {
             handleError(call, error: error)
         }
