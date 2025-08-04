@@ -405,11 +405,13 @@ public class Map {
 
     func animateCamera(config: GoogleMapCameraConfig) throws {
         DispatchQueue.main.sync {
-            CATransaction.begin()
-            CATransaction.setValue(NSNumber(value: config.duration ?? 0.0), forKey: kCATransactionAnimationDuration)
-            let newCamera = setupCameraPosition(config: config)
-            self.mapViewController.GMapView.animate(to: newCamera )
-            CATransaction.commit()
+          CATransaction.begin()
+          CATransaction.setValue(NSNumber(value: config.duration ?? 1.0), forKey: kCATransactionAnimationDuration)
+          let newCamera = setupCameraPosition(config: config)
+          CATransaction.setCompletionBlock({
+            self.mapViewController.GMapView.animate(to: newCamera)
+          })
+          CATransaction.commit()
         }
     }
     
