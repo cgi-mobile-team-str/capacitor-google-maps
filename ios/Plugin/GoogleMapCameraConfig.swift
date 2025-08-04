@@ -7,13 +7,13 @@ public struct GoogleMapCameraConfig {
     let zoom: Float?
     let bearing: Double?
     let angle: Double?
-    let animationDuration: Double?
+    let duration: Double?
 
     init(fromJSObject: JSObject) throws {
         zoom = fromJSObject["zoom"] as? Float
         bearing = fromJSObject["bearing"] as? Double
         angle = fromJSObject["angle"] as? Double
-        animationDuration = fromJSObject["animationDuration"] as? Double
+        duration = fromJSObject["duration"] as? Double
 
         if let latLngObj = fromJSObject["coordinate"] as? JSObject {
             guard let lat = latLngObj["lat"] as? Double, let lng = latLngObj["lng"] as? Double else {

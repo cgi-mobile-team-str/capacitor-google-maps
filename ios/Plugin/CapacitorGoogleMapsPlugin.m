@@ -44,5 +44,5 @@ CAP_PLUGIN(CapacitorGoogleMapsPlugin, "CapacitorGoogleMaps",
    CAP_PLUGIN_METHOD(moveCamera, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(setCameraBearing, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(getCameraZoom, CAPPluginReturnPromise);
-   CAP_PLUGIN_METHOD(setOptions, CAPPluginReturnPromise)
+   CAP_PLUGIN_METHOD(setOptions, CAPPluginReturnPromise);
 )
