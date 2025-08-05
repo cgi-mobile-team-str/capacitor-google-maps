@@ -436,7 +436,11 @@ export class MarkerClass implements Marker {
   }
 
   async setIconAnchor(x: number, y: number): Promise<void> {
-    return CapacitorGoogleMaps.setMarkerIconAnchor({ id: this.mapId, markerId: this.id, x: x, y: y });
+    return CapacitorGoogleMaps.setMarkerIconAnchor({ id: this.mapId, markerId: this.id, x, y });
+  }
+
+  async setZIndex(zIndex: number): Promise<void> {
+    return CapacitorGoogleMaps.setMarkerZIndex({ id: this.mapId, markerId: this.id, zIndex });
   }
 }
 

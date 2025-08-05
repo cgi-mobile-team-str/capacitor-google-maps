@@ -109,7 +109,10 @@ class MarkerClass {
         });
     }
     async setIconAnchor(x, y) {
-        return CapacitorGoogleMaps.setMarkerIconAnchor({ id: this.mapId, markerId: this.id, x: x, y: y });
+        return CapacitorGoogleMaps.setMarkerIconAnchor({ id: this.mapId, markerId: this.id, x, y });
+    }
+    async setZIndex(zIndex) {
+        return CapacitorGoogleMaps.setMarkerZIndex({ id: this.mapId, markerId: this.id, zIndex });
     }
 }
 
@@ -1597,6 +1600,9 @@ class CapacitorGoogleMapsWeb extends core.WebPlugin {
         throw new Error('Method not implemented.');
     }
     async setMarkerIconAnchor(_args) {
+        throw new Error('Method not implemented.');
+    }
+    async setMarkerZIndex(_args) {
         throw new Error('Method not implemented.');
     }
 }

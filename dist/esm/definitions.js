@@ -72,7 +72,10 @@ export class MarkerClass {
         });
     }
     async setIconAnchor(x, y) {
-        return CapacitorGoogleMaps.setMarkerIconAnchor({ id: this.mapId, markerId: this.id, x: x, y: y });
+        return CapacitorGoogleMaps.setMarkerIconAnchor({ id: this.mapId, markerId: this.id, x, y });
+    }
+    async setZIndex(zIndex) {
+        return CapacitorGoogleMaps.setMarkerZIndex({ id: this.mapId, markerId: this.id, zIndex });
     }
 }
 //# sourceMappingURL=definitions.js.map

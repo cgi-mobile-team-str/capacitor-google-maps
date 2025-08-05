@@ -857,7 +857,7 @@ class CapacitorGoogleMap(
         googleMap?.animateCamera(cameraUpdate)
     }
 
-    // MARKER METHODS
+    // BEGIN MARKER METHODS
 
     fun setMarkerIcon(
         markerId: String,
@@ -910,6 +910,27 @@ class CapacitorGoogleMap(
             callback(e)
         }
     }
+
+    fun setMarkerZIndex(
+        markerId: String,
+        zIndex: Float,
+        callback: (error: GoogleMapsError?) -> Unit
+    ) {
+        try {
+            googleMap ?: throw GoogleMapNotAvailable()
+            val marker = markers[markerId]
+            marker ?: throw MarkerNotFoundError()
+            CoroutineScope(Dispatchers.Main).launch {
+                marker.zIndex = zIndex
+                marker.googleMapMarker?.zIndex = zIndex
+                callback(null)
+            }
+        } catch (e: GoogleMapsError) {
+            callback(e)
+        }
+    }
+
+    // END MARKER METHODS
 
     private fun getMapTypeInt(mapType: String): Int {
         val mapTypeInt: Int =

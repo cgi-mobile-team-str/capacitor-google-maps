@@ -374,6 +374,7 @@ export declare class MarkerClass implements Marker {
     }, mapId: string);
     setIcon(icon: MarkerIcon): Promise<void>;
     setIconAnchor(x: number, y: number): Promise<void>;
+    setZIndex(zIndex: number): Promise<void>;
 }
 /**
  * The callback function to be called when map events are emitted.

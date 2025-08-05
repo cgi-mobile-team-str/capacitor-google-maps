@@ -581,5 +581,8 @@ export class CapacitorGoogleMapsWeb extends WebPlugin {
     async setMarkerIconAnchor(_args) {
         throw new Error('Method not implemented.');
     }
+    async setMarkerZIndex(_args) {
+        throw new Error('Method not implemented.');
+    }
 }
 //# sourceMappingURL=web.js.map

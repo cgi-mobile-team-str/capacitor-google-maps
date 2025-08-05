@@ -1400,6 +1400,34 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
         }
     }
 
+    @PluginMethod
+    fun setMarkerZIndex(call: PluginCall) {
+        try {
+            val id = call.getString("id")
+            id ?: throw InvalidMapIdError()
+
+            val markerId = call.getString("markerId")
+            markerId ?: throw InvalidArgumentsError("markerId is invalid or missing")
+
+            val zIndex = call.getFloat("zIndex")
+            zIndex ?: throw InvalidArgumentsError("zIndex is invalid or missing")
+
+            val map = maps[id]
+            map ?: throw MapNotFoundError()
+
+            map.setMarkerZIndex(markerId, zIndex) { err ->
+                if (err != null) {
+                    throw err
+                }
+                call.resolve()
+            }
+        } catch (e: GoogleMapsError) {
+            handleError(call, e)
+        } catch (e: Exception) {
+            handleError(call, e)
+        }
+    }
+
     private fun createLatLng(point: JSObject): LatLng {
         return LatLng(
             point.getDouble("lat"),
