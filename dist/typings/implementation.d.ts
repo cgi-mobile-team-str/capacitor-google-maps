@@ -128,6 +128,12 @@ export interface MarkerIconArgs {
     url?: string;
     size?: Size;
 }
+export interface MarkerIconAnchorArgs {
+    id: string;
+    markerId: string;
+    x: number;
+    y: number;
+}
 export interface MapBoundsContainsArgs {
     bounds: LatLngBounds;
     point: LatLng;
@@ -256,6 +262,7 @@ export interface CapacitorGoogleMapsPlugin extends Plugin {
     setCameraBearing(args: CameraBearingArgs): Promise<void>;
     setOptions(args: MapOptionsArgs): Promise<void>;
     setMarkerIcon(args: MarkerIconArgs): Promise<void>;
+    setMarkerIconAnchor(args: MarkerIconAnchorArgs): Promise<void>;
 }
 declare const CapacitorGoogleMaps: CapacitorGoogleMapsPlugin;
 export { CapacitorGoogleMaps };

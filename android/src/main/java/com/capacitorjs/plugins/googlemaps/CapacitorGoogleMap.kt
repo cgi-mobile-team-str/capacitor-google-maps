@@ -891,6 +891,26 @@ class CapacitorGoogleMap(
         }
     }
 
+    fun setMarkerIconAnchor(
+        markerId: String,
+        x: Float,
+        y: Float,
+        callback: (error: GoogleMapsError?) -> Unit
+    ) {
+        try {
+            googleMap ?: throw GoogleMapNotAvailable()
+            val marker = markers[markerId]
+            marker ?: throw MarkerNotFoundError()
+            CoroutineScope(Dispatchers.Main).launch {
+                marker.iconAnchor = CapacitorGoogleMapsPoint(x,y)
+                marker.googleMapMarker?.setAnchor(x,y)
+                callback(null)
+            }
+        } catch (e: GoogleMapsError) {
+            callback(e)
+        }
+    }
+
     private fun getMapTypeInt(mapType: String): Int {
         val mapTypeInt: Int =
             when (mapType) {

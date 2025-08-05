@@ -1,7 +1,7 @@
 import { WebPlugin } from '@capacitor/core';
 import type { MapPadding, Marker, VisibleRegion } from './definitions';
 import { LatLngBounds } from './definitions';
-import type { AddMarkerArgs, CameraArgs, AddMarkersArgs, CapacitorGoogleMapsPlugin, CreateMapArgs, CurrentLocArgs, DestroyMapArgs, MapTypeArgs, PaddingArgs, RemoveMarkerArgs, TrafficLayerArgs, RemoveMarkersArgs, MapBoundsContainsArgs, EnableClusteringArgs, FitBoundsArgs, MapBoundsExtendArgs, AddPolygonsArgs, RemovePolygonsArgs, AddCirclesArgs, RemoveCirclesArgs, AddPolylinesArgs, RemovePolylinesArgs, EnableCompassArgs, MapOptionsArgs, MarkerIconArgs } from './implementation';
+import type { AddMarkerArgs, CameraArgs, AddMarkersArgs, CapacitorGoogleMapsPlugin, CreateMapArgs, CurrentLocArgs, DestroyMapArgs, MapTypeArgs, PaddingArgs, RemoveMarkerArgs, TrafficLayerArgs, RemoveMarkersArgs, MapBoundsContainsArgs, EnableClusteringArgs, FitBoundsArgs, MapBoundsExtendArgs, AddPolygonsArgs, RemovePolygonsArgs, AddCirclesArgs, RemoveCirclesArgs, AddPolylinesArgs, RemovePolylinesArgs, EnableCompassArgs, MapOptionsArgs, MarkerIconArgs, MarkerIconAnchorArgs } from './implementation';
 export declare class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogleMapsPlugin {
     private gMapsRef;
     private AdvancedMarkerElement;
@@ -120,4 +120,5 @@ export declare class CapacitorGoogleMapsWeb extends WebPlugin implements Capacit
         id: string;
     }>;
     setMarkerIcon(_args: MarkerIconArgs): Promise<void>;
+    setMarkerIconAnchor(_args: MarkerIconAnchorArgs): Promise<void>;
 }

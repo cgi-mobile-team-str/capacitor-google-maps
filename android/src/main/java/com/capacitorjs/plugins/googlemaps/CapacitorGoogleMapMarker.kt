@@ -13,7 +13,7 @@ class CapacitorGoogleMapMarker(fromJSONObject: JSONObject): ClusterItem {
     var opacity: Float = 1.0f
     private var title: String
     private var snippet: String
-    private var zIndex: Float = 0.0f
+    var zIndex: Float = 0.0f
     var isFlat: Boolean = false
     var iconUrl: String? = null
     var iconSize: Size? = null

@@ -31,6 +31,7 @@ import type {
   EnableCompassArgs,
   MapOptionsArgs,
   MarkerIconArgs,
+  MarkerIconAnchorArgs,
 } from './implementation';
 
 export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogleMapsPlugin {
@@ -739,6 +740,10 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
   }
 
   async setMarkerIcon(_args: MarkerIconArgs): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+
+  async setMarkerIconAnchor(_args: MarkerIconAnchorArgs): Promise<void> {
     throw new Error('Method not implemented.');
   }
 }

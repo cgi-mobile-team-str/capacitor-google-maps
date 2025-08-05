@@ -83,8 +83,11 @@ var capacitorCapacitorGoogleMaps = (function (exports, core, markerclusterer) {
                 id: this.mapId,
                 markerId: this.id,
                 url: icon.url,
-                size: icon.size
+                size: icon.size,
             });
+        }
+        async setIconAnchor(x, y) {
+            return CapacitorGoogleMaps.setMarkerIconAnchor({ id: this.mapId, markerId: this.id, x: x, y: y });
         }
     }
 
@@ -1569,6 +1572,9 @@ var capacitorCapacitorGoogleMaps = (function (exports, core, markerclusterer) {
             throw new Error('Method not implemented.');
         }
         async setMarkerIcon(_args) {
+            throw new Error('Method not implemented.');
+        }
+        async setMarkerIconAnchor(_args) {
             throw new Error('Method not implemented.');
         }
     }

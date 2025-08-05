@@ -405,11 +405,11 @@ export class MarkerClass implements Marker {
   iconSize?: Size | undefined;
   iconOrigin?: Point | undefined;
   iconAnchor?: Point | undefined;
-  tintColor?: { r: number; g: number; b: number; a: number; } | undefined;
+  tintColor?: { r: number; g: number; b: number; a: number } | undefined;
   draggable?: boolean | undefined;
   zIndex?: number | undefined;
 
-  constructor(obj: Marker & {id: string}, mapId: string) {
+  constructor(obj: Marker & { id: string }, mapId: string) {
     this.mapId = mapId;
     this.id = obj.id;
     this.coordinate = obj.coordinate;
@@ -426,15 +426,18 @@ export class MarkerClass implements Marker {
     this.zIndex = obj.zIndex;
   }
 
-  async setIcon(icon: MarkerIcon) {
+  async setIcon(icon: MarkerIcon): Promise<void> {
     return CapacitorGoogleMaps.setMarkerIcon({
       id: this.mapId,
       markerId: this.id,
       url: icon.url,
-      size: icon.size
+      size: icon.size,
     });
   }
 
+  async setIconAnchor(x: number, y: number): Promise<void> {
+    return CapacitorGoogleMaps.setMarkerIconAnchor({ id: this.mapId, markerId: this.id, x: x, y: y });
+  }
 }
 
 /**
