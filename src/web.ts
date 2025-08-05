@@ -30,6 +30,7 @@ import type {
   RemovePolylinesArgs,
   EnableCompassArgs,
   MapOptionsArgs,
+  MarkerIconArgs,
 } from './implementation';
 
 export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogleMapsPlugin {
@@ -291,19 +292,6 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
     }
 
     return { ids: markerIds };
-  }
-
-  async addMarker(_args: AddMarkerArgs): Promise<{ id: string }> {
-    const advancedMarker = this.buildMarkerOpts(_args.marker, this.maps[_args.id].map);
-
-    const id = '' + this.currMarkerId;
-
-    this.maps[_args.id].markers[id] = advancedMarker;
-    await this.setMarkerListeners(_args.id, id, advancedMarker);
-
-    this.currMarkerId++;
-
-    return { id: id };
   }
 
   async removeMarkers(_args: RemoveMarkersArgs): Promise<void> {
@@ -733,6 +721,24 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
   }
 
   async getCameraZoom(_args: { id: string }): Promise<{ cameraZoom: number }> {
+    throw new Error('Method not implemented.');
+  }
+ 
+  async addMarker(_args: AddMarkerArgs): Promise<Marker> {
+    // const advancedMarker = this.buildMarkerOpts(_args.marker, this.maps[_args.id].map);
+
+    // const id = '' + this.currMarkerId;
+
+    // this.maps[_args.id].markers[id] = advancedMarker;
+    // await this.setMarkerListeners(_args.id, id, advancedMarker);
+
+    // this.currMarkerId++;
+
+    // return { id: id };
+    throw new Error('Method not implemented.');
+  }
+
+  async setMarkerIcon(_args: MarkerIconArgs): Promise<void> {
     throw new Error('Method not implemented.');
   }
 }

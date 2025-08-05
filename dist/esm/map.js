@@ -1,4 +1,5 @@
 import { Capacitor } from '@capacitor/core';
+import { MarkerClass, } from './definitions';
 import { LatLngBounds, MapType } from './definitions';
 import { CapacitorGoogleMaps } from './implementation';
 class MapCustomElement extends HTMLElement {
@@ -213,7 +214,8 @@ export class GoogleMap {
             id: this.id,
             marker,
         });
-        return res.id;
+        const markerObj = new MarkerClass(res, this.id);
+        return markerObj;
     }
     /**
      * Adds multiple markers to the map

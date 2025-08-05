@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.graphics.*
 import android.location.Location
 import android.util.Log
+import android.util.Size
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +12,6 @@ import android.widget.FrameLayout
 import com.getcapacitor.Bridge
 import com.getcapacitor.JSArray
 import com.getcapacitor.JSObject
-import com.getcapacitor.PluginCall
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.GoogleMap.*
 import com.google.android.gms.maps.model.*
@@ -213,7 +213,7 @@ class CapacitorGoogleMap(
         }
     }
 
-    fun addMarker(marker: CapacitorGoogleMapMarker, callback: (result: Result<String>) -> Unit) {
+    fun addMarker(marker: CapacitorGoogleMapMarker, callback: (result: Result<Pair<String, CapacitorGoogleMapMarker>>) -> Unit) {
         try {
             googleMap ?: throw GoogleMapNotAvailable()
 
@@ -238,7 +238,7 @@ class CapacitorGoogleMap(
 
                 markerId = googleMapMarker.id
 
-                callback(Result.success(markerId))
+                callback(Result.success(Pair(markerId, marker)))
             }
         } catch (e: GoogleMapsError) {
             callback(Result.failure(e))
@@ -854,6 +854,22 @@ class CapacitorGoogleMap(
     fun fitBounds(bounds: LatLngBounds, padding: Int) {
         val cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding)
         googleMap?.animateCamera(cameraUpdate)
+    }
+
+    // MARKER METHODS
+
+    fun setMarkerIcon(markerId: String, url: String?, size: Size?, callback: (error: GoogleMapsError?) -> Unit ) {
+        try {
+            googleMap ?: throw GoogleMapNotAvailable()
+            val marker = markers[markerId]
+            marker ?: throw MarkerNotFoundError()
+            CoroutineScope(Dispatchers.Main).launch {
+                marker.setIcon(url, size)
+                callback(null)
+            }
+        } catch (e: GoogleMapsError) {
+            callback(e)
+        }
     }
 
     private fun getMapTypeInt(mapType: String): Int {

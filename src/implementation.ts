@@ -13,6 +13,7 @@ import type {
   Marker,
   Polygon,
   Polyline,
+  Size,
   VisibleRegion,
 } from './definitions';
 
@@ -158,6 +159,13 @@ export interface MapOptionsArgs {
   config: GoogleMapsOptions;
 }
 
+export interface MarkerIconArgs {
+  id: string;
+  markerId: string;
+  url?: string;
+  size?: Size;
+}
+
 export interface MapBoundsContainsArgs {
   bounds: LatLngBounds;
   point: LatLng;
@@ -219,7 +227,7 @@ export interface CapacitorGoogleMapsPlugin extends Plugin {
   create(options: CreateMapArgs): Promise<void>;
   enableTouch(args: { id: string }): Promise<void>;
   disableTouch(args: { id: string }): Promise<void>;
-  addMarker(args: AddMarkerArgs): Promise<{ id: string }>;
+  addMarker(args: AddMarkerArgs): Promise<Marker>;
   addMarkers(args: AddMarkersArgs): Promise<{ ids: string[] }>;
   removeMarker(args: RemoveMarkerArgs): Promise<void>;
   removeMarkers(args: RemoveMarkersArgs): Promise<void>;
@@ -260,6 +268,7 @@ export interface CapacitorGoogleMapsPlugin extends Plugin {
   setMapPreferences(args: SetMapPreferencesArgs): Promise<void>;
   setCameraBearing(args: CameraBearingArgs): Promise<void>;
   setOptions(args: MapOptionsArgs): Promise<void>;
+  setMarkerIcon(args: MarkerIconArgs): Promise<void>;
 }
 
 const CapacitorGoogleMaps = registerPlugin<CapacitorGoogleMapsPlugin>('CapacitorGoogleMaps', {

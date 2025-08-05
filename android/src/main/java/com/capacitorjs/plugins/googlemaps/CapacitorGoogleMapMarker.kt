@@ -82,6 +82,15 @@ class CapacitorGoogleMapMarker(fromJSONObject: JSONObject): ClusterItem {
         return zIndex
     }
 
+    fun setIcon(url: String?, size: Size?) {
+        if(url != null) {
+            this.iconUrl = url
+        }
+        if(size != null) {
+            this.iconSize = size
+        }
+    }
+
     private fun buildIconAnchorPoint(iconAnchor: CapacitorGoogleMapsPoint): CapacitorGoogleMapsPoint? {
         iconSize ?: return null
 

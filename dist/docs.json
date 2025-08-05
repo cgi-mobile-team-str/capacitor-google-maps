@@ -79,7 +79,7 @@
       },
       {
         "name": "addMarker",
-        "signature": "(marker: Marker) => Promise<string>",
+        "signature": "(marker: Marker) => Promise<MarkerClass>",
         "parameters": [
           {
             "name": "marker",
@@ -87,10 +87,11 @@
             "type": "Marker"
           }
         ],
-        "returns": "Promise<string>",
+        "returns": "Promise<MarkerClass>",
         "tags": [],
         "docs": "",
         "complexTypes": [
+          "MarkerClass",
           "Marker"
         ],
         "slug": "addmarker"
@@ -1171,6 +1172,13 @@
       "tags": [],
       "methods": [],
       "properties": [
+        {
+          "name": "id",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "string"
+        },
         {
           "name": "coordinate",
           "tags": [],

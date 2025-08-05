@@ -296,6 +296,7 @@ export interface MapPadding {
  * A marker is an icon placed at a particular point on the map's surface.
  */
 export interface Marker {
+  id: string;
   /**
    * Marker position
    */
@@ -386,6 +387,55 @@ export interface Marker {
    * @default 0
    */
   zIndex?: number;
+}
+
+export interface MarkerIcon {
+  url?: string;
+  size?: Size;
+}
+
+export class MarkerClass implements Marker {
+  mapId: string;
+  id: string;
+  coordinate: LatLng;
+  opacity?: number | undefined;
+  title?: string | undefined;
+  snippet?: string | undefined;
+  isFlat?: boolean | undefined;
+  iconUrl?: string | undefined;
+  iconSize?: Size | undefined;
+  iconOrigin?: Point | undefined;
+  iconAnchor?: Point | undefined;
+  tintColor?: { r: number; g: number; b: number; a: number; } | undefined;
+  draggable?: boolean | undefined;
+  zIndex?: number | undefined;
+
+  constructor(marker: Marker, mapId: string) {
+    this.mapId = mapId;
+    this.id = marker.id;
+    this.coordinate = marker.coordinate;
+    this.opacity = marker.opacity;
+    this.title = marker.title;
+    this.snippet = marker.snippet;
+    this.isFlat = marker.isFlat;
+    this.iconUrl = marker.iconUrl;
+    this.iconSize = marker.iconSize;
+    this.iconOrigin = marker.iconOrigin;
+    this.iconAnchor = marker.iconAnchor;
+    this.tintColor = marker.tintColor;
+    this.draggable = marker.draggable;
+    this.zIndex = marker.zIndex;
+  }
+
+  async setIcon(icon: MarkerIcon) {
+    return CapacitorGoogleMaps.setMarkerIcon({
+      id: this.mapId,
+      markerId: this.id,
+      url: icon.url,
+      size: icon.size
+    });
+  }
+
 }
 
 /**

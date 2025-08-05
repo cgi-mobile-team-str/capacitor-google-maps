@@ -1,5 +1,5 @@
 import type { Plugin } from '@capacitor/core';
-import type { CameraConfig, Circle, GoogleMapConfig, GoogleMapsOptions, LatLng, LatLngBounds, MapPadding, MapType, Marker, Polygon, Polyline, VisibleRegion } from './definitions';
+import type { CameraConfig, Circle, GoogleMapConfig, GoogleMapsOptions, LatLng, LatLngBounds, MapPadding, MapType, Marker, Polygon, Polyline, Size, VisibleRegion } from './definitions';
 /**
  * An interface containing the options used when creating a map.
  */
@@ -122,6 +122,12 @@ export interface MapOptionsArgs {
     id: string;
     config: GoogleMapsOptions;
 }
+export interface MarkerIconArgs {
+    id: string;
+    markerId: string;
+    url?: string;
+    size?: Size;
+}
 export interface MapBoundsContainsArgs {
     bounds: LatLngBounds;
     point: LatLng;
@@ -177,9 +183,7 @@ export interface CapacitorGoogleMapsPlugin extends Plugin {
     disableTouch(args: {
         id: string;
     }): Promise<void>;
-    addMarker(args: AddMarkerArgs): Promise<{
-        id: string;
-    }>;
+    addMarker(args: AddMarkerArgs): Promise<Marker>;
     addMarkers(args: AddMarkersArgs): Promise<{
         ids: string[];
     }>;
@@ -249,6 +253,7 @@ export interface CapacitorGoogleMapsPlugin extends Plugin {
     setMapPreferences(args: SetMapPreferencesArgs): Promise<void>;
     setCameraBearing(args: CameraBearingArgs): Promise<void>;
     setOptions(args: MapOptionsArgs): Promise<void>;
+    setMarkerIcon(args: MarkerIconArgs): Promise<void>;
 }
 declare const CapacitorGoogleMaps: CapacitorGoogleMapsPlugin;
 export { CapacitorGoogleMaps };

@@ -83,6 +83,32 @@ exports.MapType = void 0;
      */
     MapType["None"] = "None";
 })(exports.MapType || (exports.MapType = {}));
+class MarkerClass {
+    constructor(marker, mapId) {
+        this.mapId = mapId;
+        this.id = marker.id;
+        this.coordinate = marker.coordinate;
+        this.opacity = marker.opacity;
+        this.title = marker.title;
+        this.snippet = marker.snippet;
+        this.isFlat = marker.isFlat;
+        this.iconUrl = marker.iconUrl;
+        this.iconSize = marker.iconSize;
+        this.iconOrigin = marker.iconOrigin;
+        this.iconAnchor = marker.iconAnchor;
+        this.tintColor = marker.tintColor;
+        this.draggable = marker.draggable;
+        this.zIndex = marker.zIndex;
+    }
+    async setIcon(icon) {
+        return CapacitorGoogleMaps.setMarkerIcon({
+            id: this.mapId,
+            markerId: this.id,
+            url: icon.url,
+            size: icon.size
+        });
+    }
+}
 
 class MapCustomElement extends HTMLElement {
     constructor() {
@@ -296,7 +322,8 @@ class GoogleMap {
             id: this.id,
             marker,
         });
-        return res.id;
+        const markerObj = new MarkerClass(res, this.id);
+        return markerObj;
     }
     /**
      * Adds multiple markers to the map
@@ -1191,14 +1218,6 @@ class CapacitorGoogleMapsWeb extends core.WebPlugin {
         }
         return { ids: markerIds };
     }
-    async addMarker(_args) {
-        const advancedMarker = this.buildMarkerOpts(_args.marker, this.maps[_args.id].map);
-        const id = '' + this.currMarkerId;
-        this.maps[_args.id].markers[id] = advancedMarker;
-        await this.setMarkerListeners(_args.id, id, advancedMarker);
-        this.currMarkerId++;
-        return { id: id };
-    }
     async removeMarkers(_args) {
         const map = this.maps[_args.id];
         for (const id of _args.markerIds) {
@@ -1560,6 +1579,18 @@ class CapacitorGoogleMapsWeb extends core.WebPlugin {
         throw new Error('Method not implemented.');
     }
     async getCameraZoom(_args) {
+        throw new Error('Method not implemented.');
+    }
+    async addMarker(_args) {
+        // const advancedMarker = this.buildMarkerOpts(_args.marker, this.maps[_args.id].map);
+        // const id = '' + this.currMarkerId;
+        // this.maps[_args.id].markers[id] = advancedMarker;
+        // await this.setMarkerListeners(_args.id, id, advancedMarker);
+        // this.currMarkerId++;
+        // return { id: id };
+        throw new Error('Method not implemented.');
+    }
+    async setMarkerIcon(_args) {
         throw new Error('Method not implemented.');
     }
 }

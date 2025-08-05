@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.graphics.RectF
 import android.util.Log
+import android.util.Size
 import android.view.MotionEvent
 import android.view.View
 import com.getcapacitor.*
@@ -441,10 +442,21 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
 
             val marker = CapacitorGoogleMapMarker(markerObj)
             map.addMarker(marker) { result ->
-                val markerId = result.getOrThrow()
-
+                val pairIdMarker = result.getOrThrow()
                 val res = JSObject()
-                res.put("id", markerId)
+                res.put("id", pairIdMarker.first)
+                res.put("mapId", id)
+                res.put("coordinate",  pairIdMarker.second.coordinate)
+                res.put("opacity", pairIdMarker.second.opacity)
+                res.put("title", pairIdMarker.second.title)
+                res.put("snippet", pairIdMarker.second.snippet)
+                res.put("zIndex", pairIdMarker.second.zIndex)
+                res.put("isFlat", pairIdMarker.second.isFlat)
+                res.put("iconUrl", pairIdMarker.second.iconUrl)
+                res.put("iconSize", pairIdMarker.second.iconSize)
+                res.put("iconAnchor", pairIdMarker.second.iconAnchor)
+                res.put("draggable", pairIdMarker.second.draggable)
+                res.put("colorHue", pairIdMarker.second.colorHue)
                 call.resolve(res)
             }
         } catch (e: GoogleMapsError) {
@@ -1307,6 +1319,38 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
                 val data = JSObject()
                 data.put("bounds", getLatLngBoundsJSObject(newBounds))
                 call.resolve(data)
+            }
+        } catch (e: GoogleMapsError) {
+            handleError(call, e)
+        } catch (e: Exception) {
+            handleError(call, e)
+        }
+    }
+
+    // MARKER METHODS
+
+    @PluginMethod
+    fun setMarkerIcon(call: PluginCall) {
+        try {
+            val id = call.getString("id")
+            id ?: throw InvalidMapIdError()
+
+            val markerId = call.getString("markerId")
+            markerId ?: throw InvalidArgumentsError("markerId is invalid or missing")
+
+            val url = call.getString("url")
+
+            val sizeObj = call.getObject("size")
+            val size = Size(sizeObj.optInt("width"), sizeObj.optInt("height"))
+
+            val map = maps[id]
+            map ?: throw MapNotFoundError()
+
+            map.setMarkerIcon(markerId, url, size) { err ->
+                if (err != null) {
+                    throw err
+                }
+                call.resolve()
             }
         } catch (e: GoogleMapsError) {
             handleError(call, e)

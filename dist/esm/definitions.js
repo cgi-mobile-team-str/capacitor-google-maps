@@ -46,4 +46,30 @@ export var MapType;
      */
     MapType["None"] = "None";
 })(MapType || (MapType = {}));
+export class MarkerClass {
+    constructor(marker, mapId) {
+        this.mapId = mapId;
+        this.id = marker.id;
+        this.coordinate = marker.coordinate;
+        this.opacity = marker.opacity;
+        this.title = marker.title;
+        this.snippet = marker.snippet;
+        this.isFlat = marker.isFlat;
+        this.iconUrl = marker.iconUrl;
+        this.iconSize = marker.iconSize;
+        this.iconOrigin = marker.iconOrigin;
+        this.iconAnchor = marker.iconAnchor;
+        this.tintColor = marker.tintColor;
+        this.draggable = marker.draggable;
+        this.zIndex = marker.zIndex;
+    }
+    async setIcon(icon) {
+        return CapacitorGoogleMaps.setMarkerIcon({
+            id: this.mapId,
+            markerId: this.id,
+            url: icon.url,
+            size: icon.size
+        });
+    }
+}
 //# sourceMappingURL=definitions.js.map

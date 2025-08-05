@@ -203,14 +203,6 @@ export class CapacitorGoogleMapsWeb extends WebPlugin {
         }
         return { ids: markerIds };
     }
-    async addMarker(_args) {
-        const advancedMarker = this.buildMarkerOpts(_args.marker, this.maps[_args.id].map);
-        const id = '' + this.currMarkerId;
-        this.maps[_args.id].markers[id] = advancedMarker;
-        await this.setMarkerListeners(_args.id, id, advancedMarker);
-        this.currMarkerId++;
-        return { id: id };
-    }
     async removeMarkers(_args) {
         const map = this.maps[_args.id];
         for (const id of _args.markerIds) {
@@ -572,6 +564,18 @@ export class CapacitorGoogleMapsWeb extends WebPlugin {
         throw new Error('Method not implemented.');
     }
     async getCameraZoom(_args) {
+        throw new Error('Method not implemented.');
+    }
+    async addMarker(_args) {
+        // const advancedMarker = this.buildMarkerOpts(_args.marker, this.maps[_args.id].map);
+        // const id = '' + this.currMarkerId;
+        // this.maps[_args.id].markers[id] = advancedMarker;
+        // await this.setMarkerListeners(_args.id, id, advancedMarker);
+        // this.currMarkerId++;
+        // return { id: id };
+        throw new Error('Method not implemented.');
+    }
+    async setMarkerIcon(_args) {
         throw new Error('Method not implemented.');
     }
 }
