@@ -116,6 +116,9 @@ export declare class CapacitorGoogleMapsWeb extends WebPlugin implements Capacit
     }): Promise<{
         cameraZoom: number;
     }>;
-    addMarker(_args: AddMarkerArgs): Promise<Marker>;
+    addMarker(_args: AddMarkerArgs): Promise<{
+        markerId: string;
+        marker: Marker;
+    }>;
     setMarkerIcon(_args: MarkerIconArgs): Promise<void>;
 }

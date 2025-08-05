@@ -62,9 +62,9 @@ var capacitorCapacitorGoogleMaps = (function (exports, core, markerclusterer) {
         MapType["None"] = "None";
     })(exports.MapType || (exports.MapType = {}));
     class MarkerClass {
-        constructor(marker, mapId) {
+        constructor(marker, markerId, mapId) {
             this.mapId = mapId;
-            this.id = marker.id;
+            this.id = markerId;
             this.coordinate = marker.coordinate;
             this.opacity = marker.opacity;
             this.title = marker.title;
@@ -300,7 +300,7 @@ var capacitorCapacitorGoogleMaps = (function (exports, core, markerclusterer) {
                 id: this.id,
                 marker,
             });
-            const markerObj = new MarkerClass(res, this.id);
+            const markerObj = new MarkerClass(res.marker, res.markerId, this.id);
             return markerObj;
         }
         /**

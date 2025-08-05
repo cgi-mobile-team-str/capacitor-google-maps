@@ -47,9 +47,9 @@ export var MapType;
     MapType["None"] = "None";
 })(MapType || (MapType = {}));
 export class MarkerClass {
-    constructor(marker, mapId) {
+    constructor(marker, markerId, mapId) {
         this.mapId = mapId;
-        this.id = marker.id;
+        this.id = markerId;
         this.coordinate = marker.coordinate;
         this.opacity = marker.opacity;
         this.title = marker.title;

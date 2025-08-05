@@ -183,7 +183,10 @@ export interface CapacitorGoogleMapsPlugin extends Plugin {
     disableTouch(args: {
         id: string;
     }): Promise<void>;
-    addMarker(args: AddMarkerArgs): Promise<Marker>;
+    addMarker(args: AddMarkerArgs): Promise<{
+        markerId: string;
+        marker: Marker;
+    }>;
     addMarkers(args: AddMarkersArgs): Promise<{
         ids: string[];
     }>;

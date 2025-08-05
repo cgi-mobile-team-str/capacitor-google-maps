@@ -296,7 +296,6 @@ export interface MapPadding {
  * A marker is an icon placed at a particular point on the map's surface.
  */
 export interface Marker {
-  id: string;
   /**
    * Marker position
    */
@@ -410,9 +409,9 @@ export class MarkerClass implements Marker {
   draggable?: boolean | undefined;
   zIndex?: number | undefined;
 
-  constructor(marker: Marker, mapId: string) {
+  constructor(marker: Marker, markerId: string, mapId: string) {
     this.mapId = mapId;
-    this.id = marker.id;
+    this.id = markerId;
     this.coordinate = marker.coordinate;
     this.opacity = marker.opacity;
     this.title = marker.title;

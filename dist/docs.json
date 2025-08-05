@@ -1173,13 +1173,6 @@
       "methods": [],
       "properties": [
         {
-          "name": "id",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "string"
-        },
-        {
           "name": "coordinate",
           "tags": [],
           "docs": "Marker position",
