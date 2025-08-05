@@ -724,10 +724,7 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
     throw new Error('Method not implemented.');
   }
  
-  async addMarker(_args: AddMarkerArgs): Promise<{
-  markerId: string;
-  marker: Marker;
-}> {
+  async addMarker(_args: AddMarkerArgs): Promise<Marker & {id:string}> {
     // const advancedMarker = this.buildMarkerOpts(_args.marker, this.maps[_args.id].map);
 
     // const id = '' + this.currMarkerId;
