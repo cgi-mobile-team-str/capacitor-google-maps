@@ -21,6 +21,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import java.io.InputStream
 import java.net.URL
+import androidx.core.graphics.scale
 
 
 class CapacitorGoogleMap(
@@ -858,13 +859,31 @@ class CapacitorGoogleMap(
 
     // MARKER METHODS
 
-    fun setMarkerIcon(markerId: String, url: String?, size: Size?, callback: (error: GoogleMapsError?) -> Unit ) {
+    fun setMarkerIcon(
+        markerId: String,
+        url: String?,
+        size: Size?,
+        callback: (error: GoogleMapsError?) -> Unit
+    ) {
         try {
             googleMap ?: throw GoogleMapNotAvailable()
             val marker = markers[markerId]
             marker ?: throw MarkerNotFoundError()
+            val context = this@CapacitorGoogleMap.delegate.context
             CoroutineScope(Dispatchers.Main).launch {
                 marker.setIcon(url, size)
+                val finalUrl = url ?: marker.iconUrl
+                if (finalUrl != null) {
+                    val inputStream = context.assets.open("public/$finalUrl")
+                    val originalBitmap = BitmapFactory.decodeStream(inputStream)
+                    val descriptor = if (size != null) {
+                        val scaledBitmap = originalBitmap.scale(size.width, size.height, false)
+                        BitmapDescriptorFactory.fromBitmap(scaledBitmap)
+                    } else {
+                        BitmapDescriptorFactory.fromBitmap(originalBitmap)
+                    }
+                    marker.googleMapMarker?.setIcon(descriptor)
+                }
                 callback(null)
             }
         } catch (e: GoogleMapsError) {
@@ -1049,6 +1068,7 @@ class CapacitorGoogleMap(
         markerOptions.flat(marker.isFlat)
         markerOptions.draggable(marker.draggable)
         markerOptions.zIndex(marker.zIndex)
+
         if (marker.iconAnchor != null) {
             markerOptions.anchor(marker.iconAnchor!!.x, marker.iconAnchor!!.y)
         }
