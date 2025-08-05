@@ -1349,8 +1349,10 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
             val url = call.getString("url")
 
             val sizeObj = call.getObject("size")
-            val size = Size(sizeObj.optInt("width"), sizeObj.optInt("height"))
-
+            var size: Size? = null
+            if(sizeObj != null) {
+                size = Size(sizeObj.optInt("width"), sizeObj.optInt("height"))
+            }
             val map = maps[id]
             map ?: throw MapNotFoundError()
 

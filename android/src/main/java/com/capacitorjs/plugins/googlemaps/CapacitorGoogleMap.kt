@@ -871,9 +871,9 @@ class CapacitorGoogleMap(
             marker ?: throw MarkerNotFoundError()
             val context = this@CapacitorGoogleMap.delegate.context
             CoroutineScope(Dispatchers.Main).launch {
-                marker.setIcon(url, size)
                 val finalUrl = url ?: marker.iconUrl
-                if (finalUrl != null) {
+                marker.setIcon(finalUrl, size)
+                if (finalUrl != null && finalUrl != "") {
                     val inputStream = context.assets.open("public/$finalUrl")
                     val originalBitmap = BitmapFactory.decodeStream(inputStream)
                     val descriptor = if (size != null) {
