@@ -369,7 +369,9 @@ export declare class MarkerClass implements Marker {
     } | undefined;
     draggable?: boolean | undefined;
     zIndex?: number | undefined;
-    constructor(marker: Marker, markerId: string, mapId: string);
+    constructor(obj: Marker & {
+        id: string;
+    }, mapId: string);
     setIcon(icon: MarkerIcon): Promise<void>;
 }
 /**

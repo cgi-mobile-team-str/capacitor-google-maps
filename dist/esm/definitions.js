@@ -47,21 +47,21 @@ export var MapType;
     MapType["None"] = "None";
 })(MapType || (MapType = {}));
 export class MarkerClass {
-    constructor(marker, markerId, mapId) {
+    constructor(obj, mapId) {
         this.mapId = mapId;
-        this.id = markerId;
-        this.coordinate = marker.coordinate;
-        this.opacity = marker.opacity;
-        this.title = marker.title;
-        this.snippet = marker.snippet;
-        this.isFlat = marker.isFlat;
-        this.iconUrl = marker.iconUrl;
-        this.iconSize = marker.iconSize;
-        this.iconOrigin = marker.iconOrigin;
-        this.iconAnchor = marker.iconAnchor;
-        this.tintColor = marker.tintColor;
-        this.draggable = marker.draggable;
-        this.zIndex = marker.zIndex;
+        this.id = obj.id;
+        this.coordinate = obj.coordinate;
+        this.opacity = obj.opacity;
+        this.title = obj.title;
+        this.snippet = obj.snippet;
+        this.isFlat = obj.isFlat;
+        this.iconUrl = obj.iconUrl;
+        this.iconSize = obj.iconSize;
+        this.iconOrigin = obj.iconOrigin;
+        this.iconAnchor = obj.iconAnchor;
+        this.tintColor = obj.tintColor;
+        this.draggable = obj.draggable;
+        this.zIndex = obj.zIndex;
     }
     async setIcon(icon) {
         return CapacitorGoogleMaps.setMarkerIcon({

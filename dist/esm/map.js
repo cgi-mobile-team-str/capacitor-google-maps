@@ -214,7 +214,7 @@ export class GoogleMap {
             id: this.id,
             marker,
         });
-        const markerObj = new MarkerClass(res.marker, res.markerId, this.id);
+        const markerObj = new MarkerClass(res, this.id);
         return markerObj;
     }
     /**
