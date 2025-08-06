@@ -344,6 +344,7 @@ export interface Marker {
      * @default 0
      */
     zIndex?: number;
+    isVisible?: boolean;
 }
 export interface MarkerIcon {
     url?: string;
@@ -369,12 +370,15 @@ export declare class MarkerClass implements Marker {
     } | undefined;
     draggable?: boolean | undefined;
     zIndex?: number | undefined;
+    isVisible?: boolean | undefined;
     constructor(obj: Marker & {
         id: string;
     }, mapId: string);
     setIcon(icon: MarkerIcon): Promise<void>;
     setIconAnchor(x: number, y: number): Promise<void>;
     setZIndex(zIndex: number): Promise<void>;
+    setVisible(isVisible: boolean): Promise<void>;
+    getPosition(): Promise<LatLng>;
 }
 /**
  * The callback function to be called when map events are emitted.

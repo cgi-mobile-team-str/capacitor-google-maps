@@ -930,6 +930,38 @@ class CapacitorGoogleMap(
         }
     }
 
+    fun setMarkerVisibility(
+        markerId: String,
+        isVisible: Boolean,
+        callback: (error: GoogleMapsError?) -> Unit
+    ) {
+        try {
+            googleMap ?: throw GoogleMapNotAvailable()
+            val marker = markers[markerId]
+            marker ?: throw MarkerNotFoundError()
+            CoroutineScope(Dispatchers.Main).launch {
+                marker.isVisible = isVisible
+                marker.googleMapMarker?.isVisible = isVisible
+                callback(null)
+            }
+        } catch (e: GoogleMapsError) {
+            callback(e)
+        }
+    }
+
+    fun getMarkerPosition(markerId: String, callback: (position: LatLng?, error: GoogleMapsError?) -> Unit
+    ) {
+        try {
+            googleMap ?: throw GoogleMapNotAvailable()
+            val marker = markers[markerId]
+            marker ?: throw MarkerNotFoundError()
+            CoroutineScope(Dispatchers.Main).launch {
+                callback(marker.googleMapMarker?.position, null)
+            }
+        } catch (e: GoogleMapsError) {
+            callback(null, e)
+        }
+    }
     // END MARKER METHODS
 
     private fun getMapTypeInt(mapType: String): Int {

@@ -62,8 +62,15 @@ export class MarkerClass {
         this.tintColor = obj.tintColor;
         this.draggable = obj.draggable;
         this.zIndex = obj.zIndex;
+        this.isVisible = obj.isVisible;
     }
     async setIcon(icon) {
+        if (icon.url !== null && icon.url !== undefined) {
+            this.iconUrl = icon.url;
+        }
+        if (icon.size !== null && icon.size !== undefined) {
+            this.iconSize = icon.size;
+        }
         return CapacitorGoogleMaps.setMarkerIcon({
             id: this.mapId,
             markerId: this.id,
@@ -72,10 +79,19 @@ export class MarkerClass {
         });
     }
     async setIconAnchor(x, y) {
+        this.iconAnchor = { x, y };
         return CapacitorGoogleMaps.setMarkerIconAnchor({ id: this.mapId, markerId: this.id, x, y });
     }
     async setZIndex(zIndex) {
+        this.zIndex = zIndex;
         return CapacitorGoogleMaps.setMarkerZIndex({ id: this.mapId, markerId: this.id, zIndex });
+    }
+    async setVisible(isVisible) {
+        this.isVisible = isVisible;
+        return CapacitorGoogleMaps.setMarkerVisibility({ id: this.mapId, markerId: this.id, isVisible });
+    }
+    async getPosition() {
+        return (await CapacitorGoogleMaps.getMarkerPosition({ id: this.mapId, markerId: this.id })).position;
     }
 }
 //# sourceMappingURL=definitions.js.map

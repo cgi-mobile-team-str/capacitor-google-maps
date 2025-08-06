@@ -465,6 +465,7 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
                 res.put("iconAnchor", anchorObj)
                 res.put("draggable", pairIdMarker.second.draggable)
                 res.put("colorHue", pairIdMarker.second.colorHue)
+                res.put("isVisible", pairIdMarker.second.isVisible)
                 call.resolve(res)
             }
         } catch (e: GoogleMapsError) {
@@ -1335,7 +1336,7 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
         }
     }
 
-    // MARKER METHODS
+    // BEGIN MARKER METHODS
 
     @PluginMethod
     fun setMarkerIcon(call: PluginCall) {
@@ -1427,6 +1428,64 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
             handleError(call, e)
         }
     }
+
+    @PluginMethod
+    fun setMarkerVisibility(call: PluginCall) {
+        try {
+            val id = call.getString("id")
+            id ?: throw InvalidMapIdError()
+
+            val markerId = call.getString("markerId")
+            markerId ?: throw InvalidArgumentsError("markerId is invalid or missing")
+
+            val isVisible = call.getBoolean("isVisible")
+            isVisible ?: throw InvalidArgumentsError("isVisible is invalid or missing")
+
+            val map = maps[id]
+            map ?: throw MapNotFoundError()
+
+            map.setMarkerVisibility(markerId, isVisible) { err ->
+                if (err != null) {
+                    throw err
+                }
+                call.resolve()
+            }
+        } catch (e: GoogleMapsError) {
+            handleError(call, e)
+        } catch (e: Exception) {
+            handleError(call, e)
+        }
+    }
+
+
+    @PluginMethod
+    fun getMarkerPosition(call: PluginCall) {
+        try {
+            val id = call.getString("id")
+            id ?: throw InvalidMapIdError()
+
+            val markerId = call.getString("markerId")
+            markerId ?: throw InvalidArgumentsError("markerId is invalid or missing")
+
+            val map = maps[id]
+            map ?: throw MapNotFoundError()
+
+            map.getMarkerPosition(markerId) { position, err ->
+                if (err != null) {
+                    throw err
+                }
+                val data = JSObject()
+                data.put("position", latLngToJSObject(position))
+                call.resolve(data)
+            }
+        } catch (e: GoogleMapsError) {
+            handleError(call, e)
+        } catch (e: Exception) {
+            handleError(call, e)
+        }
+    }
+
+    // END MARKER METHODS
 
     private fun createLatLng(point: JSObject): LatLng {
         return LatLng(

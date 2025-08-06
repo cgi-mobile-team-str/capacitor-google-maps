@@ -139,6 +139,15 @@ export interface MarkerZIndexArgs {
     markerId: string;
     zIndex: number;
 }
+export interface MarkerVisibilityArgs {
+    id: string;
+    markerId: string;
+    isVisible: boolean;
+}
+export interface MarkerPositionArgs {
+    id: string;
+    markerId: string;
+}
 export interface MapBoundsContainsArgs {
     bounds: LatLngBounds;
     point: LatLng;
@@ -269,6 +278,10 @@ export interface CapacitorGoogleMapsPlugin extends Plugin {
     setMarkerIcon(args: MarkerIconArgs): Promise<void>;
     setMarkerIconAnchor(args: MarkerIconAnchorArgs): Promise<void>;
     setMarkerZIndex(args: MarkerZIndexArgs): Promise<void>;
+    setMarkerVisibility(args: MarkerVisibilityArgs): Promise<void>;
+    getMarkerPosition(args: MarkerPositionArgs): Promise<{
+        position: LatLng;
+    }>;
 }
 declare const CapacitorGoogleMaps: CapacitorGoogleMapsPlugin;
 export { CapacitorGoogleMaps };

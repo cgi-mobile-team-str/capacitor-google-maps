@@ -22,6 +22,7 @@ class CapacitorGoogleMapMarker(fromJSONObject: JSONObject): ClusterItem {
     var googleMapMarker: Marker? = null
     var colorHue: Float? = null
     var markerOptions: MarkerOptions? = null
+    var isVisible: Boolean = true
 
     init {
         if (!fromJSONObject.has("coordinate")) {
@@ -38,6 +39,7 @@ class CapacitorGoogleMapMarker(fromJSONObject: JSONObject): ClusterItem {
         opacity = fromJSONObject.optDouble("opacity", 1.0).toFloat()
         snippet = fromJSONObject.optString("snippet")
         isFlat = fromJSONObject.optBoolean("isFlat", false)
+        isVisible = fromJSONObject.optBoolean("isVisible", true)
         iconUrl = fromJSONObject.optString("iconUrl")
         if (fromJSONObject.has("iconSize")) {
             val iconSizeObject = fromJSONObject.getJSONObject("iconSize")

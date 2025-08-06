@@ -1312,6 +1312,13 @@
           "docs": "Specifies the stack order of this marker, relative to other markers on the map.\nA marker with a high z-index is drawn on top of markers with lower z-indexes",
           "complexTypes": [],
           "type": "number | undefined"
+        },
+        {
+          "name": "isVisible",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "boolean | undefined"
         }
       ]
     },

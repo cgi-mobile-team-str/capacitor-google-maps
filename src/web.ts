@@ -3,7 +3,7 @@ import { WebPlugin } from '@capacitor/core';
 import type { Cluster, onClusterClickHandler } from '@googlemaps/markerclusterer';
 import { MarkerClusterer, SuperClusterAlgorithm } from '@googlemaps/markerclusterer';
 
-import type { MapPadding, Marker, VisibleRegion } from './definitions';
+import type { LatLng, MapPadding, Marker, VisibleRegion } from './definitions';
 import { MapType, LatLngBounds } from './definitions';
 import type {
   AddMarkerArgs,
@@ -33,6 +33,8 @@ import type {
   MarkerIconArgs,
   MarkerIconAnchorArgs,
   MarkerZIndexArgs,
+  MarkerPositionArgs,
+  MarkerVisibilityArgs,
 } from './implementation';
 
 export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogleMapsPlugin {
@@ -749,6 +751,14 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
   }
 
   async setMarkerZIndex(_args: MarkerZIndexArgs): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+  
+  async setMarkerVisibility(_args: MarkerVisibilityArgs): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+
+  async getMarkerPosition(_args: MarkerPositionArgs): Promise<{position: LatLng}> {
     throw new Error('Method not implemented.');
   }
 }
