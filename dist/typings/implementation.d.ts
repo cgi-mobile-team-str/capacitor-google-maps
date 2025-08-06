@@ -1,5 +1,5 @@
 import type { Plugin } from '@capacitor/core';
-import type { CameraConfig, Circle, GoogleMapConfig, GoogleMapsOptions, LatLng, LatLngBounds, MapPadding, MapType, Marker, Polygon, Polyline, VisibleRegion } from './definitions';
+import type { CameraConfig, Circle, GoogleMapConfig, GoogleMapsOptions, LatLng, LatLngBounds, MapPadding, MapType, Marker, Polygon, Polyline, Size, VisibleRegion } from './definitions';
 /**
  * An interface containing the options used when creating a map.
  */
@@ -122,6 +122,32 @@ export interface MapOptionsArgs {
     id: string;
     config: GoogleMapsOptions;
 }
+export interface MarkerIconArgs {
+    id: string;
+    markerId: string;
+    url?: string;
+    size?: Size;
+}
+export interface MarkerIconAnchorArgs {
+    id: string;
+    markerId: string;
+    x: number;
+    y: number;
+}
+export interface MarkerZIndexArgs {
+    id: string;
+    markerId: string;
+    zIndex: number;
+}
+export interface MarkerVisibilityArgs {
+    id: string;
+    markerId: string;
+    isVisible: boolean;
+}
+export interface MarkerPositionArgs {
+    id: string;
+    markerId: string;
+}
 export interface MapBoundsContainsArgs {
     bounds: LatLngBounds;
     point: LatLng;
@@ -177,7 +203,7 @@ export interface CapacitorGoogleMapsPlugin extends Plugin {
     disableTouch(args: {
         id: string;
     }): Promise<void>;
-    addMarker(args: AddMarkerArgs): Promise<{
+    addMarker(args: AddMarkerArgs): Promise<Marker & {
         id: string;
     }>;
     addMarkers(args: AddMarkersArgs): Promise<{
@@ -249,6 +275,13 @@ export interface CapacitorGoogleMapsPlugin extends Plugin {
     setMapPreferences(args: SetMapPreferencesArgs): Promise<void>;
     setCameraBearing(args: CameraBearingArgs): Promise<void>;
     setOptions(args: MapOptionsArgs): Promise<void>;
+    setMarkerIcon(args: MarkerIconArgs): Promise<void>;
+    setMarkerIconAnchor(args: MarkerIconAnchorArgs): Promise<void>;
+    setMarkerZIndex(args: MarkerZIndexArgs): Promise<void>;
+    setMarkerVisibility(args: MarkerVisibilityArgs): Promise<void>;
+    getMarkerPosition(args: MarkerPositionArgs): Promise<{
+        position: LatLng;
+    }>;
 }
 declare const CapacitorGoogleMaps: CapacitorGoogleMapsPlugin;
 export { CapacitorGoogleMaps };

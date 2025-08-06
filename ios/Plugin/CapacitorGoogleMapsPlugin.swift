@@ -199,9 +199,8 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
                 throw GoogleMapErrors.mapNotFound
             }
 
-            let markerId = try map.addMarker(marker: marker)
-
-            call.resolve(["id": String(markerId)])
+            let (markerId, addedMarker) = try map.addMarker(marker: marker)
+            call.resolve(formatMarkerForResponse(markerId: markerId, mapId: id, marker: addedMarker))
 
         } catch {
             handleError(call, error: error)
@@ -1187,6 +1186,34 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
         ]
     }
     
+    private func formatMarkerForResponse(markerId: Int, mapId: String, marker: Marker) -> PluginCallResultData {
+        return [
+            "id": String(markerId),
+            "mapId": mapId,
+            "coordinate": [
+                "lat": marker.coordinate.lat,
+                "lng": marker.coordinate.lng
+            ],
+            "opacity": marker.opacity,
+            "title": marker.title,
+            "snippet": marker.snippet,
+            "zIndex": marker.zIndex,
+            "isFlat": marker.isFlat,
+            "iconUrl": marker.iconUrl,
+            "iconSize": [
+                "width": marker.iconSize?.width,
+                "height": marker.iconSize?.height
+            ],
+            "iconAnchor": [
+                "x": marker.iconAnchor?.x,
+                "y": marker.iconAnchor?.y
+            ],
+            "draggable": marker.draggable,
+            "colorHue": marker.color,
+            "isVisible": marker.isVisible
+        ]
+    }
+    
     private func formatMapBoundsForResponse(_ bounds: GMSCoordinateBounds) -> PluginCallResultData {
         let centerLatitude = (bounds.southWest.latitude + bounds.northEast.latitude) / 2.0
         let centerLongitude = (bounds.southWest.longitude + bounds.northEast.longitude) / 2.0
@@ -1414,6 +1441,172 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
             "longitude": location.longitude
         ])
     }
+    
+    // BEGIN MARKER METHODS
+    
+    @objc func setMarkerIcon(_ call: CAPPluginCall) {
+        do {
+            guard let id = call.getString("id") else {
+                throw GoogleMapErrors.invalidMapId
+            }
+
+            guard let markerIdString = call.getString("markerId") else {
+                throw GoogleMapErrors.invalidArguments("markerId is invalid or missing")
+            }
+
+            guard let markerId = Int(markerIdString) else {
+                throw GoogleMapErrors.invalidArguments("markerId is invalid or missing")
+            }
+            
+            let url = call.getString("url")
+            var size: CGSize?
+            
+            if let sizeObj: JSObject = call.getObject("size") {
+                size = CGSize.init(width: sizeObj["width"] as? Double ?? 0, height: sizeObj["height"] as? Double  ?? 0)
+            }
+            
+            guard let map = self.maps[id] else {
+                throw GoogleMapErrors.mapNotFound
+            }
+
+            try map.setMarkerIcon(markerId: markerId, url: url, size: size)
+
+            call.resolve()
+
+        } catch {
+            handleError(call, error: error)
+        }
+    }
+    
+    @objc func setMarkerIconAnchor(_ call: CAPPluginCall) {
+        do {
+            guard let id = call.getString("id") else {
+                throw GoogleMapErrors.invalidMapId
+            }
+
+            guard let markerIdString = call.getString("markerId") else {
+                throw GoogleMapErrors.invalidArguments("markerId is invalid or missing")
+            }
+
+            guard let markerId = Int(markerIdString) else {
+                throw GoogleMapErrors.invalidArguments("markerId is invalid or missing")
+            }
+            
+            guard let x = call.getDouble("x") else {
+                throw GoogleMapErrors.invalidArguments("x is invalid or missing")
+            }
+            
+            guard let y = call.getDouble("y") else {
+                throw GoogleMapErrors.invalidArguments("y is invalid or missing")
+            }
+            
+            guard let map = self.maps[id] else {
+                throw GoogleMapErrors.mapNotFound
+            }
+
+            try map.setMarkerIconAnchor(markerId: markerId, x: x, y: y)
+
+            call.resolve()
+
+        } catch {
+            handleError(call, error: error)
+        }
+    }
+    
+    @objc func setMarkerZIndex(_ call: CAPPluginCall) {
+        do {
+            guard let id = call.getString("id") else {
+                throw GoogleMapErrors.invalidMapId
+            }
+
+            guard let markerIdString = call.getString("markerId") else {
+                throw GoogleMapErrors.invalidArguments("markerId is invalid or missing")
+            }
+
+            guard let markerId = Int(markerIdString) else {
+                throw GoogleMapErrors.invalidArguments("markerId is invalid or missing")
+            }
+            
+            guard let zIndex = call.getInt("zIndex") else {
+                throw GoogleMapErrors.invalidArguments("zIndex is invalid or missing")
+            }
+            
+            guard let map = self.maps[id] else {
+                throw GoogleMapErrors.mapNotFound
+            }
+
+            try map.setMarkerZIndex(markerId: markerId, zIndex: Int32(zIndex))
+
+            call.resolve()
+
+        } catch {
+            handleError(call, error: error)
+        }
+    }
+    
+    @objc func setMarkerVisibility(_ call: CAPPluginCall) {
+        do {
+            guard let id = call.getString("id") else {
+                throw GoogleMapErrors.invalidMapId
+            }
+
+            guard let markerIdString = call.getString("markerId") else {
+                throw GoogleMapErrors.invalidArguments("markerId is invalid or missing")
+            }
+
+            guard let markerId = Int(markerIdString) else {
+                throw GoogleMapErrors.invalidArguments("markerId is invalid or missing")
+            }
+            
+            guard let isVisible = call.getBool("isVisible") else {
+                throw GoogleMapErrors.invalidArguments("isVisible is invalid or missing")
+            }
+            
+            guard let map = self.maps[id] else {
+                throw GoogleMapErrors.mapNotFound
+            }
+
+            try map.setMarkerVisibility(markerId: markerId, isVisible: isVisible)
+
+            call.resolve()
+
+        } catch {
+            handleError(call, error: error)
+        }
+    }
+    
+    @objc func getMarkerPosition(_ call: CAPPluginCall) {
+        do {
+            guard let id = call.getString("id") else {
+                throw GoogleMapErrors.invalidMapId
+            }
+
+            guard let markerIdString = call.getString("markerId") else {
+                throw GoogleMapErrors.invalidArguments("markerId is invalid or missing")
+            }
+
+            guard let markerId = Int(markerIdString) else {
+                throw GoogleMapErrors.invalidArguments("markerId is invalid or missing")
+            }
+            
+            guard let map = self.maps[id] else {
+                throw GoogleMapErrors.mapNotFound
+            }
+
+            let position = try map.getMarkerPosition(markerId: markerId)
+
+            call.resolve([
+                "position": [
+                    "lat": position.lat,
+                    "lng": position.lng
+                ]
+            ])
+        } catch {
+            handleError(call, error: error)
+        }
+    }
+    
+    // END MARKER METHODS
 }
 
 // snippet from https://www.hackingwithswift.com/example-code/uicolor/how-to-convert-a-hex-color-to-a-uicolor

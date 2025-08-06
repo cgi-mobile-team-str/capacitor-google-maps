@@ -13,7 +13,7 @@ class CapacitorGoogleMapMarker(fromJSONObject: JSONObject): ClusterItem {
     var opacity: Float = 1.0f
     private var title: String
     private var snippet: String
-    private var zIndex: Float = 0.0f
+    var zIndex: Float = 0.0f
     var isFlat: Boolean = false
     var iconUrl: String? = null
     var iconSize: Size? = null
@@ -22,6 +22,7 @@ class CapacitorGoogleMapMarker(fromJSONObject: JSONObject): ClusterItem {
     var googleMapMarker: Marker? = null
     var colorHue: Float? = null
     var markerOptions: MarkerOptions? = null
+    var isVisible: Boolean = true
 
     init {
         if (!fromJSONObject.has("coordinate")) {
@@ -38,6 +39,7 @@ class CapacitorGoogleMapMarker(fromJSONObject: JSONObject): ClusterItem {
         opacity = fromJSONObject.optDouble("opacity", 1.0).toFloat()
         snippet = fromJSONObject.optString("snippet")
         isFlat = fromJSONObject.optBoolean("isFlat", false)
+        isVisible = fromJSONObject.optBoolean("isVisible", true)
         iconUrl = fromJSONObject.optString("iconUrl")
         if (fromJSONObject.has("iconSize")) {
             val iconSizeObject = fromJSONObject.getJSONObject("iconSize")
@@ -80,6 +82,15 @@ class CapacitorGoogleMapMarker(fromJSONObject: JSONObject): ClusterItem {
 
     override fun getZIndex(): Float {
         return zIndex
+    }
+
+    fun setIcon(url: String?, size: Size?) {
+        if(url != null) {
+            this.iconUrl = url
+        }
+        if(size != null) {
+            this.iconSize = size
+        }
     }
 
     private fun buildIconAnchorPoint(iconAnchor: CapacitorGoogleMapsPoint): CapacitorGoogleMapsPoint? {

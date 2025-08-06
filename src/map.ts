@@ -1,7 +1,7 @@
 import { Capacitor } from '@capacitor/core';
 import type { PluginListenerHandle } from '@capacitor/core';
 
-import type {
+import {
   CameraConfig,
   Marker,
   MapPadding,
@@ -21,6 +21,7 @@ import type {
   PolylineCallbackData,
   VisibleRegion,
   GoogleMapsOptions,
+  MarkerClass,
 } from './definitions';
 import { LatLngBounds, MapType } from './definitions';
 import type { CreateMapArgs } from './implementation';
@@ -37,7 +38,7 @@ export interface GoogleMapInterface {
     minClusterSize?: number
   ): Promise<void>;
   disableClustering(): Promise<void>;
-  addMarker(marker: Marker): Promise<string>;
+  addMarker(marker: Marker): Promise<MarkerClass>;
   addMarkers(markers: Marker[]): Promise<string[]>;
   removeMarker(id: string): Promise<void>;
   removeMarkers(ids: string[]): Promise<void>;
@@ -354,13 +355,15 @@ export class GoogleMap {
    * @param marker
    * @returns created marker id
    */
-  async addMarker(marker: Marker): Promise<string> {
+  async addMarker(marker: Marker): Promise<MarkerClass> {
     const res = await CapacitorGoogleMaps.addMarker({
       id: this.id,
       marker,
     });
+    
+    const markerObj: MarkerClass = new MarkerClass(res, this.id);
 
-    return res.id;
+    return markerObj;
   }
 
   /**

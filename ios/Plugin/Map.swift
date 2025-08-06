@@ -220,7 +220,7 @@ public class Map {
         }
     }
 
-    func addMarker(marker: Marker) throws -> Int {
+    func addMarker(marker: Marker) throws -> (Int, Marker) {
         var markerHash = 0
 
         DispatchQueue.main.sync {
@@ -233,11 +233,11 @@ public class Map {
             }
 
             self.markers[newMarker.hash.hashValue] = newMarker
-
+            
             markerHash = newMarker.hash.hashValue
         }
 
-        return markerHash
+        return (markerHash, addedMarker: marker)
     }
 
     func addMarkers(markers: [Marker]) throws -> [Int] {
@@ -617,6 +617,84 @@ public class Map {
             
         }
     }
+    
+    // BEGIN MARKER METHODS
+    
+    func setMarkerIcon(markerId: Int?, url: String?, size: CGSize?) throws {
+        guard let markerIndex = markerId, let marker = self.markers[markerIndex] else {
+            throw GoogleMapErrors.markerNotFound
+        }
+
+        DispatchQueue.main.async {
+            guard let urlString = url, !urlString.isEmpty else {
+                marker.icon = nil
+                return
+            }
+
+            let filePath = Bundle.main.path(forResource: "public/\(urlString)", ofType: nil)
+
+            guard let validPath = filePath,
+                  let image = UIImage(contentsOfFile: validPath) else {
+                print("can't load given url")
+                return
+            }
+
+            let finalImage: UIImage
+            if let targetSize = size {
+                finalImage = self.resizeImage(image: image, targetSize: targetSize)
+            } else {
+                finalImage = image
+            }
+
+            marker.icon = finalImage
+        }
+    }
+
+    func setMarkerIconAnchor(markerId: Int, x: Double, y: Double) throws {
+        guard let marker = self.markers[markerId] else {
+            throw GoogleMapErrors.markerNotFound
+        }
+        
+        DispatchQueue.main.sync {
+            marker.groundAnchor = CGPoint(x: x, y: y)
+        }
+    }
+    
+    func setMarkerZIndex(markerId: Int, zIndex: Int32) throws {
+        guard let marker = self.markers[markerId] else {
+            throw GoogleMapErrors.markerNotFound
+        }
+        
+        DispatchQueue.main.sync {
+            marker.zIndex = zIndex
+        }
+    }
+    
+    func setMarkerVisibility(markerId: Int, isVisible: Bool) throws {
+        guard let marker = self.markers[markerId] else {
+            throw GoogleMapErrors.markerNotFound
+        }
+        
+        DispatchQueue.main.sync {
+            marker.map = isVisible ? marker.map : nil
+        }
+    }
+    
+    func getMarkerPosition(markerId: Int) throws -> LatLng {
+        guard let marker = self.markers[markerId] else {
+            throw GoogleMapErrors.markerNotFound
+        }
+        return LatLng(lat: marker.position.latitude, lng: marker.position.longitude)
+    }
+    
+    private func resizeImage(image: UIImage, targetSize: CGSize) -> UIImage {
+        let renderer = UIGraphicsImageRenderer(size: targetSize)
+        return renderer.image { _ in
+            image.draw(in: CGRect(origin: .zero, size: targetSize))
+        }
+    }
+    
+    // END MARKER METHODS
 
     private func setupCameraPosition(config: GoogleMapCameraConfig ) -> GMSCameraPosition {
         let currentCamera = self.mapViewController.GMapView.camera
@@ -767,6 +845,7 @@ public class Map {
         newMarker.opacity = marker.opacity ?? 1
         newMarker.isDraggable = marker.draggable ?? false
         newMarker.zIndex = marker.zIndex
+        newMarker.map = marker.isVisible != false ? newMarker.map : nil
         if let iconAnchor = marker.iconAnchor {
             newMarker.groundAnchor = iconAnchor
         }

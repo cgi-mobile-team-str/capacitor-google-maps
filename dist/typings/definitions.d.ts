@@ -344,6 +344,41 @@ export interface Marker {
      * @default 0
      */
     zIndex?: number;
+    isVisible?: boolean;
+}
+export interface MarkerIcon {
+    url?: string;
+    size?: Size;
+}
+export declare class MarkerClass implements Marker {
+    mapId: string;
+    id: string;
+    coordinate: LatLng;
+    opacity?: number | undefined;
+    title?: string | undefined;
+    snippet?: string | undefined;
+    isFlat?: boolean | undefined;
+    iconUrl?: string | undefined;
+    iconSize?: Size | undefined;
+    iconOrigin?: Point | undefined;
+    iconAnchor?: Point | undefined;
+    tintColor?: {
+        r: number;
+        g: number;
+        b: number;
+        a: number;
+    } | undefined;
+    draggable?: boolean | undefined;
+    zIndex?: number | undefined;
+    isVisible?: boolean | undefined;
+    constructor(obj: Marker & {
+        id: string;
+    }, mapId: string);
+    setIcon(icon: MarkerIcon): Promise<void>;
+    setIconAnchor(x: number, y: number): Promise<void>;
+    setZIndex(zIndex: number): Promise<void>;
+    setVisible(isVisible: boolean): Promise<void>;
+    getPosition(): Promise<LatLng>;
 }
 /**
  * The callback function to be called when map events are emitted.

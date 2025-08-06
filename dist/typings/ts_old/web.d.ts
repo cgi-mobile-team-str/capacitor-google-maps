@@ -1,7 +1,7 @@
 import { WebPlugin } from '@capacitor/core';
-import { MapPadding, VisibleRegion } from './definitions';
+import { LatLng, MapPadding, Marker, VisibleRegion } from './definitions';
 import { LatLngBounds } from './definitions';
-import { AddMarkerArgs, CameraArgs, AddMarkersArgs, CapacitorGoogleMapsPlugin, CreateMapArgs, CurrentLocArgs, DestroyMapArgs, MapTypeArgs, PaddingArgs, RemoveMarkerArgs, TrafficLayerArgs, RemoveMarkersArgs, MapBoundsContainsArgs, EnableClusteringArgs, FitBoundsArgs, MapBoundsExtendArgs, AddPolygonsArgs, RemovePolygonsArgs, AddCirclesArgs, RemoveCirclesArgs, AddPolylinesArgs, RemovePolylinesArgs, EnableCompassArgs, MapOptionsArgs } from './implementation';
+import { AddMarkerArgs, CameraArgs, AddMarkersArgs, CapacitorGoogleMapsPlugin, CreateMapArgs, CurrentLocArgs, DestroyMapArgs, MapTypeArgs, PaddingArgs, RemoveMarkerArgs, TrafficLayerArgs, RemoveMarkersArgs, MapBoundsContainsArgs, EnableClusteringArgs, FitBoundsArgs, MapBoundsExtendArgs, AddPolygonsArgs, RemovePolygonsArgs, AddCirclesArgs, RemoveCirclesArgs, AddPolylinesArgs, RemovePolylinesArgs, EnableCompassArgs, MapOptionsArgs, MarkerIconArgs, MarkerIconAnchorArgs, MarkerZIndexArgs, MarkerPositionArgs, MarkerVisibilityArgs } from './implementation';
 export declare class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogleMapsPlugin {
     private gMapsRef;
     private AdvancedMarkerElement;
@@ -42,9 +42,6 @@ export declare class CapacitorGoogleMapsWeb extends WebPlugin implements Capacit
     fitBounds(_args: FitBoundsArgs): Promise<void>;
     addMarkers(_args: AddMarkersArgs): Promise<{
         ids: string[];
-    }>;
-    addMarker(_args: AddMarkerArgs): Promise<{
-        id: string;
     }>;
     removeMarkers(_args: RemoveMarkersArgs): Promise<void>;
     removeMarker(_args: RemoveMarkerArgs): Promise<void>;
@@ -118,5 +115,15 @@ export declare class CapacitorGoogleMapsWeb extends WebPlugin implements Capacit
         id: string;
     }): Promise<{
         cameraZoom: number;
+    }>;
+    addMarker(_args: AddMarkerArgs): Promise<Marker & {
+        id: string;
+    }>;
+    setMarkerIcon(_args: MarkerIconArgs): Promise<void>;
+    setMarkerIconAnchor(_args: MarkerIconAnchorArgs): Promise<void>;
+    setMarkerZIndex(_args: MarkerZIndexArgs): Promise<void>;
+    setMarkerVisibility(_args: MarkerVisibilityArgs): Promise<void>;
+    getMarkerPosition(_args: MarkerPositionArgs): Promise<{
+        position: LatLng;
     }>;
 }

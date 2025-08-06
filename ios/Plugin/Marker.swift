@@ -13,6 +13,7 @@ public struct Marker {
     let draggable: Bool?
     let color: UIColor?
     let zIndex: Int32
+    let isVisible: Bool?
 
     init(fromJSObject: JSObject) throws {
         guard let latLngObj = fromJSObject["coordinate"] as? JSObject else {
@@ -64,6 +65,7 @@ public struct Marker {
         self.iconAnchor = iconAnchor
         self.color = tintColor
         self.zIndex = Int32((fromJSObject["zIndex"] as? Int) ?? 0)
+        self.isVisible = fromJSObject["isVisible"] as? Bool ?? true
     }
 }
 

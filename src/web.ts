@@ -3,7 +3,7 @@ import { WebPlugin } from '@capacitor/core';
 import type { Cluster, onClusterClickHandler } from '@googlemaps/markerclusterer';
 import { MarkerClusterer, SuperClusterAlgorithm } from '@googlemaps/markerclusterer';
 
-import type { MapPadding, Marker, VisibleRegion } from './definitions';
+import type { LatLng, MapPadding, Marker, VisibleRegion } from './definitions';
 import { MapType, LatLngBounds } from './definitions';
 import type {
   AddMarkerArgs,
@@ -30,6 +30,11 @@ import type {
   RemovePolylinesArgs,
   EnableCompassArgs,
   MapOptionsArgs,
+  MarkerIconArgs,
+  MarkerIconAnchorArgs,
+  MarkerZIndexArgs,
+  MarkerPositionArgs,
+  MarkerVisibilityArgs,
 } from './implementation';
 
 export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogleMapsPlugin {
@@ -291,19 +296,6 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
     }
 
     return { ids: markerIds };
-  }
-
-  async addMarker(_args: AddMarkerArgs): Promise<{ id: string }> {
-    const advancedMarker = this.buildMarkerOpts(_args.marker, this.maps[_args.id].map);
-
-    const id = '' + this.currMarkerId;
-
-    this.maps[_args.id].markers[id] = advancedMarker;
-    await this.setMarkerListeners(_args.id, id, advancedMarker);
-
-    this.currMarkerId++;
-
-    return { id: id };
   }
 
   async removeMarkers(_args: RemoveMarkersArgs): Promise<void> {
@@ -733,6 +725,40 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
   }
 
   async getCameraZoom(_args: { id: string }): Promise<{ cameraZoom: number }> {
+    throw new Error('Method not implemented.');
+  }
+ 
+  async addMarker(_args: AddMarkerArgs): Promise<Marker & {id:string}> {
+    // const advancedMarker = this.buildMarkerOpts(_args.marker, this.maps[_args.id].map);
+
+    // const id = '' + this.currMarkerId;
+
+    // this.maps[_args.id].markers[id] = advancedMarker;
+    // await this.setMarkerListeners(_args.id, id, advancedMarker);
+
+    // this.currMarkerId++;
+
+    // return { id: id };
+    throw new Error('Method not implemented.');
+  }
+
+  async setMarkerIcon(_args: MarkerIconArgs): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+
+  async setMarkerIconAnchor(_args: MarkerIconAnchorArgs): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+
+  async setMarkerZIndex(_args: MarkerZIndexArgs): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+  
+  async setMarkerVisibility(_args: MarkerVisibilityArgs): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+
+  async getMarkerPosition(_args: MarkerPositionArgs): Promise<{position: LatLng}> {
     throw new Error('Method not implemented.');
   }
 }

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.graphics.*
 import android.location.Location
 import android.util.Log
+import android.util.Size
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +12,6 @@ import android.widget.FrameLayout
 import com.getcapacitor.Bridge
 import com.getcapacitor.JSArray
 import com.getcapacitor.JSObject
-import com.getcapacitor.PluginCall
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.GoogleMap.*
 import com.google.android.gms.maps.model.*
@@ -21,6 +21,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import java.io.InputStream
 import java.net.URL
+import androidx.core.graphics.scale
 
 
 class CapacitorGoogleMap(
@@ -213,7 +214,7 @@ class CapacitorGoogleMap(
         }
     }
 
-    fun addMarker(marker: CapacitorGoogleMapMarker, callback: (result: Result<String>) -> Unit) {
+    fun addMarker(marker: CapacitorGoogleMapMarker, callback: (result: Result<Pair<String, CapacitorGoogleMapMarker>>) -> Unit) {
         try {
             googleMap ?: throw GoogleMapNotAvailable()
 
@@ -238,7 +239,7 @@ class CapacitorGoogleMap(
 
                 markerId = googleMapMarker.id
 
-                callback(Result.success(markerId))
+                callback(Result.success(Pair(markerId, marker)))
             }
         } catch (e: GoogleMapsError) {
             callback(Result.failure(e))
@@ -856,6 +857,113 @@ class CapacitorGoogleMap(
         googleMap?.animateCamera(cameraUpdate)
     }
 
+    // BEGIN MARKER METHODS
+
+    fun setMarkerIcon(
+        markerId: String,
+        url: String?,
+        size: Size?,
+        callback: (error: GoogleMapsError?) -> Unit
+    ) {
+        try {
+            googleMap ?: throw GoogleMapNotAvailable()
+            val marker = markers[markerId]
+            marker ?: throw MarkerNotFoundError()
+            val context = this@CapacitorGoogleMap.delegate.context
+            CoroutineScope(Dispatchers.Main).launch {
+                val finalUrl = url ?: marker.iconUrl
+                marker.setIcon(finalUrl, size)
+                if (finalUrl != null && finalUrl != "") {
+                    val inputStream = context.assets.open("public/$finalUrl")
+                    val originalBitmap = BitmapFactory.decodeStream(inputStream)
+                    val descriptor = if (size != null) {
+                        val scaledBitmap = originalBitmap.scale(size.width, size.height, false)
+                        BitmapDescriptorFactory.fromBitmap(scaledBitmap)
+                    } else {
+                        BitmapDescriptorFactory.fromBitmap(originalBitmap)
+                    }
+                    marker.googleMapMarker?.setIcon(descriptor)
+                }
+                callback(null)
+            }
+        } catch (e: GoogleMapsError) {
+            callback(e)
+        }
+    }
+
+    fun setMarkerIconAnchor(
+        markerId: String,
+        x: Float,
+        y: Float,
+        callback: (error: GoogleMapsError?) -> Unit
+    ) {
+        try {
+            googleMap ?: throw GoogleMapNotAvailable()
+            val marker = markers[markerId]
+            marker ?: throw MarkerNotFoundError()
+            CoroutineScope(Dispatchers.Main).launch {
+                marker.iconAnchor = CapacitorGoogleMapsPoint(x,y)
+                marker.googleMapMarker?.setAnchor(x,y)
+                callback(null)
+            }
+        } catch (e: GoogleMapsError) {
+            callback(e)
+        }
+    }
+
+    fun setMarkerZIndex(
+        markerId: String,
+        zIndex: Float,
+        callback: (error: GoogleMapsError?) -> Unit
+    ) {
+        try {
+            googleMap ?: throw GoogleMapNotAvailable()
+            val marker = markers[markerId]
+            marker ?: throw MarkerNotFoundError()
+            CoroutineScope(Dispatchers.Main).launch {
+                marker.zIndex = zIndex
+                marker.googleMapMarker?.zIndex = zIndex
+                callback(null)
+            }
+        } catch (e: GoogleMapsError) {
+            callback(e)
+        }
+    }
+
+    fun setMarkerVisibility(
+        markerId: String,
+        isVisible: Boolean,
+        callback: (error: GoogleMapsError?) -> Unit
+    ) {
+        try {
+            googleMap ?: throw GoogleMapNotAvailable()
+            val marker = markers[markerId]
+            marker ?: throw MarkerNotFoundError()
+            CoroutineScope(Dispatchers.Main).launch {
+                marker.isVisible = isVisible
+                marker.googleMapMarker?.isVisible = isVisible
+                callback(null)
+            }
+        } catch (e: GoogleMapsError) {
+            callback(e)
+        }
+    }
+
+    fun getMarkerPosition(markerId: String, callback: (position: LatLng?, error: GoogleMapsError?) -> Unit
+    ) {
+        try {
+            googleMap ?: throw GoogleMapNotAvailable()
+            val marker = markers[markerId]
+            marker ?: throw MarkerNotFoundError()
+            CoroutineScope(Dispatchers.Main).launch {
+                callback(marker.googleMapMarker?.position, null)
+            }
+        } catch (e: GoogleMapsError) {
+            callback(null, e)
+        }
+    }
+    // END MARKER METHODS
+
     private fun getMapTypeInt(mapType: String): Int {
         val mapTypeInt: Int =
             when (mapType) {
@@ -1033,6 +1141,7 @@ class CapacitorGoogleMap(
         markerOptions.flat(marker.isFlat)
         markerOptions.draggable(marker.draggable)
         markerOptions.zIndex(marker.zIndex)
+
         if (marker.iconAnchor != null) {
             markerOptions.anchor(marker.iconAnchor!!.x, marker.iconAnchor!!.y)
         }

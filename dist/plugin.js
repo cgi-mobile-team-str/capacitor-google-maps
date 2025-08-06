@@ -61,6 +61,54 @@ var capacitorCapacitorGoogleMaps = (function (exports, core, markerclusterer) {
          */
         MapType["None"] = "None";
     })(exports.MapType || (exports.MapType = {}));
+    class MarkerClass {
+        constructor(obj, mapId) {
+            this.mapId = mapId;
+            this.id = obj.id;
+            this.coordinate = obj.coordinate;
+            this.opacity = obj.opacity;
+            this.title = obj.title;
+            this.snippet = obj.snippet;
+            this.isFlat = obj.isFlat;
+            this.iconUrl = obj.iconUrl;
+            this.iconSize = obj.iconSize;
+            this.iconOrigin = obj.iconOrigin;
+            this.iconAnchor = obj.iconAnchor;
+            this.tintColor = obj.tintColor;
+            this.draggable = obj.draggable;
+            this.zIndex = obj.zIndex;
+            this.isVisible = obj.isVisible;
+        }
+        async setIcon(icon) {
+            if (icon.url !== null && icon.url !== undefined) {
+                this.iconUrl = icon.url;
+            }
+            if (icon.size !== null && icon.size !== undefined) {
+                this.iconSize = icon.size;
+            }
+            return CapacitorGoogleMaps.setMarkerIcon({
+                id: this.mapId,
+                markerId: this.id,
+                url: icon.url,
+                size: icon.size,
+            });
+        }
+        async setIconAnchor(x, y) {
+            this.iconAnchor = { x, y };
+            return CapacitorGoogleMaps.setMarkerIconAnchor({ id: this.mapId, markerId: this.id, x, y });
+        }
+        async setZIndex(zIndex) {
+            this.zIndex = zIndex;
+            return CapacitorGoogleMaps.setMarkerZIndex({ id: this.mapId, markerId: this.id, zIndex });
+        }
+        async setVisible(isVisible) {
+            this.isVisible = isVisible;
+            return CapacitorGoogleMaps.setMarkerVisibility({ id: this.mapId, markerId: this.id, isVisible });
+        }
+        async getPosition() {
+            return (await CapacitorGoogleMaps.getMarkerPosition({ id: this.mapId, markerId: this.id })).position;
+        }
+    }
 
     class MapCustomElement extends HTMLElement {
         constructor() {
@@ -274,7 +322,8 @@ var capacitorCapacitorGoogleMaps = (function (exports, core, markerclusterer) {
                 id: this.id,
                 marker,
             });
-            return res.id;
+            const markerObj = new MarkerClass(res, this.id);
+            return markerObj;
         }
         /**
          * Adds multiple markers to the map
@@ -1169,14 +1218,6 @@ var capacitorCapacitorGoogleMaps = (function (exports, core, markerclusterer) {
             }
             return { ids: markerIds };
         }
-        async addMarker(_args) {
-            const advancedMarker = this.buildMarkerOpts(_args.marker, this.maps[_args.id].map);
-            const id = '' + this.currMarkerId;
-            this.maps[_args.id].markers[id] = advancedMarker;
-            await this.setMarkerListeners(_args.id, id, advancedMarker);
-            this.currMarkerId++;
-            return { id: id };
-        }
         async removeMarkers(_args) {
             const map = this.maps[_args.id];
             for (const id of _args.markerIds) {
@@ -1538,6 +1579,30 @@ var capacitorCapacitorGoogleMaps = (function (exports, core, markerclusterer) {
             throw new Error('Method not implemented.');
         }
         async getCameraZoom(_args) {
+            throw new Error('Method not implemented.');
+        }
+        async addMarker(_args) {
+            // const advancedMarker = this.buildMarkerOpts(_args.marker, this.maps[_args.id].map);
+            // const id = '' + this.currMarkerId;
+            // this.maps[_args.id].markers[id] = advancedMarker;
+            // await this.setMarkerListeners(_args.id, id, advancedMarker);
+            // this.currMarkerId++;
+            // return { id: id };
+            throw new Error('Method not implemented.');
+        }
+        async setMarkerIcon(_args) {
+            throw new Error('Method not implemented.');
+        }
+        async setMarkerIconAnchor(_args) {
+            throw new Error('Method not implemented.');
+        }
+        async setMarkerZIndex(_args) {
+            throw new Error('Method not implemented.');
+        }
+        async setMarkerVisibility(_args) {
+            throw new Error('Method not implemented.');
+        }
+        async getMarkerPosition(_args) {
             throw new Error('Method not implemented.');
         }
     }

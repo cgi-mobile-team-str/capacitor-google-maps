@@ -45,4 +45,9 @@ CAP_PLUGIN(CapacitorGoogleMapsPlugin, "CapacitorGoogleMaps",
    CAP_PLUGIN_METHOD(setCameraBearing, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(getCameraZoom, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(setOptions, CAPPluginReturnPromise);
+   CAP_PLUGIN_METHOD(setMarkerIcon, CAPPluginReturnPromise);
+   CAP_PLUGIN_METHOD(setMarkerIconAnchor, CAPPluginReturnPromise);
+   CAP_PLUGIN_METHOD(setMarkerZIndex, CAPPluginReturnPromise);
+   CAP_PLUGIN_METHOD(setMarkerVisibility, CAPPluginReturnPromise);
+   CAP_PLUGIN_METHOD(getMarkerPosition, CAPPluginReturnPromise);
 )
