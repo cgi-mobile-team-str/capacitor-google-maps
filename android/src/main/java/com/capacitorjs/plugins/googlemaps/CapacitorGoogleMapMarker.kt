@@ -8,11 +8,11 @@ import com.google.maps.android.clustering.ClusterItem
 import org.json.JSONObject
 
 
-class CapacitorGoogleMapMarker(fromJSONObject: JSONObject): ClusterItem {
+class CapacitorGoogleMapMarker(): ClusterItem {
     var coordinate: LatLng = LatLng(0.0, 0.0)
     var opacity: Float = 1.0f
-    private var title: String
-    private var snippet: String
+    private var title: String = ""
+    private var snippet: String = ""
     var zIndex: Float = 0.0f
     var isFlat: Boolean = false
     var iconUrl: String? = null
@@ -24,7 +24,7 @@ class CapacitorGoogleMapMarker(fromJSONObject: JSONObject): ClusterItem {
     var markerOptions: MarkerOptions? = null
     var isVisible: Boolean = true
 
-    init {
+    constructor(fromJSONObject: JSONObject): this() {
         if (!fromJSONObject.has("coordinate")) {
             throw InvalidArgumentsError("Marker object is missing the required 'coordinate' property")
         }
@@ -68,6 +68,25 @@ class CapacitorGoogleMapMarker(fromJSONObject: JSONObject): ClusterItem {
         zIndex = fromJSONObject.optLong("zIndex").toFloat()
     }
 
+    constructor(options: CapacitorMarkerOptions) : this() {
+        coordinate = options.position
+        opacity = options.alpha ?: 1.0f
+        title = options.title ?: ""
+        snippet = options.snippet ?: ""
+        zIndex = options.zIndex ?: 0.0f
+        isFlat = options.flat
+        iconUrl = options.icon?.url
+        iconSize = options.icon?.size
+        val x = options.anchor?.get(0)
+        val y = options.anchor?.get(1)
+        if( x != null && y != null) {
+            val inputAnchorPoint = CapacitorGoogleMapsPoint(x , y)
+            iconAnchor = this.buildIconAnchorPoint(inputAnchorPoint)
+        }
+        draggable = options.draggable
+        isVisible = options.visible
+    }
+
     override fun getPosition(): LatLng {
         return LatLng(coordinate.latitude, coordinate.longitude)
     }
@@ -93,7 +112,7 @@ class CapacitorGoogleMapMarker(fromJSONObject: JSONObject): ClusterItem {
         }
     }
 
-    private fun buildIconAnchorPoint(iconAnchor: CapacitorGoogleMapsPoint): CapacitorGoogleMapsPoint? {
+     private fun buildIconAnchorPoint(iconAnchor: CapacitorGoogleMapsPoint): CapacitorGoogleMapsPoint? {
         iconSize ?: return null
 
         val u: Float = iconAnchor.x / iconSize!!.width

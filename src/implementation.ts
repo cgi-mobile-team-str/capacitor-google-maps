@@ -11,6 +11,7 @@ import type {
   MapPadding,
   MapType,
   Marker,
+  MarkerOption,
   Polygon,
   Polyline,
   Size,
@@ -73,7 +74,7 @@ export interface RemoveMarkersArgs {
 
 export interface AddMarkerArgs {
   id: string;
-  marker: Marker;
+  options: MarkerOption;
 }
 
 export interface AddPolygonsArgs {

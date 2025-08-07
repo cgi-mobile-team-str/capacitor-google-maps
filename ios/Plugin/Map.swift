@@ -220,54 +220,6 @@ public class Map {
         }
     }
 
-    func addMarker(marker: Marker) throws -> (Int, Marker) {
-        var markerHash = 0
-
-        DispatchQueue.main.sync {
-            let newMarker = self.buildMarker(marker: marker)
-
-            if self.mapViewController.clusteringEnabled {
-                self.mapViewController.addMarkersToCluster(markers: [newMarker])
-            } else {
-                newMarker.map = self.mapViewController.GMapView
-            }
-
-            self.markers[newMarker.hash.hashValue] = newMarker
-            
-            markerHash = newMarker.hash.hashValue
-        }
-
-        return (markerHash, addedMarker: marker)
-    }
-
-    func addMarkers(markers: [Marker]) throws -> [Int] {
-        var markerHashes: [Int] = []
-
-        DispatchQueue.main.sync {
-            var googleMapsMarkers: [GMSMarker] = []
-
-            markers.forEach { marker in
-                let newMarker = self.buildMarker(marker: marker)
-
-                if self.mapViewController.clusteringEnabled {
-                    googleMapsMarkers.append(newMarker)
-                } else {
-                    newMarker.map = self.mapViewController.GMapView
-                }
-
-                self.markers[newMarker.hash.hashValue] = newMarker
-
-                markerHashes.append(newMarker.hash.hashValue)
-            }
-
-            if self.mapViewController.clusteringEnabled {
-                self.mapViewController.addMarkersToCluster(markers: googleMapsMarkers)
-            }
-        }
-
-        return markerHashes
-    }
-
     func addPolygons(polygons: [Polygon]) throws -> [Int] {
         var polygonHashes: [Int] = []
 
@@ -620,6 +572,56 @@ public class Map {
     
     // BEGIN MARKER METHODS
     
+    func addMarker(options: MarkerOptions) throws -> (Int, Marker) {
+        var markerHash = 0
+        let marker = Marker(options: options)
+
+        DispatchQueue.main.sync {
+            let newMarker = self.buildMarker(marker: marker)
+
+            if self.mapViewController.clusteringEnabled {
+                self.mapViewController.addMarkersToCluster(markers: [newMarker])
+            } else {
+                newMarker.map = self.mapViewController.GMapView
+            }
+
+            self.markers[newMarker.hash.hashValue] = newMarker
+            
+            markerHash = newMarker.hash.hashValue
+        }
+
+        return (markerHash, addedMarker: marker)
+    }
+
+    //TODO
+    /*func addMarkers(markers: [Marker]) throws -> [Int] {
+        var markerHashes: [Int] = []
+
+        DispatchQueue.main.sync {
+            var googleMapsMarkers: [GMSMarker] = []
+
+            markers.forEach { marker in
+                let newMarker = self.buildMarker(marker: marker)
+
+                if self.mapViewController.clusteringEnabled {
+                    googleMapsMarkers.append(newMarker)
+                } else {
+                    newMarker.map = self.mapViewController.GMapView
+                }
+
+                self.markers[newMarker.hash.hashValue] = newMarker
+
+                markerHashes.append(newMarker.hash.hashValue)
+            }
+
+            if self.mapViewController.clusteringEnabled {
+                self.mapViewController.addMarkersToCluster(markers: googleMapsMarkers)
+            }
+        }
+
+        return markerHashes
+    }*/
+    
     func setMarkerIcon(markerId: Int?, url: String?, size: CGSize?) throws {
         guard let markerIndex = markerId, let marker = self.markers[markerIndex] else {
             throw GoogleMapErrors.markerNotFound
@@ -656,7 +658,11 @@ public class Map {
         }
         
         DispatchQueue.main.sync {
-            marker.groundAnchor = CGPoint(x: x, y: y)
+            if let size = marker.icon?.size {
+                let anchorX = (x / size.width)
+                let anchorY = (y / size.height)
+                marker.groundAnchor = CGPoint(x: anchorX, y: anchorY)
+            }
         }
     }
     

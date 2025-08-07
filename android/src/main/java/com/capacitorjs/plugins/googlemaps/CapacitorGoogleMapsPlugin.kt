@@ -429,95 +429,6 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
     }
 
     @PluginMethod
-    fun addMarker(call: PluginCall) {
-        try {
-            val id = call.getString("id")
-            id ?: throw InvalidMapIdError()
-
-            val markerObj = call.getObject("marker", null)
-            markerObj ?: throw InvalidArgumentsError("marker object is missing")
-
-            val map = maps[id]
-            map ?: throw MapNotFoundError()
-
-            val marker = CapacitorGoogleMapMarker(markerObj)
-            map.addMarker(marker) { result ->
-                val pairIdMarker = result.getOrThrow()
-                val res = JSObject()
-                val sizeObj = JSObject()
-                sizeObj.put("width", pairIdMarker.second.iconSize?.width)
-                sizeObj.put("height", pairIdMarker.second.iconSize?.height)
-
-                val anchorObj = JSObject()
-                anchorObj.put("x", pairIdMarker.second.iconAnchor?.x)
-                anchorObj.put("y", pairIdMarker.second.iconAnchor?.y)
-
-                res.put("id", pairIdMarker.first)
-                res.put("mapId", id)
-                res.put("coordinate",  latLngToJSObject(pairIdMarker.second.coordinate))
-                res.put("opacity", pairIdMarker.second.opacity)
-                res.put("title", pairIdMarker.second.title)
-                res.put("snippet", pairIdMarker.second.snippet)
-                res.put("zIndex", pairIdMarker.second.zIndex)
-                res.put("isFlat", pairIdMarker.second.isFlat)
-                res.put("iconUrl", pairIdMarker.second.iconUrl)
-                res.put("iconSize", sizeObj)
-                res.put("iconAnchor", anchorObj)
-                res.put("draggable", pairIdMarker.second.draggable)
-                res.put("colorHue", pairIdMarker.second.colorHue)
-                res.put("isVisible", pairIdMarker.second.isVisible)
-                call.resolve(res)
-            }
-        } catch (e: GoogleMapsError) {
-            handleError(call, e)
-        } catch (e: Exception) {
-            handleError(call, e)
-        }
-    }
-
-    @PluginMethod
-    fun addMarkers(call: PluginCall) {
-        try {
-            val id = call.getString("id")
-            id ?: throw InvalidMapIdError()
-
-            val markerObjectArray = call.getArray("markers", null)
-            markerObjectArray ?: throw InvalidArgumentsError("markers array is missing")
-
-            if (markerObjectArray.length() == 0) {
-                throw InvalidArgumentsError("markers array requires at least one marker")
-            }
-
-            val map = maps[id]
-            map ?: throw MapNotFoundError()
-
-            val markers: MutableList<CapacitorGoogleMapMarker> = mutableListOf()
-
-            for (i in 0 until markerObjectArray.length()) {
-                val markerObj = markerObjectArray.getJSONObject(i)
-                val marker = CapacitorGoogleMapMarker(markerObj)
-
-                markers.add(marker)
-            }
-
-            map.addMarkers(markers) { result ->
-                val ids = result.getOrThrow()
-
-                val jsonIDs = JSONArray()
-                ids.forEach { jsonIDs.put(it) }
-
-                val res = JSObject()
-                res.put("ids", jsonIDs)
-                call.resolve(res)
-            }
-        } catch (e: GoogleMapsError) {
-            handleError(call, e)
-        } catch (e: Exception) {
-            handleError(call, e)
-        }
-    }
-
-    @PluginMethod
     fun addPolygons(call: PluginCall) {
         try {
             val id = call.getString("id")
@@ -640,7 +551,8 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
         }
     }
 
-    @PluginMethod
+    //TODO
+    /*@PluginMethod
      fun addPolylines(call: PluginCall) {
          try  {
              val id = call.getString("id")
@@ -681,7 +593,7 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
          } catch (e: Exception) {
              handleError(call, e)
          }
-     }
+     }*/
 
     @PluginMethod
     fun removeCircles(call: PluginCall) {
@@ -1337,6 +1249,96 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
     }
 
     // BEGIN MARKER METHODS
+
+    @PluginMethod
+    fun addMarker(call: PluginCall) {
+        try {
+            val id = call.getString("id")
+            id ?: throw InvalidMapIdError()
+
+            val optionsObj = call.getObject("options", null)
+            optionsObj ?: throw InvalidArgumentsError("options object is missing")
+
+            val map = maps[id]
+            map ?: throw MapNotFoundError()
+
+            val options = CapacitorMarkerOptions(optionsObj)
+            map.addMarker(options) { result ->
+                val pairIdMarker = result.getOrThrow()
+                val res = JSObject()
+                val sizeObj = JSObject()
+                sizeObj.put("width", pairIdMarker.second.iconSize?.width)
+                sizeObj.put("height", pairIdMarker.second.iconSize?.height)
+
+                val anchorObj = JSObject()
+                anchorObj.put("x", pairIdMarker.second.iconAnchor?.x)
+                anchorObj.put("y", pairIdMarker.second.iconAnchor?.y)
+
+                res.put("id", pairIdMarker.first)
+                res.put("mapId", id)
+                res.put("coordinate",  latLngToJSObject(pairIdMarker.second.coordinate))
+                res.put("opacity", pairIdMarker.second.opacity)
+                res.put("title", pairIdMarker.second.title)
+                res.put("snippet", pairIdMarker.second.snippet)
+                res.put("zIndex", pairIdMarker.second.zIndex)
+                res.put("isFlat", pairIdMarker.second.isFlat)
+                res.put("iconUrl", pairIdMarker.second.iconUrl)
+                res.put("iconSize", sizeObj)
+                res.put("iconAnchor", anchorObj)
+                res.put("draggable", pairIdMarker.second.draggable)
+                res.put("colorHue", pairIdMarker.second.colorHue)
+                res.put("isVisible", pairIdMarker.second.isVisible)
+                call.resolve(res)
+            }
+        } catch (e: GoogleMapsError) {
+            handleError(call, e)
+        } catch (e: Exception) {
+            handleError(call, e)
+        }
+    }
+
+    //TODO
+    /*@PluginMethod
+     fun addMarkers(call: PluginCall) {
+         try {
+             val id = call.getString("id")
+             id ?: throw InvalidMapIdError()
+
+             val markerObjectArray = call.getArray("markers", null)
+             markerObjectArray ?: throw InvalidArgumentsError("markers array is missing")
+
+             if (markerObjectArray.length() == 0) {
+                 throw InvalidArgumentsError("markers array requires at least one marker")
+             }
+
+             val map = maps[id]
+             map ?: throw MapNotFoundError()
+
+             val markers: MutableList<CapacitorGoogleMapMarker> = mutableListOf()
+
+             for (i in 0 until markerObjectArray.length()) {
+                 val markerObj = markerObjectArray.getJSONObject(i)
+                 val marker = CapacitorGoogleMapMarker(markerObj)
+
+                 markers.add(marker)
+             }
+
+             map.addMarkers(markers) { result ->
+                 val ids = result.getOrThrow()
+
+                 val jsonIDs = JSONArray()
+                 ids.forEach { jsonIDs.put(it) }
+
+                 val res = JSObject()
+                 res.put("ids", jsonIDs)
+                 call.resolve(res)
+             }
+         } catch (e: GoogleMapsError) {
+             handleError(call, e)
+         } catch (e: Exception) {
+             handleError(call, e)
+         }
+     }*/
 
     @PluginMethod
     fun setMarkerIcon(call: PluginCall) {

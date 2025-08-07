@@ -79,12 +79,12 @@
       },
       {
         "name": "addMarker",
-        "signature": "(marker: Marker) => Promise<MarkerClass>",
+        "signature": "(options: MarkerOption) => Promise<MarkerClass>",
         "parameters": [
           {
-            "name": "marker",
+            "name": "options",
             "docs": "",
-            "type": "Marker"
+            "type": "MarkerOption"
           }
         ],
         "returns": "Promise<MarkerClass>",
@@ -92,7 +92,7 @@
         "docs": "",
         "complexTypes": [
           "MarkerClass",
-          "Marker"
+          "MarkerOption"
         ],
         "slug": "addmarker"
       },
@@ -1166,6 +1166,165 @@
       ]
     },
     {
+      "name": "MarkerOption",
+      "slug": "markeroption",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "icon",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [
+            "MarkerIcon"
+          ],
+          "type": "(MarkerIcon & { anchor?: number[] | undefined; }) | undefined"
+        },
+        {
+          "name": "title",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "string | undefined"
+        },
+        {
+          "name": "snippet",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "string | undefined"
+        },
+        {
+          "name": "position",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [
+            "LatLng"
+          ],
+          "type": "LatLng"
+        },
+        {
+          "name": "infoWindowAnchor",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "number[] | undefined"
+        },
+        {
+          "name": "anchor",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "number[] | undefined"
+        },
+        {
+          "name": "draggable",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "flat",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "rotation",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "number | undefined"
+        },
+        {
+          "name": "visible",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "animation",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "string | undefined"
+        },
+        {
+          "name": "zIndex",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "number | undefined"
+        },
+        {
+          "name": "disableAutoPan",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "alpha",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "number | undefined"
+        }
+      ]
+    },
+    {
+      "name": "MarkerIcon",
+      "slug": "markericon",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "url",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "string | undefined"
+        },
+        {
+          "name": "size",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [
+            "Size"
+          ],
+          "type": "Size"
+        }
+      ]
+    },
+    {
+      "name": "Size",
+      "slug": "size",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "width",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "number"
+        },
+        {
+          "name": "height",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "number"
+        }
+      ]
+    },
+    {
       "name": "Marker",
       "slug": "marker",
       "docs": "A marker is an icon placed at a particular point on the map's surface.",
@@ -1319,29 +1478,6 @@
           "docs": "",
           "complexTypes": [],
           "type": "boolean | undefined"
-        }
-      ]
-    },
-    {
-      "name": "Size",
-      "slug": "size",
-      "docs": "",
-      "tags": [],
-      "methods": [],
-      "properties": [
-        {
-          "name": "width",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "number"
-        },
-        {
-          "name": "height",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "number"
         }
       ]
     },

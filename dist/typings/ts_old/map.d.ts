@@ -1,4 +1,4 @@
-import { CameraConfig, Marker, MapPadding, MapListenerCallback, MapReadyCallbackData, CameraIdleCallbackData, CameraMoveStartedCallbackData, ClusterClickCallbackData, MapClickCallbackData, MarkerClickCallbackData, MyLocationButtonClickCallbackData, Polygon, PolygonClickCallbackData, Circle, CircleClickCallbackData, Polyline, PolylineCallbackData, VisibleRegion, GoogleMapsOptions, MarkerClass } from './definitions';
+import { CameraConfig, Marker, MapPadding, MapListenerCallback, MapReadyCallbackData, CameraIdleCallbackData, CameraMoveStartedCallbackData, ClusterClickCallbackData, MapClickCallbackData, MarkerClickCallbackData, MyLocationButtonClickCallbackData, Polygon, PolygonClickCallbackData, Circle, CircleClickCallbackData, Polyline, PolylineCallbackData, VisibleRegion, GoogleMapsOptions, MarkerClass, MarkerOption } from './definitions';
 import { LatLngBounds, MapType } from './definitions';
 import { CreateMapArgs } from './implementation';
 export interface GoogleMapInterface {
@@ -11,7 +11,7 @@ export interface GoogleMapInterface {
      */
     minClusterSize?: number): Promise<void>;
     disableClustering(): Promise<void>;
-    addMarker(marker: Marker): Promise<MarkerClass>;
+    addMarker(options: MarkerOption): Promise<MarkerClass>;
     addMarkers(markers: Marker[]): Promise<string[]>;
     removeMarker(id: string): Promise<void>;
     removeMarkers(ids: string[]): Promise<void>;
@@ -136,7 +136,7 @@ export declare class GoogleMap {
      * @param marker
      * @returns created marker id
      */
-    addMarker(marker: Marker): Promise<MarkerClass>;
+    addMarker(options: MarkerOption): Promise<MarkerClass>;
     /**
      * Adds multiple markers to the map
      *
