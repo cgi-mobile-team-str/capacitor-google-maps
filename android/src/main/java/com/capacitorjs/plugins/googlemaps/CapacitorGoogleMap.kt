@@ -175,7 +175,8 @@ class CapacitorGoogleMap(
         }
     }
 
-    fun addMarkers(
+    //TODO
+    /*fun addMarkers(
             newMarkers: List<CapacitorGoogleMapMarker>,
             callback: (ids: Result<List<String>>) -> Unit
     ) {
@@ -212,19 +213,21 @@ class CapacitorGoogleMap(
         } catch (e: GoogleMapsError) {
             callback(Result.failure(e))
         }
-    }
+    }*/
 
-    fun addMarker(marker: CapacitorGoogleMapMarker, callback: (result: Result<Pair<String, CapacitorGoogleMapMarker>>) -> Unit) {
+    fun addMarker(options: CapacitorMarkerOptions, callback: (result: Result<Pair<String, CapacitorGoogleMapMarker>>) -> Unit) {
         try {
             googleMap ?: throw GoogleMapNotAvailable()
 
             var markerId: String
 
             CoroutineScope(Dispatchers.Main).launch {
+                val marker = CapacitorGoogleMapMarker(options)
+
                 val markerOptions: Deferred<MarkerOptions> =
-                        CoroutineScope(Dispatchers.IO).async {
-                            this@CapacitorGoogleMap.buildMarker(marker)
-                        }
+                    CoroutineScope(Dispatchers.IO).async {
+                        this@CapacitorGoogleMap.buildMarker(marker)
+                    }
                 val googleMapMarker = googleMap?.addMarker(markerOptions.await())
 
                 marker.googleMapMarker = googleMapMarker
@@ -901,9 +904,11 @@ class CapacitorGoogleMap(
             googleMap ?: throw GoogleMapNotAvailable()
             val marker = markers[markerId]
             marker ?: throw MarkerNotFoundError()
+            var anchorX = (x / marker.iconSize!!.width)
+            var anchorY = (y / marker.iconSize!!.height)
             CoroutineScope(Dispatchers.Main).launch {
-                marker.iconAnchor = CapacitorGoogleMapsPoint(x,y)
-                marker.googleMapMarker?.setAnchor(x,y)
+                marker.iconAnchor = CapacitorGoogleMapsPoint(anchorX ,anchorY)
+                marker.googleMapMarker?.setAnchor(anchorX,anchorY)
                 callback(null)
             }
         } catch (e: GoogleMapsError) {
@@ -963,6 +968,32 @@ class CapacitorGoogleMap(
         }
     }
     // END MARKER METHODS
+
+    // BEGIN POLYLINE METHODS
+
+    fun addPolyline(polyline: CapacitorGoogleMapPolyline, callback: (polyline: Result<Pair<String, Polyline>>) -> Unit) {
+        try {
+            googleMap ?: throw GoogleMapNotAvailable()
+
+            CoroutineScope(Dispatchers.Main).launch {
+                val polylineOptions: Deferred<PolylineOptions> = CoroutineScope(Dispatchers.IO).async {
+                    this@CapacitorGoogleMap.buildPolyline(polyline)
+                }
+                val googleMapPolyline = googleMap?.addPolyline(polylineOptions.await())
+                googleMapPolyline?.tag = polyline.tag
+
+                polyline.googleMapsPolyline = googleMapPolyline
+
+                polylines[googleMapPolyline!!.id] = polyline
+
+                callback(Result.success(Pair(googleMapPolyline.id, googleMapPolyline)))
+            }
+        } catch (e: GoogleMapsError) {
+            callback(Result.failure(e))
+        }
+    }
+
+    // END POLYLINE METHODS
 
     private fun getMapTypeInt(mapType: String): Int {
         val mapTypeInt: Int =

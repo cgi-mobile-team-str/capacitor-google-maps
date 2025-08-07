@@ -1,5 +1,5 @@
 import type { Plugin } from '@capacitor/core';
-import type { CameraConfig, Circle, GoogleMapConfig, GoogleMapsOptions, LatLng, LatLngBounds, MapPadding, MapType, Marker, Polygon, Polyline, Size, VisibleRegion } from './definitions';
+import type { CameraConfig, Circle, GoogleMapConfig, GoogleMapsOptions, LatLng, LatLngBounds, MapPadding, MapType, Marker, MarkerOption, Polygon, Polyline, Size, VisibleRegion } from './definitions';
 /**
  * An interface containing the options used when creating a map.
  */
@@ -51,7 +51,7 @@ export interface RemoveMarkersArgs {
 }
 export interface AddMarkerArgs {
     id: string;
-    marker: Marker;
+    options: MarkerOption;
 }
 export interface AddPolygonsArgs {
     id: string;

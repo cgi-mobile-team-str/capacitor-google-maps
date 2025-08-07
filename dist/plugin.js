@@ -317,10 +317,10 @@ var capacitorCapacitorGoogleMaps = (function (exports, core, markerclusterer) {
          * @param marker
          * @returns created marker id
          */
-        async addMarker(marker) {
+        async addMarker(options) {
             const res = await CapacitorGoogleMaps.addMarker({
                 id: this.id,
-                marker,
+                options,
             });
             const markerObj = new MarkerClass(res, this.id);
             return markerObj;

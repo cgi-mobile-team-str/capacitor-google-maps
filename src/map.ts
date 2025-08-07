@@ -22,6 +22,7 @@ import {
   VisibleRegion,
   GoogleMapsOptions,
   MarkerClass,
+  MarkerOption,
 } from './definitions';
 import { LatLngBounds, MapType } from './definitions';
 import type { CreateMapArgs } from './implementation';
@@ -38,7 +39,7 @@ export interface GoogleMapInterface {
     minClusterSize?: number
   ): Promise<void>;
   disableClustering(): Promise<void>;
-  addMarker(marker: Marker): Promise<MarkerClass>;
+  addMarker(options: MarkerOption): Promise<MarkerClass>;
   addMarkers(markers: Marker[]): Promise<string[]>;
   removeMarker(id: string): Promise<void>;
   removeMarkers(ids: string[]): Promise<void>;
@@ -355,10 +356,10 @@ export class GoogleMap {
    * @param marker
    * @returns created marker id
    */
-  async addMarker(marker: Marker): Promise<MarkerClass> {
+  async addMarker(options: MarkerOption): Promise<MarkerClass> {
     const res = await CapacitorGoogleMaps.addMarker({
       id: this.id,
-      marker,
+      options,
     });
     
     const markerObj: MarkerClass = new MarkerClass(res, this.id);

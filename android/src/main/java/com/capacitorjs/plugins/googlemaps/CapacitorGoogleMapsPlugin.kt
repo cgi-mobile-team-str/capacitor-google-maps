@@ -434,14 +434,14 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
             val id = call.getString("id")
             id ?: throw InvalidMapIdError()
 
-            val markerObj = call.getObject("marker", null)
-            markerObj ?: throw InvalidArgumentsError("marker object is missing")
+            val optionsObj = call.getObject("options", null)
+            optionsObj ?: throw InvalidArgumentsError("options object is missing")
 
             val map = maps[id]
             map ?: throw MapNotFoundError()
 
-            val marker = CapacitorGoogleMapMarker(markerObj)
-            map.addMarker(marker) { result ->
+            val options = CapacitorMarkerOptions(optionsObj)
+            map.addMarker(options) { result ->
                 val pairIdMarker = result.getOrThrow()
                 val res = JSObject()
                 val sizeObj = JSObject()
@@ -475,7 +475,8 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
         }
     }
 
-    @PluginMethod
+    //TODO
+   /*@PluginMethod
     fun addMarkers(call: PluginCall) {
         try {
             val id = call.getString("id")
@@ -515,7 +516,7 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
         } catch (e: Exception) {
             handleError(call, e)
         }
-    }
+    }*/
 
     @PluginMethod
     fun addPolygons(call: PluginCall) {

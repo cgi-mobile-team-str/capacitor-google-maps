@@ -389,6 +389,23 @@ export interface Marker {
   isVisible?: boolean;
 }
 
+export interface MarkerOption {
+  icon?: MarkerIcon & {anchor?: number[]}
+  title?: string
+  snippet?: string
+  position: LatLng
+  infoWindowAnchor?: number[]
+  anchor?: number[]
+  draggable?: boolean
+  flat?: boolean
+  rotation?: number
+  visible?: boolean
+  animation?: string
+  zIndex?: number
+  disableAutoPan?: boolean
+  alpha?: number
+}
+
 export interface MarkerIcon {
   url?: string;
   size?: Size;

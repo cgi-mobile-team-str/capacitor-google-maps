@@ -417,12 +417,12 @@ disableClustering() => Promise<void>
 ### addMarker(...)
 
 ```typescript
-addMarker(marker: Marker) => Promise<MarkerClass>
+addMarker(options: MarkerOption) => Promise<MarkerClass>
 ```
 
-| Param        | Type                                      |
-| ------------ | ----------------------------------------- |
-| **`marker`** | <code><a href="#marker">Marker</a></code> |
+| Param         | Type                                                  |
+| ------------- | ----------------------------------------------------- |
+| **`options`** | <code><a href="#markeroption">MarkerOption</a></code> |
 
 **Returns:** <code>Promise&lt;MarkerClass&gt;</code>
 
@@ -1114,6 +1114,42 @@ An interface representing a pair of latitude and longitude coordinates.
 | **`mapId`** | <code>string</code> |
 
 
+#### MarkerOption
+
+| Prop                   | Type                                                                         |
+| ---------------------- | ---------------------------------------------------------------------------- |
+| **`icon`**             | <code>(<a href="#markericon">MarkerIcon</a> & { anchor?: number[]; })</code> |
+| **`title`**            | <code>string</code>                                                          |
+| **`snippet`**          | <code>string</code>                                                          |
+| **`position`**         | <code><a href="#latlng">LatLng</a></code>                                    |
+| **`infoWindowAnchor`** | <code>number[]</code>                                                        |
+| **`anchor`**           | <code>number[]</code>                                                        |
+| **`draggable`**        | <code>boolean</code>                                                         |
+| **`flat`**             | <code>boolean</code>                                                         |
+| **`rotation`**         | <code>number</code>                                                          |
+| **`visible`**          | <code>boolean</code>                                                         |
+| **`animation`**        | <code>string</code>                                                          |
+| **`zIndex`**           | <code>number</code>                                                          |
+| **`disableAutoPan`**   | <code>boolean</code>                                                         |
+| **`alpha`**            | <code>number</code>                                                          |
+
+
+#### MarkerIcon
+
+| Prop       | Type                                  |
+| ---------- | ------------------------------------- |
+| **`url`**  | <code>string</code>                   |
+| **`size`** | <code><a href="#size">Size</a></code> |
+
+
+#### Size
+
+| Prop         | Type                |
+| ------------ | ------------------- |
+| **`width`**  | <code>number</code> |
+| **`height`** | <code>number</code> |
+
+
 #### Marker
 
 A marker is an icon placed at a particular point on the map's surface.
@@ -1133,14 +1169,6 @@ A marker is an icon placed at a particular point on the map's surface.
 | **`draggable`**  | <code>boolean</code>                                         | Controls whether this marker can be dragged interactively                                                                                                                                 | <code>false</code> |       |
 | **`zIndex`**     | <code>number</code>                                          | Specifies the stack order of this marker, relative to other markers on the map. A marker with a high z-index is drawn on top of markers with lower z-indexes                              | <code>0</code>     |       |
 | **`isVisible`**  | <code>boolean</code>                                         |                                                                                                                                                                                           |                    |       |
-
-
-#### Size
-
-| Prop         | Type                |
-| ------------ | ------------------- |
-| **`width`**  | <code>number</code> |
-| **`height`** | <code>number</code> |
 
 
 #### Point
