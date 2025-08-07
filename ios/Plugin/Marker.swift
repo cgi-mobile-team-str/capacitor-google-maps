@@ -67,6 +67,26 @@ public struct Marker {
         self.zIndex = Int32((fromJSObject["zIndex"] as? Int) ?? 0)
         self.isVisible = fromJSObject["isVisible"] as? Bool ?? true
     }
+    
+    init (options:MarkerOptions) {
+        var iconAnchor: CGPoint?
+        self.coordinate = options.position
+        self.opacity = options.alpha ?? 1
+        self.title = options.title ?? ""
+        self.snippet = options.snippet ?? ""
+        self.zIndex = Int32(options.zIndex ?? 0)
+        self.isFlat = options.flat ?? false
+        self.iconUrl = options.icon?.url
+        self.iconSize = options.icon?.size
+        if let x = options.anchor?[0] as? Double, let y = options.anchor?[1] as? Double {
+            iconAnchor = CGPoint(x: x, y: y)
+        }
+        self.iconAnchor = iconAnchor
+        self.draggable = options.draggable ?? false
+        self.isVisible = options.visible ?? true
+        self.color = nil
+    }
+    
 }
 
 extension CGFloat {

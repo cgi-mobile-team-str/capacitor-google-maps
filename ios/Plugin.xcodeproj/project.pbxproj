@@ -29,6 +29,8 @@
 		9B66AC492E3CF81D004CC9EA /* GoogleMapGestures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B66AC482E3CF818004CC9EA /* GoogleMapGestures.swift */; };
 		9B66AC4B2E3CF82C004CC9EA /* GoogleMapsPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B66AC4A2E3CF826004CC9EA /* GoogleMapsPreferences.swift */; };
 		9B66AC4D2E3CFA08004CC9EA /* GoogleMapZoomOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B66AC4C2E3CFA06004CC9EA /* GoogleMapZoomOptions.swift */; };
+		9BCA366C2E44FA6D003B6112 /* MarkerOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BCA366B2E44FA57003B6112 /* MarkerOptions.swift */; };
+		9BCA366E2E44FA7B003B6112 /* MarkerIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BCA366D2E44FA77003B6112 /* MarkerIcon.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -69,6 +71,8 @@
 		9B66AC482E3CF818004CC9EA /* GoogleMapGestures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleMapGestures.swift; sourceTree = "<group>"; };
 		9B66AC4A2E3CF826004CC9EA /* GoogleMapsPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleMapsPreferences.swift; sourceTree = "<group>"; };
 		9B66AC4C2E3CFA06004CC9EA /* GoogleMapZoomOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleMapZoomOptions.swift; sourceTree = "<group>"; };
+		9BCA366B2E44FA57003B6112 /* MarkerOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkerOptions.swift; sourceTree = "<group>"; };
+		9BCA366D2E44FA77003B6112 /* MarkerIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkerIcon.swift; sourceTree = "<group>"; };
 		F65BB2953ECE002E1EF3E424 /* Pods-PluginTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PluginTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-PluginTests/Pods-PluginTests.release.xcconfig"; sourceTree = "<group>"; };
 		F6753A823D3815DB436415E3 /* Pods_PluginTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PluginTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -118,6 +122,8 @@
 		50ADFF8A201F53D600D50D53 /* Plugin */ = {
 			isa = PBXGroup;
 			children = (
+				9BCA366D2E44FA77003B6112 /* MarkerIcon.swift */,
+				9BCA366B2E44FA57003B6112 /* MarkerOptions.swift */,
 				9B66AC4C2E3CFA06004CC9EA /* GoogleMapZoomOptions.swift */,
 				9B66AC4A2E3CF826004CC9EA /* GoogleMapsPreferences.swift */,
 				9B66AC482E3CF818004CC9EA /* GoogleMapGestures.swift */,
@@ -389,6 +395,7 @@
 				02404C8D279F408800CEF8C8 /* GoogleMapErrors.swift in Sources */,
 				50E1A94820377CB70090CE1A /* CapacitorGoogleMapsPlugin.swift in Sources */,
 				0238AED727C931A40012930B /* GoogleMapCameraConfig.swift in Sources */,
+				9BCA366E2E44FA7B003B6112 /* MarkerIcon.swift in Sources */,
 				0238AED927C945840012930B /* GoogleMapPadding.swift in Sources */,
 				02404C8F279F43E900CEF8C8 /* GoogleMapConfig.swift in Sources */,
 				02B55EAE29EA0CF000493664 /* Circle.swift in Sources */,
@@ -398,6 +405,7 @@
 				50ADFFA82020EE4F00D50D53 /* CapacitorGoogleMapsPlugin.m in Sources */,
 				02C012C327A9D20200FAAE78 /* Marker.swift in Sources */,
 				9B66AC4B2E3CF82C004CC9EA /* GoogleMapsPreferences.swift in Sources */,
+				9BCA366C2E44FA6D003B6112 /* MarkerOptions.swift in Sources */,
 				9B66AC492E3CF81D004CC9EA /* GoogleMapGestures.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

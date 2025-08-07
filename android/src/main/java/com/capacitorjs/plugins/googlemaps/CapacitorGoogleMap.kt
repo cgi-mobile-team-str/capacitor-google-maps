@@ -175,80 +175,6 @@ class CapacitorGoogleMap(
         }
     }
 
-    //TODO
-    /*fun addMarkers(
-            newMarkers: List<CapacitorGoogleMapMarker>,
-            callback: (ids: Result<List<String>>) -> Unit
-    ) {
-        try {
-            googleMap ?: throw GoogleMapNotAvailable()
-            val markerIds: MutableList<String> = mutableListOf()
-
-            CoroutineScope(Dispatchers.Main).launch {
-                newMarkers.forEach {
-                    val markerOptions: Deferred<MarkerOptions> =
-                            CoroutineScope(Dispatchers.IO).async {
-                                this@CapacitorGoogleMap.buildMarker(it)
-                            }
-                    val googleMapMarker = googleMap?.addMarker(markerOptions.await())
-                    it.googleMapMarker = googleMapMarker
-
-                    if (googleMapMarker != null) {
-                        if (clusterManager != null) {
-                            googleMapMarker.remove()
-                        }
-
-                        markers[googleMapMarker.id] = it
-                        markerIds.add(googleMapMarker.id)
-                    }
-                }
-
-                if (clusterManager != null) {
-                    clusterManager?.addItems(newMarkers)
-                    clusterManager?.cluster()
-                }
-
-                callback(Result.success(markerIds))
-            }
-        } catch (e: GoogleMapsError) {
-            callback(Result.failure(e))
-        }
-    }*/
-
-    fun addMarker(options: CapacitorMarkerOptions, callback: (result: Result<Pair<String, CapacitorGoogleMapMarker>>) -> Unit) {
-        try {
-            googleMap ?: throw GoogleMapNotAvailable()
-
-            var markerId: String
-
-            CoroutineScope(Dispatchers.Main).launch {
-                val marker = CapacitorGoogleMapMarker(options)
-
-                val markerOptions: Deferred<MarkerOptions> =
-                    CoroutineScope(Dispatchers.IO).async {
-                        this@CapacitorGoogleMap.buildMarker(marker)
-                    }
-                val googleMapMarker = googleMap?.addMarker(markerOptions.await())
-
-                marker.googleMapMarker = googleMapMarker
-
-                if (clusterManager != null) {
-                    googleMapMarker?.remove()
-                    clusterManager?.addItem(marker)
-                    clusterManager?.cluster()
-                }
-
-                markers[googleMapMarker!!.id] = marker
-
-                markerId = googleMapMarker.id
-
-                callback(Result.success(Pair(markerId, marker)))
-            }
-        } catch (e: GoogleMapsError) {
-            callback(Result.failure(e))
-        }
-    }
-
     fun getVisibleRegion(callback: (region: VisibleRegion?, error: GoogleMapsError?) -> Unit) {
         try {
             googleMap ?: throw GoogleMapNotAvailable()
@@ -405,32 +331,6 @@ class CapacitorGoogleMap(
                 }
 
                 callback(Result.success(circleIds))
-            }
-        } catch (e: GoogleMapsError) {
-            callback(Result.failure(e))
-        }
-    }
-
-    fun addPolylines(newLines: List<CapacitorGoogleMapPolyline>, callback: (ids: Result<List<String>>) -> Unit) {
-        try {
-            googleMap ?: throw GoogleMapNotAvailable()
-            val lineIds: MutableList<String> = mutableListOf()
-
-            CoroutineScope(Dispatchers.Main).launch {
-                newLines.forEach {
-                    val polylineOptions: Deferred<PolylineOptions> = CoroutineScope(Dispatchers.IO).async {
-                        this@CapacitorGoogleMap.buildPolyline(it)
-                    }
-                    val googleMapPolyline = googleMap?.addPolyline(polylineOptions.await())
-                    googleMapPolyline?.tag = it.tag
-                    
-                    it.googleMapsPolyline = googleMapPolyline
-
-                    polylines[googleMapPolyline!!.id] = it
-                    lineIds.add(googleMapPolyline.id)
-                }
-
-                callback(Result.success(lineIds))
             }
         } catch (e: GoogleMapsError) {
             callback(Result.failure(e))
@@ -862,6 +762,81 @@ class CapacitorGoogleMap(
 
     // BEGIN MARKER METHODS
 
+    //TODO
+    /*fun addMarkers(
+            optionsList: List<CapacitorMarkerOptions>,
+            callback: (ids: Result<List<Pair<String, CapacitorGoogleMapMarker>>>) -> Unit
+    ) {
+        try {
+            googleMap ?: throw GoogleMapNotAvailable()
+            val markerIds: MutableList<String> = mutableListOf()
+
+            CoroutineScope(Dispatchers.Main).launch {
+                optionsList.forEach {
+                    val marker = CapacitorGoogleMapMarker(it)
+                    val markerOptions: Deferred<MarkerOptions> =
+                            CoroutineScope(Dispatchers.IO).async {
+                                this@CapacitorGoogleMap.buildMarker(marker)
+                            }
+                    val googleMapMarker = googleMap?.addMarker(markerOptions.await())
+                    marker.googleMapMarker = googleMapMarker
+
+                    if (googleMapMarker != null) {
+                        if (clusterManager != null) {
+                            googleMapMarker.remove()
+                        }
+
+                        markers[googleMapMarker.id] = marker
+                        markerIds.add(googleMapMarker.id)
+                    }
+                }
+
+                if (clusterManager != null) {
+                    clusterManager?.addItems(optionsList)
+                    clusterManager?.cluster()
+                }
+
+                callback(Result.success(markerIds))
+            }
+        } catch (e: GoogleMapsError) {
+            callback(Result.failure(e))
+        }
+    }*/
+
+    fun addMarker(options: CapacitorMarkerOptions, callback: (result: Result<Pair<String, CapacitorGoogleMapMarker>>) -> Unit) {
+        try {
+            googleMap ?: throw GoogleMapNotAvailable()
+
+            var markerId: String
+
+            CoroutineScope(Dispatchers.Main).launch {
+                val marker = CapacitorGoogleMapMarker(options)
+
+                val markerOptions: Deferred<MarkerOptions> =
+                    CoroutineScope(Dispatchers.IO).async {
+                        this@CapacitorGoogleMap.buildMarker(marker)
+                    }
+                val googleMapMarker = googleMap?.addMarker(markerOptions.await())
+
+                marker.googleMapMarker = googleMapMarker
+
+                if (clusterManager != null) {
+                    googleMapMarker?.remove()
+                    clusterManager?.addItem(marker)
+                    clusterManager?.cluster()
+                }
+
+                markers[googleMapMarker!!.id] = marker
+
+                markerId = googleMapMarker.id
+
+                callback(Result.success(Pair(markerId, marker)))
+            }
+        } catch (e: GoogleMapsError) {
+            callback(Result.failure(e))
+        }
+    }
+
     fun setMarkerIcon(
         markerId: String,
         url: String?,
@@ -970,6 +945,33 @@ class CapacitorGoogleMap(
     // END MARKER METHODS
 
     // BEGIN POLYLINE METHODS
+
+    //TODO
+    /*fun addPolylines(newLines: List<CapacitorGoogleMapPolyline>, callback: (ids: Result<List<String>>) -> Unit) {
+        try {
+            googleMap ?: throw GoogleMapNotAvailable()
+            val lineIds: MutableList<String> = mutableListOf()
+
+            CoroutineScope(Dispatchers.Main).launch {
+                newLines.forEach {
+                    val polylineOptions: Deferred<PolylineOptions> = CoroutineScope(Dispatchers.IO).async {
+                        this@CapacitorGoogleMap.buildPolyline(it)
+                    }
+                    val googleMapPolyline = googleMap?.addPolyline(polylineOptions.await())
+                    googleMapPolyline?.tag = it.tag
+
+                    it.googleMapsPolyline = googleMapPolyline
+
+                    polylines[googleMapPolyline!!.id] = it
+                    lineIds.add(googleMapPolyline.id)
+                }
+
+                callback(Result.success(lineIds))
+            }
+        } catch (e: GoogleMapsError) {
+            callback(Result.failure(e))
+        }
+    }*/
 
     fun addPolyline(polyline: CapacitorGoogleMapPolyline, callback: (polyline: Result<Pair<String, Polyline>>) -> Unit) {
         try {

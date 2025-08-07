@@ -183,66 +183,6 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
         }
     }
 
-    @objc func addMarker(_ call: CAPPluginCall) {
-        do {
-            guard let id = call.getString("id") else {
-                throw GoogleMapErrors.invalidMapId
-            }
-
-            guard let markerObj = call.getObject("marker") else {
-                throw GoogleMapErrors.invalidArguments("marker object is missing")
-            }
-
-            let marker = try Marker(fromJSObject: markerObj)
-
-            guard let map = self.maps[id] else {
-                throw GoogleMapErrors.mapNotFound
-            }
-
-            let (markerId, addedMarker) = try map.addMarker(marker: marker)
-            call.resolve(formatMarkerForResponse(markerId: markerId, mapId: id, marker: addedMarker))
-
-        } catch {
-            handleError(call, error: error)
-        }
-    }
-
-    @objc func addMarkers(_ call: CAPPluginCall) {
-        do {
-            guard let id = call.getString("id") else {
-                throw GoogleMapErrors.invalidMapId
-            }
-
-            guard let markerObjs = call.getArray("markers") as? [JSObject] else {
-                throw GoogleMapErrors.invalidArguments("markers array is missing")
-            }
-
-            if markerObjs.isEmpty {
-                throw GoogleMapErrors.invalidArguments("markers requires at least one marker")
-            }
-
-            guard let map = self.maps[id] else {
-                throw GoogleMapErrors.mapNotFound
-            }
-
-            var markers: [Marker] = []
-
-            try markerObjs.forEach { marker in
-                let marker = try Marker(fromJSObject: marker)
-                markers.append(marker)
-            }
-
-            let ids = try map.addMarkers(markers: markers)
-
-            call.resolve(["ids": ids.map({ id in
-                return String(id)
-            })])
-
-        } catch {
-            handleError(call, error: error)
-        }
-    }
-
     @objc func removeMarkers(_ call: CAPPluginCall) {
         do {
             guard let id = call.getString("id") else {
@@ -1443,6 +1383,67 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
     }
     
     // BEGIN MARKER METHODS
+    
+    @objc func addMarker(_ call: CAPPluginCall) {
+        do {
+            guard let id = call.getString("id") else {
+                throw GoogleMapErrors.invalidMapId
+            }
+
+            guard let optionsObj = call.getObject("options") else {
+                throw GoogleMapErrors.invalidArguments("options object is missing")
+            }
+            
+            let options = try MarkerOptions(fromJSObject: optionsObj)
+
+            guard let map = self.maps[id] else {
+                throw GoogleMapErrors.mapNotFound
+            }
+
+            let (markerId, addedMarker) = try map.addMarker(options: options)
+            call.resolve(formatMarkerForResponse(markerId: markerId, mapId: id, marker: addedMarker))
+
+        } catch {
+            handleError(call, error: error)
+        }
+    }
+
+    //TODO
+    /*@objc func addMarkers(_ call: CAPPluginCall) {
+        do {
+            guard let id = call.getString("id") else {
+                throw GoogleMapErrors.invalidMapId
+            }
+
+            guard let markerObjs = call.getArray("markers") as? [JSObject] else {
+                throw GoogleMapErrors.invalidArguments("markers array is missing")
+            }
+
+            if markerObjs.isEmpty {
+                throw GoogleMapErrors.invalidArguments("markers requires at least one marker")
+            }
+
+            guard let map = self.maps[id] else {
+                throw GoogleMapErrors.mapNotFound
+            }
+
+            var markers: [Marker] = []
+
+            try markerObjs.forEach { marker in
+                let marker = try Marker(fromJSObject: marker)
+                markers.append(marker)
+            }
+
+            let ids = try map.addMarkers(markers: markers)
+
+            call.resolve(["ids": ids.map({ id in
+                return String(id)
+            })])
+
+        } catch {
+            handleError(call, error: error)
+        }
+    }*/
     
     @objc func setMarkerIcon(_ call: CAPPluginCall) {
         do {
