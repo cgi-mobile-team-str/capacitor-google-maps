@@ -973,11 +973,12 @@ class CapacitorGoogleMap(
         }
     }*/
 
-    fun addPolyline(polyline: CapacitorGoogleMapPolyline, callback: (polyline: Result<Pair<String, Polyline>>) -> Unit) {
+    fun addPolyline(options: CapacitorPolylineOptions, callback: (polyline: Result<Pair<String, Polyline>>) -> Unit) {
         try {
             googleMap ?: throw GoogleMapNotAvailable()
 
             CoroutineScope(Dispatchers.Main).launch {
+                val polyline = CapacitorGoogleMapPolyline(options)
                 val polylineOptions: Deferred<PolylineOptions> = CoroutineScope(Dispatchers.IO).async {
                     this@CapacitorGoogleMap.buildPolyline(polyline)
                 }
@@ -995,6 +996,51 @@ class CapacitorGoogleMap(
         }
     }
 
+    fun setPolylineStrokeColor(polylineId: String, strokeColor: String, callback: (error: GoogleMapsError?) -> Unit) {
+        try {
+            googleMap ?: throw GoogleMapNotAvailable()
+            val polyline = polylines[polylineId]
+            polyline ?: throw PolylineNotFound()
+            CoroutineScope(Dispatchers.Main).launch {
+                val colorInt = CapacitorGoogleMapsUtils.processColor(strokeColor, null)
+                polyline.strokeColor = colorInt
+                polyline.googleMapsPolyline?.color = colorInt
+                callback(null)
+            }
+        } catch (e: GoogleMapsError) {
+            callback(e)
+        }
+    }
+
+    fun setPolylineStrokeWidth(polylineId: String, strokeWidth: Float, callback: (error: GoogleMapsError?) -> Unit) {
+        try {
+            googleMap ?: throw GoogleMapNotAvailable()
+            val polyline = polylines[polylineId]
+            polyline ?: throw PolylineNotFound()
+            CoroutineScope(Dispatchers.Main).launch {
+                polyline.strokeWidth = strokeWidth
+                polyline.googleMapsPolyline?.width = strokeWidth
+                callback(null)
+            }
+        } catch (e: GoogleMapsError) {
+            callback(e)
+        }
+    }
+
+    fun removePolyline(polylineId: String, callback: (error: GoogleMapsError?) -> Unit) {
+        try {
+            googleMap ?: throw GoogleMapNotAvailable()
+            val polyline = polylines[polylineId]
+            polyline ?: throw PolylineNotFound()
+            CoroutineScope(Dispatchers.Main).launch {
+                polyline.googleMapsPolyline?.remove()
+                polylines.remove(polylineId)
+                callback(null)
+            }
+        } catch (e: GoogleMapsError) {
+            callback(e)
+        }
+    }
     // END POLYLINE METHODS
 
     private fun getMapTypeInt(mapType: String): Int {
@@ -1149,11 +1195,9 @@ class CapacitorGoogleMap(
         polylineOptions.clickable(line.clickable)
         polylineOptions.zIndex(line.zIndex)
         polylineOptions.geodesic(line.geodesic)
-
         line.path.forEach {
-            polylineOptions.add(it)
+            polylineOptions.points.add(it)
         }
-
         line.styleSpans.forEach {
             if (it.segments != null) {
                 polylineOptions.addSpan(StyleSpan(it.color, it.segments))
@@ -1174,7 +1218,7 @@ class CapacitorGoogleMap(
         markerOptions.flat(marker.isFlat)
         markerOptions.draggable(marker.draggable)
         markerOptions.zIndex(marker.zIndex)
-
+        markerOptions.visible(marker.isVisible)
         if (marker.iconAnchor != null) {
             markerOptions.anchor(marker.iconAnchor!!.x, marker.iconAnchor!!.y)
         }

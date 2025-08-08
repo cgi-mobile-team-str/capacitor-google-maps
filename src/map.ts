@@ -23,6 +23,8 @@ import {
   GoogleMapsOptions,
   MarkerClass,
   MarkerOption,
+  PolylineOption,
+  PolylineClass,
 } from './definitions';
 import { LatLngBounds, MapType } from './definitions';
 import type { CreateMapArgs } from './implementation';
@@ -102,6 +104,7 @@ export interface GoogleMapInterface {
   setCameraBearing(bearing: number): Promise<void>;
   setOptions(config: GoogleMapsOptions): Promise<void>;
   getCameraZoom(): Promise<number>;
+  addPolyline(options: PolylineOption): Promise<PolylineClass>;
 }
 
 class MapCustomElement extends HTMLElement {
@@ -361,7 +364,7 @@ export class GoogleMap {
       id: this.id,
       options,
     });
-    
+
     const markerObj: MarkerClass = new MarkerClass(res, this.id);
 
     return markerObj;
@@ -424,6 +427,16 @@ export class GoogleMap {
     });
 
     return res.ids;
+  }
+
+  async addPolyline(options: PolylineOption): Promise<PolylineClass> {
+    const res = await CapacitorGoogleMaps.addPolyline({
+      id: this.id,
+      options,
+    });
+
+    const polylineObj: PolylineClass = new PolylineClass(res, this.id);
+    return polylineObj;
   }
 
   async removePolygons(ids: string[]): Promise<void> {

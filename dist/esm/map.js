@@ -1,5 +1,5 @@
 import { Capacitor } from '@capacitor/core';
-import { MarkerClass, } from './definitions';
+import { MarkerClass, PolylineClass, } from './definitions';
 import { LatLngBounds, MapType } from './definitions';
 import { CapacitorGoogleMaps } from './implementation';
 class MapCustomElement extends HTMLElement {
@@ -267,6 +267,14 @@ export class GoogleMap {
             polylines,
         });
         return res.ids;
+    }
+    async addPolyline(options) {
+        const res = await CapacitorGoogleMaps.addPolyline({
+            id: this.id,
+            options,
+        });
+        const polylineObj = new PolylineClass(res, this.id);
+        return polylineObj;
     }
     async removePolygons(ids) {
         return CapacitorGoogleMaps.removePolygons({

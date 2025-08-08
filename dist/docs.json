@@ -932,6 +932,25 @@
         "docs": "",
         "complexTypes": [],
         "slug": "getcamerazoom"
+      },
+      {
+        "name": "addPolyline",
+        "signature": "(options: PolylineOption) => Promise<PolylineClass>",
+        "parameters": [
+          {
+            "name": "options",
+            "docs": "",
+            "type": "PolylineOption"
+          }
+        ],
+        "returns": "Promise<PolylineClass>",
+        "tags": [],
+        "docs": "",
+        "complexTypes": [
+          "PolylineClass",
+          "PolylineOption"
+        ],
+        "slug": "addpolyline"
       }
     ],
     "properties": []
@@ -1618,9 +1637,9 @@
           "type": "number | undefined"
         },
         {
-          "name": "strokeWeight",
+          "name": "strokeWidth",
           "tags": [],
-          "docs": "The stroke width in pixels.",
+          "docs": "",
           "complexTypes": [],
           "type": "number | undefined"
         },
@@ -2374,6 +2393,66 @@
           "docs": "The maximum zoom level of the map.",
           "complexTypes": [],
           "type": "number | undefined"
+        }
+      ]
+    },
+    {
+      "name": "PolylineOption",
+      "slug": "polylineoption",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "points",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [
+            "LatLng"
+          ],
+          "type": "LatLng[]"
+        },
+        {
+          "name": "visible",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "geodesic",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "color",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "string | undefined"
+        },
+        {
+          "name": "width",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "number | undefined"
+        },
+        {
+          "name": "zIndex",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "number | undefined"
+        },
+        {
+          "name": "clickable",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "boolean | undefined"
         }
       ]
     }

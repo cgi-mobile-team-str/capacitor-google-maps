@@ -349,6 +349,7 @@ export default MyMap;
 * [`setCameraBearing(...)`](#setcamerabearing)
 * [`setOptions(...)`](#setoptions)
 * [`getCameraZoom()`](#getcamerazoom)
+* [`addPolyline(...)`](#addpolyline)
 * [Interfaces](#interfaces)
 * [Type Aliases](#type-aliases)
 * [Enums](#enums)
@@ -1057,6 +1058,21 @@ getCameraZoom() => Promise<number>
 --------------------
 
 
+### addPolyline(...)
+
+```typescript
+addPolyline(options: PolylineOption) => Promise<PolylineClass>
+```
+
+| Param         | Type                                                      |
+| ------------- | --------------------------------------------------------- |
+| **`options`** | <code><a href="#polylineoption">PolylineOption</a></code> |
+
+**Returns:** <code>Promise&lt;PolylineClass&gt;</code>
+
+--------------------
+
+
 ### Interfaces
 
 
@@ -1221,7 +1237,7 @@ For iOS and Android only the config options declared on <a href="#polyline">Poly
 | ------------------- | ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **`strokeColor`**   | <code>string</code>      | The stroke color. All CSS3 colors are supported except for extended named colors.                                                                                                                                                                                                                                                                                                              |
 | **`strokeOpacity`** | <code>number</code>      | The stroke opacity between 0.0 and 1.0.                                                                                                                                                                                                                                                                                                                                                        |
-| **`strokeWeight`**  | <code>number</code>      | The stroke width in pixels.                                                                                                                                                                                                                                                                                                                                                                    |
+| **`strokeWidth`**   | <code>number</code>      |                                                                                                                                                                                                                                                                                                                                                                                                |
 | **`geodesic`**      | <code>boolean</code>     | When &lt;code&gt;true&lt;/code&gt;, edges of the polygon are interpreted as geodesic and will follow the curvature of the Earth. When &lt;code&gt;false&lt;/code&gt;, edges of the polygon are rendered as straight lines in screen space. Note that the shape of a geodesic polygon may appear to change when dragged, as the dimensions are maintained relative to the surface of the earth. |
 | **`clickable`**     | <code>boolean</code>     | Indicates whether this &lt;code&gt;<a href="#polyline">Polyline</a>&lt;/code&gt; handles mouse events.                                                                                                                                                                                                                                                                                         |
 | **`tag`**           | <code>string</code>      |                                                                                                                                                                                                                                                                                                                                                                                                |
@@ -1418,6 +1434,19 @@ Controls for setting padding on the 'visible' region of the view.
 | ------------- | ------------------- | ---------------------------------- |
 | **`minZoom`** | <code>number</code> | The minimum zoom level of the map. |
 | **`maxZoom`** | <code>number</code> | The maximum zoom level of the map. |
+
+
+#### PolylineOption
+
+| Prop            | Type                  |
+| --------------- | --------------------- |
+| **`points`**    | <code>LatLng[]</code> |
+| **`visible`**   | <code>boolean</code>  |
+| **`geodesic`**  | <code>boolean</code>  |
+| **`color`**     | <code>string</code>   |
+| **`width`**     | <code>number</code>   |
+| **`zIndex`**    | <code>number</code>   |
+| **`clickable`** | <code>boolean</code>  |
 
 
 ### Type Aliases

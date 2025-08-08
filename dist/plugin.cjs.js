@@ -60,6 +60,30 @@ class LatLngBounds {
         return this;
     }
 }
+class PolylineClass {
+    constructor(obj, mapId) {
+        this.mapId = mapId;
+        this.id = obj.id;
+        this.points = obj.path;
+        this.visible = obj.visible;
+        this.geodesic = obj.geodesic;
+        this.strokeColor = obj.strokeColor;
+        this.strokeWidth = obj.strokeWidth;
+        this.zIndex = obj.zIndex;
+        this.clickable = obj.clickable;
+    }
+    async setStrokeColor(color) {
+        this.strokeColor = color;
+        return CapacitorGoogleMaps.setPolylineStrokeColor({ id: this.mapId, polylineId: this.id, strokeColor: color });
+    }
+    async setStrokeWidth(width) {
+        this.strokeWidth = width;
+        return CapacitorGoogleMaps.setPolylineStrokeWidth({ id: this.mapId, polylineId: this.id, strokeWidth: width });
+    }
+    async remove() {
+        return CapacitorGoogleMaps.removePolyline({ id: this.mapId, polylineId: this.id });
+    }
+}
 exports.MapType = void 0;
 (function (MapType) {
     /**
@@ -397,6 +421,14 @@ class GoogleMap {
             polylines,
         });
         return res.ids;
+    }
+    async addPolyline(options) {
+        const res = await CapacitorGoogleMaps.addPolyline({
+            id: this.id,
+            options,
+        });
+        const polylineObj = new PolylineClass(res, this.id);
+        return polylineObj;
     }
     async removePolygons(ids) {
         return CapacitorGoogleMaps.removePolygons({
@@ -1627,6 +1659,18 @@ class CapacitorGoogleMapsWeb extends core.WebPlugin {
     async getMarkerPosition(_args) {
         throw new Error('Method not implemented.');
     }
+    addPolyline(_args) {
+        throw new Error('Method not implemented.');
+    }
+    setPolylineStrokeColor(_args) {
+        throw new Error('Method not implemented.');
+    }
+    setPolylineStrokeWidth(_args) {
+        throw new Error('Method not implemented.');
+    }
+    removePolyline(_args) {
+        throw new Error('Method not implemented.');
+    }
 }
 
 var web = /*#__PURE__*/Object.freeze({
@@ -1636,4 +1680,6 @@ var web = /*#__PURE__*/Object.freeze({
 
 exports.GoogleMap = GoogleMap;
 exports.LatLngBounds = LatLngBounds;
+exports.MarkerClass = MarkerClass;
+exports.PolylineClass = PolylineClass;
 //# sourceMappingURL=plugin.cjs.js.map

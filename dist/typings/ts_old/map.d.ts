@@ -1,4 +1,4 @@
-import { CameraConfig, Marker, MapPadding, MapListenerCallback, MapReadyCallbackData, CameraIdleCallbackData, CameraMoveStartedCallbackData, ClusterClickCallbackData, MapClickCallbackData, MarkerClickCallbackData, MyLocationButtonClickCallbackData, Polygon, PolygonClickCallbackData, Circle, CircleClickCallbackData, Polyline, PolylineCallbackData, VisibleRegion, GoogleMapsOptions, MarkerClass, MarkerOption } from './definitions';
+import { CameraConfig, Marker, MapPadding, MapListenerCallback, MapReadyCallbackData, CameraIdleCallbackData, CameraMoveStartedCallbackData, ClusterClickCallbackData, MapClickCallbackData, MarkerClickCallbackData, MyLocationButtonClickCallbackData, Polygon, PolygonClickCallbackData, Circle, CircleClickCallbackData, Polyline, PolylineCallbackData, VisibleRegion, GoogleMapsOptions, MarkerClass, MarkerOption, PolylineOption, PolylineClass } from './definitions';
 import { LatLngBounds, MapType } from './definitions';
 import { CreateMapArgs } from './implementation';
 export interface GoogleMapInterface {
@@ -73,6 +73,7 @@ export interface GoogleMapInterface {
     setCameraBearing(bearing: number): Promise<void>;
     setOptions(config: GoogleMapsOptions): Promise<void>;
     getCameraZoom(): Promise<number>;
+    addPolyline(options: PolylineOption): Promise<PolylineClass>;
 }
 export declare class GoogleMap {
     private id;
@@ -160,6 +161,7 @@ export declare class GoogleMap {
     removeMarkers(ids: string[]): Promise<void>;
     addPolygons(polygons: Polygon[]): Promise<string[]>;
     addPolylines(polylines: Polyline[]): Promise<string[]>;
+    addPolyline(options: PolylineOption): Promise<PolylineClass>;
     removePolygons(ids: string[]): Promise<void>;
     addCircles(circles: Circle[]): Promise<string[]>;
     removeCircles(ids: string[]): Promise<void>;

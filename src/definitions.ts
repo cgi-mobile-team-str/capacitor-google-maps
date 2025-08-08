@@ -116,7 +116,7 @@ export interface Circle extends google.maps.CircleOptions {
 export interface Polyline extends google.maps.PolylineOptions {
   strokeColor?: string;
   strokeOpacity?: number;
-  strokeWeight?: number;
+  strokeWidth?: number;
   geodesic?: boolean;
   clickable?: boolean;
   tag?: string;
@@ -127,6 +127,54 @@ export interface Polyline extends google.maps.PolylineOptions {
    * Only on iOS and Android.
    */
   styleSpans?: StyleSpan[];
+}
+
+export interface PolylineOption {
+  points: LatLng[];
+  visible?: boolean;
+  geodesic?: boolean;
+  color?: string;
+  width?: number;
+  zIndex?: number;
+  clickable?: boolean;
+}
+export class PolylineClass implements Polyline {
+  mapId: string;
+  id: string;
+  points: LatLng[] | null | undefined;
+  visible?: boolean | null;
+  geodesic?: boolean;
+  strokeColor?: string;
+  strokeWidth?: number;
+  zIndex?: number | null;
+  clickable?: boolean;
+
+  constructor(obj: Polyline & { id: string }, mapId: string) {
+    this.mapId = mapId;
+    this.id = obj.id;
+    this.points = obj.path as LatLng[];
+    this.visible = obj.visible;
+    this.geodesic = obj.geodesic;
+    this.strokeColor = obj.strokeColor;
+    this.strokeWidth = obj.strokeWidth;
+    this.zIndex = obj.zIndex;
+    this.clickable = obj.clickable;
+  }
+
+  async setStrokeColor(color: string) : Promise<void> {
+    this.strokeColor = color;
+    return CapacitorGoogleMaps.setPolylineStrokeColor({id: this.mapId, polylineId: this.id, strokeColor: color});
+  }
+
+  async setStrokeWidth(width: number) : Promise<void> {
+    this.strokeWidth = width;
+    return CapacitorGoogleMaps.setPolylineStrokeWidth({id: this.mapId, polylineId: this.id, strokeWidth: width});
+  }
+
+  async remove(): Promise<void> {
+    return CapacitorGoogleMaps.removePolyline({id: this.mapId, polylineId: this.id});
+  }
+
 }
 
 /**
@@ -390,20 +438,20 @@ export interface Marker {
 }
 
 export interface MarkerOption {
-  icon?: MarkerIcon & {anchor?: number[]}
-  title?: string
-  snippet?: string
-  position: LatLng
-  infoWindowAnchor?: number[]
-  anchor?: number[]
-  draggable?: boolean
-  flat?: boolean
-  rotation?: number
-  visible?: boolean
-  animation?: string
-  zIndex?: number
-  disableAutoPan?: boolean
-  alpha?: number
+  icon?: MarkerIcon & { anchor?: number[] };
+  title?: string;
+  snippet?: string;
+  position: LatLng;
+  infoWindowAnchor?: number[];
+  anchor?: number[];
+  draggable?: boolean;
+  flat?: boolean;
+  rotation?: number;
+  visible?: boolean;
+  animation?: string;
+  zIndex?: number;
+  disableAutoPan?: boolean;
+  alpha?: number;
 }
 
 export interface MarkerIcon {

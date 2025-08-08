@@ -23,6 +23,30 @@ export class LatLngBounds {
         return this;
     }
 }
+export class PolylineClass {
+    constructor(obj, mapId) {
+        this.mapId = mapId;
+        this.id = obj.id;
+        this.points = obj.path;
+        this.visible = obj.visible;
+        this.geodesic = obj.geodesic;
+        this.strokeColor = obj.strokeColor;
+        this.strokeWidth = obj.strokeWidth;
+        this.zIndex = obj.zIndex;
+        this.clickable = obj.clickable;
+    }
+    async setStrokeColor(color) {
+        this.strokeColor = color;
+        return CapacitorGoogleMaps.setPolylineStrokeColor({ id: this.mapId, polylineId: this.id, strokeColor: color });
+    }
+    async setStrokeWidth(width) {
+        this.strokeWidth = width;
+        return CapacitorGoogleMaps.setPolylineStrokeWidth({ id: this.mapId, polylineId: this.id, strokeWidth: width });
+    }
+    async remove() {
+        return CapacitorGoogleMaps.removePolyline({ id: this.mapId, polylineId: this.id });
+    }
+}
 export var MapType;
 (function (MapType) {
     /**

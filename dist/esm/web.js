@@ -590,5 +590,17 @@ export class CapacitorGoogleMapsWeb extends WebPlugin {
     async getMarkerPosition(_args) {
         throw new Error('Method not implemented.');
     }
+    addPolyline(_args) {
+        throw new Error('Method not implemented.');
+    }
+    setPolylineStrokeColor(_args) {
+        throw new Error('Method not implemented.');
+    }
+    setPolylineStrokeWidth(_args) {
+        throw new Error('Method not implemented.');
+    }
+    removePolyline(_args) {
+        throw new Error('Method not implemented.');
+    }
 }
 //# sourceMappingURL=web.js.map

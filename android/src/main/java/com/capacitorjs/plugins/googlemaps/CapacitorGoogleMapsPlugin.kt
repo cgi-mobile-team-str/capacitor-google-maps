@@ -2,6 +2,7 @@ package com.capacitorjs.plugins.googlemaps
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.graphics.Color
 import android.graphics.RectF
 import android.util.Log
 import android.util.Size
@@ -550,50 +551,6 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
             handleError(call, e)
         }
     }
-
-    //TODO
-    /*@PluginMethod
-     fun addPolylines(call: PluginCall) {
-         try  {
-             val id = call.getString("id")
-             id ?: throw InvalidMapIdError()
-
-             val polylinesObjectArray = call.getArray("polylines", null)
-             polylinesObjectArray ?: throw InvalidArgumentsError("polylines array is missing")
-
-             if (polylinesObjectArray.length() == 0) {
-                 throw InvalidArgumentsError("polylines requires at least one line")
-             }
-
-             val map = maps[id]
-             map ?: throw MapNotFoundError()
-
-             val polylines: MutableList<CapacitorGoogleMapPolyline> = mutableListOf()
-
-             for (i in 0 until polylinesObjectArray.length()) {
-                 val polylineObj = polylinesObjectArray.getJSONObject(i)
-                 val polyline = CapacitorGoogleMapPolyline(polylineObj)
-
-                 polylines.add(polyline)
-             }
-
-             map.addPolylines(polylines) { result ->
-                 val ids = result.getOrThrow()
-
-                 val jsonIDs = JSONArray()
-                 ids.forEach { jsonIDs.put(it) }
-
-                 val res = JSObject()
-                 res.put("ids", jsonIDs)
-                 call.resolve(res)
-             }
-
-         } catch (e: GoogleMapsError) {
-             handleError(call, e)
-         } catch (e: Exception) {
-             handleError(call, e)
-         }
-     }*/
 
     @PluginMethod
     fun removeCircles(call: PluginCall) {
@@ -1488,6 +1445,179 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
     }
 
     // END MARKER METHODS
+
+    // BEGIN POLYLINE METHODS
+
+    @PluginMethod
+    fun addPolyline(call: PluginCall) {
+        try {
+            val id = call.getString("id")
+            id ?: throw InvalidMapIdError()
+
+            val optionsObj = call.getObject("options", null)
+            optionsObj ?: throw InvalidArgumentsError("options object is missing")
+
+            val map = maps[id]
+            map ?: throw MapNotFoundError()
+
+            val options = CapacitorPolylineOptions(optionsObj)
+            map.addPolyline(options) { result ->
+                val pairIdPolyline = result.getOrThrow()
+                val res = JSObject()
+                val hexColor = Integer.toString(pairIdPolyline.second.color, 16)
+                val pointsJsonArray = JSONArray()
+
+                if(!pairIdPolyline.second.points.isNullOrEmpty()) {
+                    for (i in 0 until pairIdPolyline.second.points.size) {
+                        pointsJsonArray.put(latLngToJSObject(pairIdPolyline.second.points.get(i)))
+                    }
+                }
+                res.put("id", pairIdPolyline.first)
+                res.put("mapId", id)
+                res.put("path", pointsJsonArray)
+                res.put("geoDesic", pairIdPolyline.second.isGeodesic)
+                res.put("visible", pairIdPolyline.second.isVisible)
+                res.put("clickable", pairIdPolyline.second.isClickable)
+                res.put("strokeWidth", pairIdPolyline.second.width)
+                res.put("strokeColor", hexColor)
+                res.put("zIndex", pairIdPolyline.second.zIndex)
+                call.resolve(res)
+            }
+        } catch (e: GoogleMapsError) {
+            handleError(call, e)
+        } catch (e: Exception) {
+            handleError(call, e)
+        }
+    }
+
+    //TODO
+    /*@PluginMethod
+     fun addPolylines(call: PluginCall) {
+         try  {
+             val id = call.getString("id")
+             id ?: throw InvalidMapIdError()
+
+             val polylinesObjectArray = call.getArray("polylines", null)
+             polylinesObjectArray ?: throw InvalidArgumentsError("polylines array is missing")
+
+             if (polylinesObjectArray.length() == 0) {
+                 throw InvalidArgumentsError("polylines requires at least one line")
+             }
+
+             val map = maps[id]
+             map ?: throw MapNotFoundError()
+
+             val polylines: MutableList<CapacitorGoogleMapPolyline> = mutableListOf()
+
+             for (i in 0 until polylinesObjectArray.length()) {
+                 val polylineObj = polylinesObjectArray.getJSONObject(i)
+                 val polyline = CapacitorGoogleMapPolyline(polylineObj)
+
+                 polylines.add(polyline)
+             }
+
+             map.addPolylines(polylines) { result ->
+                 val ids = result.getOrThrow()
+
+                 val jsonIDs = JSONArray()
+                 ids.forEach { jsonIDs.put(it) }
+
+                 val res = JSObject()
+                 res.put("ids", jsonIDs)
+                 call.resolve(res)
+             }
+
+         } catch (e: GoogleMapsError) {
+             handleError(call, e)
+         } catch (e: Exception) {
+             handleError(call, e)
+         }
+     }*/
+
+    @PluginMethod
+    fun setPolylineStrokeColor(call: PluginCall) {
+        try {
+            val id = call.getString("id")
+            id ?: throw InvalidMapIdError()
+
+            val polylineId = call.getString("polylineId", null)
+            polylineId ?: throw InvalidArgumentsError("polylineId is missing or invalid")
+
+            val strokeColor = call.getString("strokeColor", null)
+            strokeColor ?: throw InvalidArgumentsError("strokeColor is missing or invalid")
+
+            val map = maps[id]
+            map ?: throw MapNotFoundError()
+
+            map.setPolylineStrokeColor(polylineId, strokeColor) { err ->
+                if (err != null) {
+                    throw err
+                }
+                call.resolve()
+            }
+
+        } catch (e: GoogleMapsError) {
+            handleError(call, e)
+        } catch (e: Exception) {
+            handleError(call, e)
+        }
+    }
+
+    @PluginMethod
+    fun setPolylineStrokeWidth(call: PluginCall) {
+        try {
+            val id = call.getString("id")
+            id ?: throw InvalidMapIdError()
+
+            val polylineId = call.getString("polylineId", null)
+            polylineId ?: throw InvalidArgumentsError("polylineId is missing or invalid")
+
+            val strokeWidth = call.getFloat("strokeWidth", null)
+            strokeWidth ?: throw InvalidArgumentsError("strokeWidth is missing or invalid")
+
+            val map = maps[id]
+            map ?: throw MapNotFoundError()
+
+            map.setPolylineStrokeWidth(polylineId, strokeWidth) { err ->
+                if (err != null) {
+                    throw err
+                }
+                call.resolve()
+            }
+
+        } catch (e: GoogleMapsError) {
+            handleError(call, e)
+        } catch (e: Exception) {
+            handleError(call, e)
+        }
+    }
+
+    @PluginMethod
+    fun removePolyline(call: PluginCall) {
+        try {
+            val id = call.getString("id")
+            id ?: throw InvalidMapIdError()
+
+            val polylineId = call.getString("polylineId")
+            polylineId ?: throw InvalidArgumentsError("polylineId is invalid or missing")
+
+            val map = maps[id]
+            map ?: throw MapNotFoundError()
+
+            map.removePolyline(polylineId) { err ->
+                if (err != null) {
+                    throw err
+                }
+                call.resolve()
+            }
+        } catch (e: GoogleMapsError) {
+            handleError(call, e)
+        } catch (e: Exception) {
+            handleError(call, e)
+        }
+    }
+
+    // END POLYLINE METHODS
 
     private fun createLatLng(point: JSObject): LatLng {
         return LatLng(

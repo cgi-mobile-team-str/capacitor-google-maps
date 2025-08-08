@@ -16,7 +16,8 @@ public struct Polyline {
     let zIndex: Int32
     let tag: String?
     let styleSpans: [StyleSpan]
-
+    let isVisible: Bool?
+    
     init(fromJSObject: JSObject) throws {
         var strokeColor = UIColor.blue
         var strokeWidth: CGFloat = 1.0
@@ -30,7 +31,7 @@ public struct Polyline {
         let strokeOpacity = fromJSObject["strokeOpacity"] as? Double
 
         if let hexColor = fromJSObject["strokeColor"] as? String {
-            strokeColor = UIColor(hex: hexColor) ?? UIColor.blue
+            strokeColor = GoogleMapsUtils.parseToUIColor(hexColor) ?? UIColor.blue
         }
 
         strokeColor = strokeColor.withAlphaComponent(strokeOpacity ?? 1.0)
@@ -71,5 +72,23 @@ public struct Polyline {
         self.zIndex = Int32((fromJSObject["zIndex"] as? Int) ?? 0)
         self.path = path
         self.styleSpans = styleSpans
+        self.isVisible = fromJSObject["isVisible"] as? Bool ?? true
+    }
+    
+    init(options: PolylineOptions) throws {
+        var strokeColor: UIColor = UIColor.blue
+        self.path = options.points
+        self.isVisible = options.visible ?? true
+        self.geodesic = options.geodesic
+        if let color = options.color {
+            strokeColor = GoogleMapsUtils.parseToUIColor(color) ?? UIColor.blue
+        }
+        self.strokeColor = strokeColor
+        self.strokeWidth = CGFloat(options.width ?? 0)
+        self.zIndex = Int32(options.zIndex ?? 0)
+        self.tappable = options.clickable ?? false
+        self.styleSpans = []
+        self.tag = ""
+        self.title = ""
     }
 }

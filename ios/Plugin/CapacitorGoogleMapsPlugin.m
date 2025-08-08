@@ -9,7 +9,7 @@ CAP_PLUGIN(CapacitorGoogleMapsPlugin, "CapacitorGoogleMaps",
    CAP_PLUGIN_METHOD(disableTouch, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(addMarker, CAPPluginReturnPromise);
    //CAP_PLUGIN_METHOD(addMarkers, CAPPluginReturnPromise); TODO
-   CAP_PLUGIN_METHOD(addPolygons, CAPPluginReturnPromise);
+   //CAP_PLUGIN_METHOD(addPolygons, CAPPluginReturnPromise); TODO
    CAP_PLUGIN_METHOD(addPolylines, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(addCircles, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(removeMarker, CAPPluginReturnPromise);
@@ -50,4 +50,9 @@ CAP_PLUGIN(CapacitorGoogleMapsPlugin, "CapacitorGoogleMaps",
    CAP_PLUGIN_METHOD(setMarkerZIndex, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(setMarkerVisibility, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(getMarkerPosition, CAPPluginReturnPromise);
+   CAP_PLUGIN_METHOD(addPolyline, CAPPluginReturnPromise);
+   CAP_PLUGIN_METHOD(setPolylineStrokeColor, CAPPluginReturnPromise);
+   CAP_PLUGIN_METHOD(setPolylineStrokeWidth, CAPPluginReturnPromise);
+   CAP_PLUGIN_METHOD(removePolyline, CAPPluginReturnPromise);
+
 )

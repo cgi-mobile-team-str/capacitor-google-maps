@@ -3,9 +3,13 @@ import {
   LatLngBounds,
   MapType,
   Marker,
+  MarkerOption,
+  MarkerClass,
   Polygon,
   Circle,
   Polyline,
+  PolylineOption,
+  PolylineClass,
   StyleSpan,
   VisibleRegion,
   GoogleMapsOptions,
@@ -21,9 +25,13 @@ export {
   LatLngBounds,
   MapType,
   Marker,
+  MarkerOption,
+  MarkerClass,
   Polygon,
   Circle,
   Polyline,
+  PolylineOption,
+  PolylineClass,
   StyleSpan,
   VisibleRegion,
   GoogleMapsOptions,
@@ -31,6 +39,7 @@ export {
   GoogleMapZoomOptions,
   GoogleMapGestures,
   GoogleMapPreferences,
+
 };
 
 declare global {

@@ -1,23 +1,23 @@
 package com.capacitorjs.plugins.googlemaps
 
 import android.graphics.Color
-import androidx.core.graphics.toColor
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Polyline
 import org.json.JSONObject
 
-class CapacitorGoogleMapPolyline(fromJSONObject: JSONObject) {
+class CapacitorGoogleMapPolyline() {
     var path: MutableList<LatLng> = mutableListOf<LatLng>()
     var styleSpans: MutableList<CapacitorGoogleMapsStyleSpan> = mutableListOf<CapacitorGoogleMapsStyleSpan>()
     var strokeWidth: Float = 1.0f
     var strokeColor: Int = Color.BLUE
-    var clickable: Boolean
-    var geodesic: Boolean
+    var clickable: Boolean = false
+    var geodesic: Boolean = false
     var zIndex: Float = 0.00f
     var tag: String = ""
     var googleMapsPolyline: Polyline? = null
+    var isVisible: Boolean? = true
 
-    init {
+    constructor(fromJSONObject: JSONObject): this() {
         if (!fromJSONObject.has("path")) {
             throw InvalidArgumentsError("Polyline object is missing the required 'path' property")
         }
@@ -56,23 +56,24 @@ class CapacitorGoogleMapPolyline(fromJSONObject: JSONObject) {
 
         val strokeOpacity = fromJSONObject.optDouble("strokeOpacity", 1.0)
 
-        strokeColor = this.processColor(fromJSONObject.getString("strokeColor"), strokeOpacity)
+        strokeColor = CapacitorGoogleMapsUtils.processColor(fromJSONObject.getString("strokeColor"), strokeOpacity)
         strokeWidth = fromJSONObject.optDouble("strokeWeight", 1.0).toFloat()
         clickable = fromJSONObject.optBoolean("clickable", false)
         geodesic = fromJSONObject.optBoolean("geodesic", false)
         zIndex = fromJSONObject.optDouble("zIndex", 1.0).toFloat()
         tag = fromJSONObject.optString("tag", "")
+        isVisible = fromJSONObject.optBoolean("isVisible", true)
     }
 
-    private fun processColor(hex: String, opacity: Double): Int {
-        val colorInt = Color.parseColor(hex)
-
-        val alpha = (opacity * 255.0).toInt()
-        val red = android.graphics.Color.red(colorInt)
-        val green = android.graphics.Color.green(colorInt)
-        val blue = android.graphics.Color.blue(colorInt)
-
-        return Color.argb(alpha, red, green, blue)
+    constructor(options: CapacitorPolylineOptions): this() {
+        path = options.points
+        isVisible = options.visible
+        geodesic = options.geodesic == true
+        if(!options.color.isNullOrEmpty()) {
+            strokeColor = CapacitorGoogleMapsUtils.processColor(options.color!!, 1.0)
+        }
+        strokeWidth = options.width ?: 0f
+        zIndex = options.zIndex ?: 0f
+        clickable = options.clickable == true
     }
-
 }

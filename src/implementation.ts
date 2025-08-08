@@ -14,6 +14,7 @@ import type {
   MarkerOption,
   Polygon,
   Polyline,
+  PolylineOption,
   Size,
   VisibleRegion,
 } from './definitions';
@@ -247,6 +248,29 @@ export interface CameraBearingArgs {
   id: string;
   bearing: number;
 }
+
+export interface AddPolylineArgs {
+  id: string;
+  options: PolylineOption;
+}
+
+export interface PolylineStrokeColorArgs {
+  id: string;
+  polylineId: string;
+  strokeColor: string;
+}
+
+export interface PolylineStrokeWidthArgs {
+  id: string;
+  polylineId: string;
+  strokeWidth: number;
+}
+
+export interface RemovePolylineArgs {
+  id: string;
+  polylineId: string;
+}
+
 export interface CapacitorGoogleMapsPlugin extends Plugin {
   create(options: CreateMapArgs): Promise<void>;
   enableTouch(args: { id: string }): Promise<void>;
@@ -297,6 +321,11 @@ export interface CapacitorGoogleMapsPlugin extends Plugin {
   setMarkerZIndex(args: MarkerZIndexArgs): Promise<void>;
   setMarkerVisibility(args: MarkerVisibilityArgs): Promise<void>;
   getMarkerPosition(args: MarkerPositionArgs): Promise<{ position: LatLng }>;
+  addPolyline(args: AddPolylineArgs): Promise<Polyline & {id: string}>;
+  setPolylineStrokeColor(args: PolylineStrokeColorArgs): Promise<void>;
+  setPolylineStrokeWidth(args: PolylineStrokeWidthArgs): Promise<void>;
+  removePolyline(args: RemovePolylineArgs): Promise<void>;
+
 }
 
 const CapacitorGoogleMaps = registerPlugin<CapacitorGoogleMapsPlugin>('CapacitorGoogleMaps', {

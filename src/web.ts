@@ -3,7 +3,7 @@ import { WebPlugin } from '@capacitor/core';
 import type { Cluster, onClusterClickHandler } from '@googlemaps/markerclusterer';
 import { MarkerClusterer, SuperClusterAlgorithm } from '@googlemaps/markerclusterer';
 
-import type { LatLng, MapPadding, Marker, VisibleRegion } from './definitions';
+import type { LatLng, MapPadding, Marker, Polyline, VisibleRegion } from './definitions';
 import { MapType, LatLngBounds } from './definitions';
 import type {
   AddMarkerArgs,
@@ -35,6 +35,10 @@ import type {
   MarkerZIndexArgs,
   MarkerPositionArgs,
   MarkerVisibilityArgs,
+  AddPolylineArgs,
+  PolylineStrokeColorArgs,
+  PolylineStrokeWidthArgs,
+  RemovePolylineArgs,
 } from './implementation';
 
 export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogleMapsPlugin {
@@ -759,6 +763,19 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
   }
 
   async getMarkerPosition(_args: MarkerPositionArgs): Promise<{position: LatLng}> {
+    throw new Error('Method not implemented.');
+  }
+
+  addPolyline(_args: AddPolylineArgs): Promise<Polyline & { id: string; }> {
+    throw new Error('Method not implemented.');
+  }
+  setPolylineStrokeColor(_args: PolylineStrokeColorArgs): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+  setPolylineStrokeWidth(_args: PolylineStrokeWidthArgs): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+  removePolyline(_args: RemovePolylineArgs): Promise<void> {
     throw new Error('Method not implemented.');
   }
 }
