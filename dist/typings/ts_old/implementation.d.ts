@@ -71,7 +71,7 @@ export interface RemoveCirclesArgs {
 }
 export interface AddPolylinesArgs {
     id: string;
-    polylines: Polyline[];
+    optionsList: PolylineOption[];
 }
 export interface RemovePolylinesArgs {
     id: string;
@@ -107,7 +107,7 @@ export interface CurrentLocArgs {
 }
 export interface AddMarkersArgs {
     id: string;
-    markers: Marker[];
+    optionsList: MarkerOption[];
 }
 export interface MapBoundsArgs {
     id: string;
@@ -225,7 +225,9 @@ export interface CapacitorGoogleMapsPlugin extends Plugin {
         id: string;
     }>;
     addMarkers(args: AddMarkersArgs): Promise<{
-        ids: string[];
+        markers: (Marker & {
+            id: string;
+        })[];
     }>;
     removeMarker(args: RemoveMarkerArgs): Promise<void>;
     removeMarkers(args: RemoveMarkersArgs): Promise<void>;
@@ -238,7 +240,9 @@ export interface CapacitorGoogleMapsPlugin extends Plugin {
     }>;
     removeCircles(args: RemoveCirclesArgs): Promise<void>;
     addPolylines(args: AddPolylinesArgs): Promise<{
-        ids: string[];
+        polylines: (Polyline & {
+            id: string;
+        })[];
     }>;
     removePolylines(args: RemovePolylinesArgs): Promise<void>;
     enableClustering(args: EnableClusteringArgs): Promise<void>;

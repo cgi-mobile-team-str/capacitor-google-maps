@@ -3,7 +3,6 @@ import type { PluginListenerHandle } from '@capacitor/core';
 
 import {
   CameraConfig,
-  Marker,
   MapPadding,
   MapListenerCallback,
   MapReadyCallbackData,
@@ -17,7 +16,6 @@ import {
   PolygonClickCallbackData,
   Circle,
   CircleClickCallbackData,
-  Polyline,
   PolylineCallbackData,
   VisibleRegion,
   GoogleMapsOptions,
@@ -42,14 +40,14 @@ export interface GoogleMapInterface {
   ): Promise<void>;
   disableClustering(): Promise<void>;
   addMarker(options: MarkerOption): Promise<MarkerClass>;
-  addMarkers(markers: Marker[]): Promise<string[]>;
+  addMarkers(optionsList: MarkerOption[]): Promise<MarkerClass[]>;
   removeMarker(id: string): Promise<void>;
   removeMarkers(ids: string[]): Promise<void>;
   addPolygons(polygons: Polygon[]): Promise<string[]>;
   removePolygons(ids: string[]): Promise<void>;
   addCircles(circles: Circle[]): Promise<string[]>;
   removeCircles(ids: string[]): Promise<void>;
-  addPolylines(polylines: Polyline[]): Promise<string[]>;
+  addPolylines(optionsList: PolylineOption[]): Promise<PolylineClass>;
   removePolylines(ids: string[]): Promise<void>;
   destroy(): Promise<void>;
   moveCamera(config: CameraConfig): Promise<void>;
@@ -376,13 +374,18 @@ export class GoogleMap {
    * @param markers
    * @returns array of created marker IDs
    */
-  async addMarkers(markers: Marker[]): Promise<string[]> {
+  async addMarkers(optionsList: MarkerOption[]): Promise<MarkerClass[]> {
     const res = await CapacitorGoogleMaps.addMarkers({
       id: this.id,
-      markers,
+      optionsList,
     });
 
-    return res.ids;
+    const markers: MarkerClass[] = [];
+    res.markers.forEach((r) => {
+      markers.push(new MarkerClass(r, this.id));
+    });
+
+    return markers;
   }
 
   /**
@@ -420,13 +423,18 @@ export class GoogleMap {
     return res.ids;
   }
 
-  async addPolylines(polylines: Polyline[]): Promise<string[]> {
+  async addPolylines(optionsList: PolylineOption[]): Promise<PolylineClass[]> {
     const res = await CapacitorGoogleMaps.addPolylines({
       id: this.id,
-      polylines,
+      optionsList,
     });
 
-    return res.ids;
+    const polylines: PolylineClass[] = [];
+    res.polylines.forEach((r) => {
+      polylines.push(new PolylineClass(r, this.id));
+    });
+
+    return polylines;
   }
 
   async addPolyline(options: PolylineOption): Promise<PolylineClass> {

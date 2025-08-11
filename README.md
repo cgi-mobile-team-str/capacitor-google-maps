@@ -433,14 +433,14 @@ addMarker(options: MarkerOption) => Promise<MarkerClass>
 ### addMarkers(...)
 
 ```typescript
-addMarkers(markers: Marker[]) => Promise<string[]>
+addMarkers(optionsList: MarkerOption[]) => Promise<MarkerClass[]>
 ```
 
-| Param         | Type                  |
-| ------------- | --------------------- |
-| **`markers`** | <code>Marker[]</code> |
+| Param             | Type                        |
+| ----------------- | --------------------------- |
+| **`optionsList`** | <code>MarkerOption[]</code> |
 
-**Returns:** <code>Promise&lt;string[]&gt;</code>
+**Returns:** <code>Promise&lt;MarkerClass[]&gt;</code>
 
 --------------------
 
@@ -530,14 +530,14 @@ removeCircles(ids: string[]) => Promise<void>
 ### addPolylines(...)
 
 ```typescript
-addPolylines(polylines: Polyline[]) => Promise<string[]>
+addPolylines(optionsList: PolylineOption[]) => Promise<PolylineClass>
 ```
 
-| Param           | Type                    |
-| --------------- | ----------------------- |
-| **`polylines`** | <code>Polyline[]</code> |
+| Param             | Type                          |
+| ----------------- | ----------------------------- |
+| **`optionsList`** | <code>PolylineOption[]</code> |
 
-**Returns:** <code>Promise&lt;string[]&gt;</code>
+**Returns:** <code>Promise&lt;PolylineClass&gt;</code>
 
 --------------------
 
@@ -1166,38 +1166,6 @@ An interface representing a pair of latitude and longitude coordinates.
 | **`height`** | <code>number</code> |
 
 
-#### Marker
-
-A marker is an icon placed at a particular point on the map's surface.
-
-| Prop             | Type                                                         | Description                                                                                                                                                                               | Default            | Since |
-| ---------------- | ------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ | ----- |
-| **`coordinate`** | <code><a href="#latlng">LatLng</a></code>                    | <a href="#marker">Marker</a> position                                                                                                                                                     |                    |       |
-| **`opacity`**    | <code>number</code>                                          | Sets the opacity of the marker, between 0 (completely transparent) and 1 inclusive.                                                                                                       | <code>1</code>     |       |
-| **`title`**      | <code>string</code>                                          | Title, a short description of the overlay.                                                                                                                                                |                    |       |
-| **`snippet`**    | <code>string</code>                                          | Snippet text, shown beneath the title in the info window when selected.                                                                                                                   |                    |       |
-| **`isFlat`**     | <code>boolean</code>                                         | Controls whether this marker should be flat against the Earth's surface or a billboard facing the camera.                                                                                 | <code>false</code> |       |
-| **`iconUrl`**    | <code>string</code>                                          | Path to a marker icon to render. It can be relative to the web app public directory, or a https url of a remote marker icon. **SVGs are not supported on native platforms.**              |                    | 4.2.0 |
-| **`iconSize`**   | <code><a href="#size">Size</a></code>                        | Controls the scaled size of the marker image set in `iconUrl`.                                                                                                                            |                    | 4.2.0 |
-| **`iconOrigin`** | <code><a href="#point">Point</a></code>                      | The position of the image within a sprite, if any. By default, the origin is located at the top left corner of the image .                                                                |                    | 4.2.0 |
-| **`iconAnchor`** | <code><a href="#point">Point</a></code>                      | The position at which to anchor an image in correspondence to the location of the marker on the map. By default, the anchor is located along the center point of the bottom of the image. |                    | 4.2.0 |
-| **`tintColor`**  | <code>{ r: number; g: number; b: number; a: number; }</code> | Customizes the color of the default marker image. Each value must be between 0 and 255. Only for iOS and Android.                                                                         |                    | 4.2.0 |
-| **`draggable`**  | <code>boolean</code>                                         | Controls whether this marker can be dragged interactively                                                                                                                                 | <code>false</code> |       |
-| **`zIndex`**     | <code>number</code>                                          | Specifies the stack order of this marker, relative to other markers on the map. A marker with a high z-index is drawn on top of markers with lower z-indexes                              | <code>0</code>     |       |
-| **`isVisible`**  | <code>boolean</code>                                         |                                                                                                                                                                                           |                    |       |
-
-
-#### Point
-
-<a href="#point">Point</a> geometry object.
-https://tools.ietf.org/html/rfc7946#section-3.1.2
-
-| Prop              | Type                                          | Description                           |
-| ----------------- | --------------------------------------------- | ------------------------------------- |
-| **`type`**        | <code>'<a href="#point">Point</a>'</code>     | Specifies the type of GeoJSON object. |
-| **`coordinates`** | <code><a href="#position">Position</a></code> |                                       |
-
-
 #### Polygon
 
 <a href="#polygon">Polygon</a> geometry object.
@@ -1227,31 +1195,17 @@ For iOS and Android only the config options declared on <a href="#circle">Circle
 | **`tag`**          | <code>string</code>  |                                                                                                                                                                                        |
 
 
-#### Polyline
+#### PolylineOption
 
-For web, all the javascript <a href="#polyline">Polyline</a> options are available as
-Polyline extends google.maps.PolylineOptions.
-For iOS and Android only the config options declared on <a href="#polyline">Polyline</a> are available.
-
-| Prop                | Type                     | Description                                                                                                                                                                                                                                                                                                                                                                                    |
-| ------------------- | ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **`strokeColor`**   | <code>string</code>      | The stroke color. All CSS3 colors are supported except for extended named colors.                                                                                                                                                                                                                                                                                                              |
-| **`strokeOpacity`** | <code>number</code>      | The stroke opacity between 0.0 and 1.0.                                                                                                                                                                                                                                                                                                                                                        |
-| **`strokeWidth`**   | <code>number</code>      |                                                                                                                                                                                                                                                                                                                                                                                                |
-| **`geodesic`**      | <code>boolean</code>     | When &lt;code&gt;true&lt;/code&gt;, edges of the polygon are interpreted as geodesic and will follow the curvature of the Earth. When &lt;code&gt;false&lt;/code&gt;, edges of the polygon are rendered as straight lines in screen space. Note that the shape of a geodesic polygon may appear to change when dragged, as the dimensions are maintained relative to the surface of the earth. |
-| **`clickable`**     | <code>boolean</code>     | Indicates whether this &lt;code&gt;<a href="#polyline">Polyline</a>&lt;/code&gt; handles mouse events.                                                                                                                                                                                                                                                                                         |
-| **`tag`**           | <code>string</code>      |                                                                                                                                                                                                                                                                                                                                                                                                |
-| **`styleSpans`**    | <code>StyleSpan[]</code> | Used to specify the color of one or more segments of a polyline. The styleSpans property is an array of <a href="#stylespan">StyleSpan</a> objects. Setting the spans property is the preferred way to change the color of a polyline. Only on iOS and Android.                                                                                                                                |
-
-
-#### StyleSpan
-
-Describes the style for some region of a polyline.
-
-| Prop           | Type                | Description                                                                       |
-| -------------- | ------------------- | --------------------------------------------------------------------------------- |
-| **`color`**    | <code>string</code> | The stroke color. All CSS3 colors are supported except for extended named colors. |
-| **`segments`** | <code>number</code> | The length of this span in number of segments.                                    |
+| Prop            | Type                  |
+| --------------- | --------------------- |
+| **`points`**    | <code>LatLng[]</code> |
+| **`visible`**   | <code>boolean</code>  |
+| **`geodesic`**  | <code>boolean</code>  |
+| **`color`**     | <code>string</code>   |
+| **`width`**     | <code>number</code>   |
+| **`zIndex`**    | <code>number</code>   |
+| **`clickable`** | <code>boolean</code>  |
 
 
 #### CameraConfig
@@ -1436,19 +1390,6 @@ Controls for setting padding on the 'visible' region of the view.
 | **`maxZoom`** | <code>number</code> | The maximum zoom level of the map. |
 
 
-#### PolylineOption
-
-| Prop            | Type                  |
-| --------------- | --------------------- |
-| **`points`**    | <code>LatLng[]</code> |
-| **`visible`**   | <code>boolean</code>  |
-| **`geodesic`**  | <code>boolean</code>  |
-| **`color`**     | <code>string</code>   |
-| **`width`**     | <code>number</code>   |
-| **`zIndex`**    | <code>number</code>   |
-| **`clickable`** | <code>boolean</code>  |
-
-
 ### Type Aliases
 
 
@@ -1480,13 +1421,6 @@ One can use a
 to determine if a position is a 2D or 3D position.
 
 <code>number[]</code>
-
-
-#### Marker
-
-Supports markers of either either "legacy" or "advanced" types.
-
-<code>google.maps.<a href="#marker">Marker</a> | google.maps.marker.AdvancedMarkerElement</code>
 
 
 ### Enums

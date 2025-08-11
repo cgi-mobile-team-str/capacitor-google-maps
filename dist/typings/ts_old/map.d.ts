@@ -1,4 +1,4 @@
-import { CameraConfig, Marker, MapPadding, MapListenerCallback, MapReadyCallbackData, CameraIdleCallbackData, CameraMoveStartedCallbackData, ClusterClickCallbackData, MapClickCallbackData, MarkerClickCallbackData, MyLocationButtonClickCallbackData, Polygon, PolygonClickCallbackData, Circle, CircleClickCallbackData, Polyline, PolylineCallbackData, VisibleRegion, GoogleMapsOptions, MarkerClass, MarkerOption, PolylineOption, PolylineClass } from './definitions';
+import { CameraConfig, MapPadding, MapListenerCallback, MapReadyCallbackData, CameraIdleCallbackData, CameraMoveStartedCallbackData, ClusterClickCallbackData, MapClickCallbackData, MarkerClickCallbackData, MyLocationButtonClickCallbackData, Polygon, PolygonClickCallbackData, Circle, CircleClickCallbackData, PolylineCallbackData, VisibleRegion, GoogleMapsOptions, MarkerClass, MarkerOption, PolylineOption, PolylineClass } from './definitions';
 import { LatLngBounds, MapType } from './definitions';
 import { CreateMapArgs } from './implementation';
 export interface GoogleMapInterface {
@@ -12,14 +12,14 @@ export interface GoogleMapInterface {
     minClusterSize?: number): Promise<void>;
     disableClustering(): Promise<void>;
     addMarker(options: MarkerOption): Promise<MarkerClass>;
-    addMarkers(markers: Marker[]): Promise<string[]>;
+    addMarkers(optionsList: MarkerOption[]): Promise<MarkerClass[]>;
     removeMarker(id: string): Promise<void>;
     removeMarkers(ids: string[]): Promise<void>;
     addPolygons(polygons: Polygon[]): Promise<string[]>;
     removePolygons(ids: string[]): Promise<void>;
     addCircles(circles: Circle[]): Promise<string[]>;
     removeCircles(ids: string[]): Promise<void>;
-    addPolylines(polylines: Polyline[]): Promise<string[]>;
+    addPolylines(optionsList: PolylineOption[]): Promise<PolylineClass>;
     removePolylines(ids: string[]): Promise<void>;
     destroy(): Promise<void>;
     moveCamera(config: CameraConfig): Promise<void>;
@@ -144,7 +144,7 @@ export declare class GoogleMap {
      * @param markers
      * @returns array of created marker IDs
      */
-    addMarkers(markers: Marker[]): Promise<string[]>;
+    addMarkers(optionsList: MarkerOption[]): Promise<MarkerClass[]>;
     /**
      * Remove marker from the map
      *
@@ -160,7 +160,7 @@ export declare class GoogleMap {
      */
     removeMarkers(ids: string[]): Promise<void>;
     addPolygons(polygons: Polygon[]): Promise<string[]>;
-    addPolylines(polylines: Polyline[]): Promise<string[]>;
+    addPolylines(optionsList: PolylineOption[]): Promise<PolylineClass[]>;
     addPolyline(options: PolylineOption): Promise<PolylineClass>;
     removePolygons(ids: string[]): Promise<void>;
     addCircles(circles: Circle[]): Promise<string[]>;
