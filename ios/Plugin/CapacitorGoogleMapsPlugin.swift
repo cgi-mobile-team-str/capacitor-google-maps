@@ -1400,42 +1400,43 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
         }
     }
 
-    //TODO
-    /*@objc func addMarkers(_ call: CAPPluginCall) {
+    @objc func addMarkers(_ call: CAPPluginCall) {
         do {
+            var pairsIdMarker: [(Int, Marker)] = []
+            
             guard let id = call.getString("id") else {
                 throw GoogleMapErrors.invalidMapId
             }
 
-            guard let markerObjs = call.getArray("markers") as? [JSObject] else {
-                throw GoogleMapErrors.invalidArguments("markers array is missing")
+            guard let optionsListObjs = call.getArray("optionsList") as? [JSObject] else {
+                throw GoogleMapErrors.invalidArguments("options array is missing")
             }
 
-            if markerObjs.isEmpty {
-                throw GoogleMapErrors.invalidArguments("markers requires at least one marker")
+            if optionsListObjs.isEmpty {
+                throw GoogleMapErrors.invalidArguments("options requires at least one option")
             }
 
             guard let map = self.maps[id] else {
                 throw GoogleMapErrors.mapNotFound
             }
 
-            var markers: [Marker] = []
+            var optionsList: [MarkerOptions] = []
 
-            try markerObjs.forEach { marker in
-                let marker = try Marker(fromJSObject: marker)
-                markers.append(marker)
+            try optionsListObjs.forEach { options in
+                let opts = try MarkerOptions(fromJSObject: options)
+                optionsList.append(opts)
             }
 
-            let ids = try map.addMarkers(markers: markers)
+            pairsIdMarker = try map.addMarkers(optionsList: optionsList)
 
-            call.resolve(["ids": ids.map({ id in
-                return String(id)
+            call.resolve(["markers": pairsIdMarker.map({ pair in
+                return formatMarkerForResponse(markerId: pair.0, mapId: id, marker: pair.1)
             })])
 
         } catch {
             handleError(call, error: error)
         }
-    }*/
+    }
     
     @objc func setMarkerIcon(_ call: CAPPluginCall) {
         do {
@@ -1603,41 +1604,41 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
     
     // BEGIN POLYLINE METHODS
     
-    //TODO
-    /*@objc func addPolylines(_ call: CAPPluginCall) {
+    @objc func addPolylines(_ call: CAPPluginCall) {
         do {
+            var pairsIdPolyline: [(Int, GMSPolyline)] = []
             guard let id = call.getString("id") else {
                 throw GoogleMapErrors.invalidMapId
             }
 
-            guard let lineObjs = call.getArray("polylines") as? [JSObject] else {
-                throw GoogleMapErrors.invalidArguments("polylines array is missing")
+            guard let optionsListObjs = call.getArray("optionsList") as? [JSObject] else {
+                throw GoogleMapErrors.invalidArguments("options array is missing")
             }
 
-            if lineObjs.isEmpty {
-                throw GoogleMapErrors.invalidArguments("polylines requires at least one line")
+            if optionsListObjs.isEmpty {
+                throw GoogleMapErrors.invalidArguments("options requires at least one option")
             }
 
             guard let map = self.maps[id] else {
                 throw GoogleMapErrors.mapNotFound
             }
 
-            var lines: [Polyline] = []
+            var optionsList: [PolylineOptions] = []
 
-            try lineObjs.forEach { lineObj in
-                let line = try Polyline(fromJSObject: lineObj)
-                lines.append(line)
+            try optionsListObjs.forEach { options in
+                let opts = try PolylineOptions(fromJSObject: options)
+                optionsList.append(opts)
             }
 
-            let ids = try map.addPolylines(lines: lines)
+            pairsIdPolyline = try map.addPolylines(optionsList: optionsList)
 
-            call.resolve(["ids": ids.map({ id in
-                return String(id)
+            call.resolve(["polylines": pairsIdPolyline.map({ pair in
+                return formatPolylineForResponse(polylineId: pair.0, mapId: id, polyline: pair.1)
             })])
         } catch {
             handleError(call, error: error)
         }
-    }*/
+    }
     
     @objc func addPolyline(_ call: CAPPluginCall) {
         do {
