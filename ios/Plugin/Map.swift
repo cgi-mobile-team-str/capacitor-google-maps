@@ -254,23 +254,6 @@ public class Map {
         return circleHashes
     }
 
-    func addPolylines(lines: [Polyline]) throws -> [Int] {
-        var polylineHashes: [Int] = []
-
-        DispatchQueue.main.sync {
-            lines.forEach { line in
-                let newLine = self.buildPolyline(line: line)
-                newLine.map = self.mapViewController.GMapView
-
-                self.polylines[newLine.hash.hashValue] = newLine
-
-                polylineHashes.append(newLine.hash.hashValue)
-            }
-        }
-
-        return polylineHashes
-    }
-
     func enableClustering(_ minClusterSize: Int?) {
         if !self.mapViewController.clusteringEnabled {
             DispatchQueue.main.sync {
@@ -593,13 +576,17 @@ public class Map {
         return (markerHash, addedMarker: marker)
     }
 
-    //TODO
-    /*func addMarkers(markers: [Marker]) throws -> [Int] {
-        var markerHashes: [Int] = []
+    func addMarkers(optionsList: [MarkerOptions]) throws -> [(Int, Marker)] {
+        var pairsIdMarker: [(Int, Marker)] = []
 
         DispatchQueue.main.sync {
             var googleMapsMarkers: [GMSMarker] = []
-
+            var markers: [Marker] = []
+            optionsList.forEach{ options in
+                let marker = Marker(options: options)
+                markers.append(marker)
+            }
+            
             markers.forEach { marker in
                 let newMarker = self.buildMarker(marker: marker)
 
@@ -611,7 +598,7 @@ public class Map {
 
                 self.markers[newMarker.hash.hashValue] = newMarker
 
-                markerHashes.append(newMarker.hash.hashValue)
+                pairsIdMarker.append((newMarker.hash.hashValue, addedMarker:  marker))
             }
 
             if self.mapViewController.clusteringEnabled {
@@ -619,8 +606,8 @@ public class Map {
             }
         }
 
-        return markerHashes
-    }*/
+        return pairsIdMarker
+    }
     
     func setMarkerIcon(markerId: Int?, url: String?, size: CGSize?) throws {
         guard let markerIndex = markerId, let marker = self.markers[markerIndex] else {
@@ -701,6 +688,80 @@ public class Map {
     }
     
     // END MARKER METHODS
+    
+    // BEGIN POLYLINE METHODS
+    
+    func addPolylines(optionsList: [PolylineOptions]) throws -> [(Int, GMSPolyline)] {
+        var pairsIdPolyline: [(Int, GMSPolyline)] = []
+        var lines: [Polyline] = []
+       try optionsList.forEach{ options in
+            let line =  try Polyline(options: options)
+            lines.append(line)
+        }
+        DispatchQueue.main.sync {
+            lines.forEach { line in
+                let newLine = self.buildPolyline(line: line)
+                newLine.map = self.mapViewController.GMapView
+
+                self.polylines[newLine.hash.hashValue] = newLine
+
+                pairsIdPolyline.append((newLine.hash.hashValue, addedPolyline: newLine))
+            }
+        }
+
+        return pairsIdPolyline
+    }
+    
+    func addPolyline(options: PolylineOptions) throws -> (Int, GMSPolyline) {
+        var polylineHash:Int = 0
+        var newLine: GMSPolyline = GMSPolyline()
+        let line = try Polyline(options: options)
+        
+        DispatchQueue.main.sync {
+            newLine = self.buildPolyline(line: line)
+            newLine.map = self.mapViewController.GMapView
+
+            self.polylines[newLine.hash.hashValue] = newLine
+            polylineHash = newLine.hash.hashValue
+        }
+
+        return (polylineHash, newLine)
+    }
+    
+    func setPolylineStrokeColor(polylineId: Int, strokeColor: String) throws {
+        guard let line = self.polylines[polylineId] else {
+            throw GoogleMapErrors.polylineNotFound
+        }
+        
+        DispatchQueue.main.sync {
+            if let color = GoogleMapsUtils.parseToUIColor(strokeColor) {
+                line.strokeColor = color
+            }
+        }
+    }
+    
+    func setPolylineStrokeWidth(polylineId: Int, strokeWidth: Float) throws {
+        guard let line = self.polylines[polylineId] else {
+            throw GoogleMapErrors.polylineNotFound
+        }
+        
+        DispatchQueue.main.sync {
+            line.strokeWidth = CGFloat(strokeWidth)
+        }
+    }
+    
+    func removePolyline(polylineId: Int) throws {
+        if let polyline = self.polylines[polylineId] {
+            DispatchQueue.main.async {
+                polyline.map = nil
+                self.polylines.removeValue(forKey: polylineId)
+            }
+        } else {
+            throw GoogleMapErrors.polylineNotFound
+        }
+    }
+    
+    // END POLYLINE METHODS
 
     private func setupCameraPosition(config: GoogleMapCameraConfig ) -> GMSCameraPosition {
         let currentCamera = self.mapViewController.GMapView.camera

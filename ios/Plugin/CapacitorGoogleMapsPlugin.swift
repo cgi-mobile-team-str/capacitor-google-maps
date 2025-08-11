@@ -279,41 +279,6 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
         }
     }
 
-    @objc func addPolylines(_ call: CAPPluginCall) {
-        do {
-            guard let id = call.getString("id") else {
-                throw GoogleMapErrors.invalidMapId
-            }
-
-            guard let lineObjs = call.getArray("polylines") as? [JSObject] else {
-                throw GoogleMapErrors.invalidArguments("polylines array is missing")
-            }
-
-            if lineObjs.isEmpty {
-                throw GoogleMapErrors.invalidArguments("polylines requires at least one line")
-            }
-
-            guard let map = self.maps[id] else {
-                throw GoogleMapErrors.mapNotFound
-            }
-
-            var lines: [Polyline] = []
-
-            try lineObjs.forEach { lineObj in
-                let line = try Polyline(fromJSObject: lineObj)
-                lines.append(line)
-            }
-
-            let ids = try map.addPolylines(lines: lines)
-
-            call.resolve(["ids": ids.map({ id in
-                return String(id)
-            })])
-        } catch {
-            handleError(call, error: error)
-        }
-    }
-
     @objc func removePolygons(_ call: CAPPluginCall) {
         do {
             guard let id = call.getString("id") else {
@@ -832,6 +797,7 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
                 }
 
                 call.resolve(
+                  
                     formatMapBoundsForResponse(
                         bounds: bounds,
                         cameraPosition: map.mapViewController.GMapView.camera
@@ -1154,6 +1120,32 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
         ]
     }
     
+    private func formatPolylineForResponse(polylineId: Int, mapId: String, polyline: GMSPolyline) -> PluginCallResultData {
+        let hexColor =  GoogleMapsUtils.hexStringFromColor(color: polyline.strokeColor)
+        var points: JSArray = []
+        if let path = polyline.path {
+            for i in 0..<path.count() {
+                let coord = path.coordinate(at: i)
+                points.append([
+                    "lat": coord.latitude,
+                    "lng": coord.longitude
+                ])
+            }
+        }
+        
+        return [
+            "id": String(polylineId),
+            "mapId": mapId,
+            "path": points,
+            "geoDesic": polyline.geodesic,
+            "visible": polyline.map != nil,
+            "clickable": polyline.isTappable,
+            "strokeWidth": polyline.strokeWidth,
+            "strokeColor": hexColor
+        ]
+    }
+    
+    
     private func formatMapBoundsForResponse(_ bounds: GMSCoordinateBounds) -> PluginCallResultData {
         let centerLatitude = (bounds.southWest.latitude + bounds.northEast.latitude) / 2.0
         let centerLongitude = (bounds.southWest.longitude + bounds.northEast.longitude) / 2.0
@@ -1408,42 +1400,43 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
         }
     }
 
-    //TODO
-    /*@objc func addMarkers(_ call: CAPPluginCall) {
+    @objc func addMarkers(_ call: CAPPluginCall) {
         do {
+            var pairsIdMarker: [(Int, Marker)] = []
+            
             guard let id = call.getString("id") else {
                 throw GoogleMapErrors.invalidMapId
             }
 
-            guard let markerObjs = call.getArray("markers") as? [JSObject] else {
-                throw GoogleMapErrors.invalidArguments("markers array is missing")
+            guard let optionsListObjs = call.getArray("optionsList") as? [JSObject] else {
+                throw GoogleMapErrors.invalidArguments("options array is missing")
             }
 
-            if markerObjs.isEmpty {
-                throw GoogleMapErrors.invalidArguments("markers requires at least one marker")
+            if optionsListObjs.isEmpty {
+                throw GoogleMapErrors.invalidArguments("options requires at least one option")
             }
 
             guard let map = self.maps[id] else {
                 throw GoogleMapErrors.mapNotFound
             }
 
-            var markers: [Marker] = []
+            var optionsList: [MarkerOptions] = []
 
-            try markerObjs.forEach { marker in
-                let marker = try Marker(fromJSObject: marker)
-                markers.append(marker)
+            try optionsListObjs.forEach { options in
+                let opts = try MarkerOptions(fromJSObject: options)
+                optionsList.append(opts)
             }
 
-            let ids = try map.addMarkers(markers: markers)
+            pairsIdMarker = try map.addMarkers(optionsList: optionsList)
 
-            call.resolve(["ids": ids.map({ id in
-                return String(id)
+            call.resolve(["markers": pairsIdMarker.map({ pair in
+                return formatMarkerForResponse(markerId: pair.0, mapId: id, marker: pair.1)
             })])
 
         } catch {
             handleError(call, error: error)
         }
-    }*/
+    }
     
     @objc func setMarkerIcon(_ call: CAPPluginCall) {
         do {
@@ -1608,6 +1601,159 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
     }
     
     // END MARKER METHODS
+    
+    // BEGIN POLYLINE METHODS
+    
+    @objc func addPolylines(_ call: CAPPluginCall) {
+        do {
+            var pairsIdPolyline: [(Int, GMSPolyline)] = []
+            guard let id = call.getString("id") else {
+                throw GoogleMapErrors.invalidMapId
+            }
+
+            guard let optionsListObjs = call.getArray("optionsList") as? [JSObject] else {
+                throw GoogleMapErrors.invalidArguments("options array is missing")
+            }
+
+            if optionsListObjs.isEmpty {
+                throw GoogleMapErrors.invalidArguments("options requires at least one option")
+            }
+
+            guard let map = self.maps[id] else {
+                throw GoogleMapErrors.mapNotFound
+            }
+
+            var optionsList: [PolylineOptions] = []
+
+            try optionsListObjs.forEach { options in
+                let opts = try PolylineOptions(fromJSObject: options)
+                optionsList.append(opts)
+            }
+
+            pairsIdPolyline = try map.addPolylines(optionsList: optionsList)
+
+            call.resolve(["polylines": pairsIdPolyline.map({ pair in
+                return formatPolylineForResponse(polylineId: pair.0, mapId: id, polyline: pair.1)
+            })])
+        } catch {
+            handleError(call, error: error)
+        }
+    }
+    
+    @objc func addPolyline(_ call: CAPPluginCall) {
+        do {
+            guard let id = call.getString("id") else {
+                throw GoogleMapErrors.invalidMapId
+            }
+            
+            guard let optionsObj = call.getObject("options") else {
+                throw GoogleMapErrors.invalidArguments("options object is missing")
+            }
+            
+            let options = try PolylineOptions(fromJSObject: optionsObj)
+            
+            guard let map = self.maps[id] else {
+                throw GoogleMapErrors.mapNotFound
+            }
+            
+            let (polylineId, addedPolyline) = try map.addPolyline(options: options)
+            call.resolve(formatPolylineForResponse(polylineId: polylineId, mapId: id, polyline: addedPolyline))
+            
+        } catch {
+            handleError(call, error: error)
+        }
+    }
+    
+    @objc func setPolylineStrokeColor(_ call: CAPPluginCall) {
+        do {
+            guard let id = call.getString("id") else {
+                throw GoogleMapErrors.invalidMapId
+            }
+
+            guard let polylineIdString = call.getString("polylineId") else {
+                throw GoogleMapErrors.invalidArguments("polylineId is invalid or missing")
+            }
+
+            guard let polylineId = Int(polylineIdString) else {
+                throw GoogleMapErrors.invalidArguments("polylineId is invalid or missing")
+            }
+            
+            guard let strokeColor = call.getString("strokeColor") else {
+                throw GoogleMapErrors.invalidArguments("strokeColor is invalid or missing")
+            }
+            
+            guard let map = self.maps[id] else {
+                throw GoogleMapErrors.mapNotFound
+            }
+
+            try map.setPolylineStrokeColor(polylineId: polylineId, strokeColor: strokeColor)
+
+            call.resolve()
+
+        } catch {
+            handleError(call, error: error)
+        }
+    }
+    
+    @objc func setPolylineStrokeWidth(_ call: CAPPluginCall) {
+        do {
+            guard let id = call.getString("id") else {
+                throw GoogleMapErrors.invalidMapId
+            }
+
+            guard let polylineIdString = call.getString("polylineId") else {
+                throw GoogleMapErrors.invalidArguments("polylineId is invalid or missing")
+            }
+
+            guard let polylineId = Int(polylineIdString) else {
+                throw GoogleMapErrors.invalidArguments("polylineId is invalid or missing")
+            }
+            
+            guard let strokeWidth = call.getFloat("strokeWidth") else {
+                throw GoogleMapErrors.invalidArguments("strokeColor is invalid or missing")
+            }
+            
+            guard let map = self.maps[id] else {
+                throw GoogleMapErrors.mapNotFound
+            }
+
+            try map.setPolylineStrokeWidth(polylineId: polylineId, strokeWidth: strokeWidth)
+
+            call.resolve()
+
+        } catch {
+            handleError(call, error: error)
+        }
+    }
+    
+    @objc func removePolyline(_ call: CAPPluginCall) {
+        do {
+            guard let id = call.getString("id") else {
+                throw GoogleMapErrors.invalidMapId
+            }
+
+            guard let polylineIdString = call.getString("polylineId") else {
+                throw GoogleMapErrors.invalidArguments("polylineId is invalid or missing")
+            }
+
+            guard let polylineId = Int(polylineIdString) else {
+                throw GoogleMapErrors.invalidArguments("polylineId is invalid or missing")
+            }
+            
+            guard let map = self.maps[id] else {
+                throw GoogleMapErrors.mapNotFound
+            }
+
+            try map.removePolyline(polylineId: polylineId)
+
+            call.resolve()
+
+        } catch {
+            handleError(call, error: error)
+        }
+    }
+    
+    // END POLYLINE METHODS
 }
 
 // snippet from https://www.hackingwithswift.com/example-code/uicolor/how-to-convert-a-hex-color-to-a-uicolor

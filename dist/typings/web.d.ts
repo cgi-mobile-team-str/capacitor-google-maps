@@ -1,16 +1,13 @@
 import { WebPlugin } from '@capacitor/core';
-import type { LatLng, MapPadding, Marker, VisibleRegion } from './definitions';
+import type { LatLng, MapPadding, Marker, Polyline, VisibleRegion } from './definitions';
 import { LatLngBounds } from './definitions';
-import type { AddMarkerArgs, CameraArgs, AddMarkersArgs, CapacitorGoogleMapsPlugin, CreateMapArgs, CurrentLocArgs, DestroyMapArgs, MapTypeArgs, PaddingArgs, RemoveMarkerArgs, TrafficLayerArgs, RemoveMarkersArgs, MapBoundsContainsArgs, EnableClusteringArgs, FitBoundsArgs, MapBoundsExtendArgs, AddPolygonsArgs, RemovePolygonsArgs, AddCirclesArgs, RemoveCirclesArgs, AddPolylinesArgs, RemovePolylinesArgs, EnableCompassArgs, MapOptionsArgs, MarkerIconArgs, MarkerIconAnchorArgs, MarkerZIndexArgs, MarkerPositionArgs, MarkerVisibilityArgs } from './implementation';
+import type { AddMarkerArgs, CameraArgs, AddMarkersArgs, CapacitorGoogleMapsPlugin, CreateMapArgs, CurrentLocArgs, DestroyMapArgs, MapTypeArgs, PaddingArgs, RemoveMarkerArgs, TrafficLayerArgs, RemoveMarkersArgs, MapBoundsContainsArgs, EnableClusteringArgs, FitBoundsArgs, MapBoundsExtendArgs, AddPolygonsArgs, RemovePolygonsArgs, AddCirclesArgs, RemoveCirclesArgs, AddPolylinesArgs, RemovePolylinesArgs, EnableCompassArgs, MapOptionsArgs, MarkerIconArgs, MarkerIconAnchorArgs, MarkerZIndexArgs, MarkerPositionArgs, MarkerVisibilityArgs, AddPolylineArgs, PolylineStrokeColorArgs, PolylineStrokeWidthArgs, RemovePolylineArgs } from './implementation';
 export declare class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogleMapsPlugin {
     private gMapsRef;
     private AdvancedMarkerElement;
-    private PinElement;
     private maps;
-    private currMarkerId;
     private currPolygonId;
     private currCircleId;
-    private currPolylineId;
     private currMapId;
     private onClusterClickHandler;
     private getIdFromMap;
@@ -40,9 +37,6 @@ export declare class CapacitorGoogleMapsWeb extends WebPlugin implements Capacit
         id: string;
     }): Promise<LatLngBounds>;
     fitBounds(_args: FitBoundsArgs): Promise<void>;
-    addMarkers(_args: AddMarkersArgs): Promise<{
-        ids: string[];
-    }>;
     removeMarkers(_args: RemoveMarkersArgs): Promise<void>;
     removeMarker(_args: RemoveMarkerArgs): Promise<void>;
     addPolygons(args: AddPolygonsArgs): Promise<{
@@ -53,9 +47,6 @@ export declare class CapacitorGoogleMapsWeb extends WebPlugin implements Capacit
         ids: string[];
     }>;
     removeCircles(args: RemoveCirclesArgs): Promise<void>;
-    addPolylines(args: AddPolylinesArgs): Promise<{
-        ids: string[];
-    }>;
     removePolylines(args: RemovePolylinesArgs): Promise<void>;
     enableClustering(_args: EnableClusteringArgs): Promise<void>;
     disableClustering(_args: {
@@ -78,7 +69,6 @@ export declare class CapacitorGoogleMapsWeb extends WebPlugin implements Capacit
     setPolylineListeners(mapId: string, polylineId: string, polyline: google.maps.Polyline): Promise<void>;
     setMarkerListeners(mapId: string, markerId: string, marker: google.maps.marker.AdvancedMarkerElement): Promise<void>;
     setMapListeners(mapId: string): Promise<void>;
-    private buildMarkerOpts;
     getVisibleRegion(): Promise<VisibleRegion>;
     enableCompass(_args: EnableCompassArgs): Promise<void>;
     enableToolbar(_args: {
@@ -119,11 +109,27 @@ export declare class CapacitorGoogleMapsWeb extends WebPlugin implements Capacit
     addMarker(_args: AddMarkerArgs): Promise<Marker & {
         id: string;
     }>;
+    addMarkers(_args: AddMarkersArgs): Promise<{
+        markers: (Marker & {
+            id: string;
+        })[];
+    }>;
     setMarkerIcon(_args: MarkerIconArgs): Promise<void>;
     setMarkerIconAnchor(_args: MarkerIconAnchorArgs): Promise<void>;
     setMarkerZIndex(_args: MarkerZIndexArgs): Promise<void>;
     setMarkerVisibility(_args: MarkerVisibilityArgs): Promise<void>;
     getMarkerPosition(_args: MarkerPositionArgs): Promise<{
         position: LatLng;
+    }>;
+    addPolyline(_args: AddPolylineArgs): Promise<Polyline & {
+        id: string;
+    }>;
+    setPolylineStrokeColor(_args: PolylineStrokeColorArgs): Promise<void>;
+    setPolylineStrokeWidth(_args: PolylineStrokeWidthArgs): Promise<void>;
+    removePolyline(_args: RemovePolylineArgs): Promise<void>;
+    addPolylines(_args: AddPolylinesArgs): Promise<{
+        polylines: (Polyline & {
+            id: string;
+        })[];
     }>;
 }

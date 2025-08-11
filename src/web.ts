@@ -3,7 +3,7 @@ import { WebPlugin } from '@capacitor/core';
 import type { Cluster, onClusterClickHandler } from '@googlemaps/markerclusterer';
 import { MarkerClusterer, SuperClusterAlgorithm } from '@googlemaps/markerclusterer';
 
-import type { LatLng, MapPadding, Marker, VisibleRegion } from './definitions';
+import type { LatLng, MapPadding, Marker, Polyline, VisibleRegion } from './definitions';
 import { MapType, LatLngBounds } from './definitions';
 import type {
   AddMarkerArgs,
@@ -35,12 +35,16 @@ import type {
   MarkerZIndexArgs,
   MarkerPositionArgs,
   MarkerVisibilityArgs,
+  AddPolylineArgs,
+  PolylineStrokeColorArgs,
+  PolylineStrokeWidthArgs,
+  RemovePolylineArgs,
 } from './implementation';
 
 export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogleMapsPlugin {
   private gMapsRef: typeof google.maps | undefined = undefined;
   private AdvancedMarkerElement: typeof google.maps.marker.AdvancedMarkerElement | undefined = undefined;
-  private PinElement: typeof google.maps.marker.PinElement | undefined = undefined;
+  // private PinElement: typeof google.maps.marker.PinElement | undefined = undefined;
   private maps: {
     [id: string]: {
       element: HTMLElement;
@@ -61,10 +65,10 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
       trafficLayer?: google.maps.TrafficLayer;
     };
   } = {};
-  private currMarkerId = 0;
+  // private currMarkerId = 0;
   private currPolygonId = 0;
   private currCircleId = 0;
-  private currPolylineId = 0;
+  // private currPolylineId = 0;
   private currMapId = 0;
 
   private onClusterClickHandler: onClusterClickHandler = (
@@ -135,11 +139,12 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
       this.gMapsRef = google.maps;
 
       // Import marker library once
-      const { AdvancedMarkerElement, PinElement } = (await google.maps.importLibrary(
-        'marker'
-      )) as google.maps.MarkerLibrary;
+      // const { AdvancedMarkerElement, PinElement } = (await google.maps.importLibrary(
+      //   'marker'
+      // )) as google.maps.MarkerLibrary;
+      const { AdvancedMarkerElement } = (await google.maps.importLibrary('marker')) as google.maps.MarkerLibrary;
       this.AdvancedMarkerElement = AdvancedMarkerElement;
-      this.PinElement = PinElement;
+      // this.PinElement = PinElement;
 
       console.log('Loaded google maps API');
     }
@@ -279,25 +284,6 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
     map.fitBounds(bounds, _args.padding);
   }
 
-  async addMarkers(_args: AddMarkersArgs): Promise<{ ids: string[] }> {
-    const markerIds: string[] = [];
-    const map = this.maps[_args.id];
-
-    for (const markerArgs of _args.markers) {
-      const advancedMarker = this.buildMarkerOpts(markerArgs, map.map);
-
-      const id = '' + this.currMarkerId;
-
-      map.markers[id] = advancedMarker;
-      await this.setMarkerListeners(_args.id, id, advancedMarker);
-
-      markerIds.push(id);
-      this.currMarkerId++;
-    }
-
-    return { ids: markerIds };
-  }
-
   async removeMarkers(_args: RemoveMarkersArgs): Promise<void> {
     const map = this.maps[_args.id];
 
@@ -370,28 +356,6 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
       map.circles[id].setMap(null);
       delete map.circles[id];
     }
-  }
-
-  async addPolylines(args: AddPolylinesArgs): Promise<{ ids: string[] }> {
-    const lineIds: string[] = [];
-    const map = this.maps[args.id];
-
-    for (const polylineArgs of args.polylines) {
-      const polyline = new google.maps.Polyline(polylineArgs);
-      polyline.set('tag', polylineArgs.tag);
-      polyline.setMap(map.map);
-
-      const id = '' + this.currPolylineId;
-      this.maps[args.id].polylines[id] = polyline;
-      this.setPolylineListeners(args.id, id, polyline);
-
-      lineIds.push(id);
-      this.currPolylineId++;
-    }
-
-    return {
-      ids: lineIds,
-    };
   }
 
   async removePolylines(args: RemovePolylinesArgs): Promise<void> {
@@ -644,44 +608,44 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
     });
   }
 
-  private buildMarkerOpts(marker: Marker, map: google.maps.Map): google.maps.marker.AdvancedMarkerElement {
-    if (!this.AdvancedMarkerElement || !this.PinElement) {
-      throw new Error('Marker library not loaded');
-    }
+  // private buildMarkerOpts(marker: Marker, map: google.maps.Map): google.maps.marker.AdvancedMarkerElement {
+  //   if (!this.AdvancedMarkerElement || !this.PinElement) {
+  //     throw new Error('Marker library not loaded');
+  //   }
 
-    let content: HTMLElement | undefined = undefined;
+  //   let content: HTMLElement | undefined = undefined;
 
-    if (marker.iconUrl) {
-      const img = document.createElement('img');
-      img.src = marker.iconUrl;
-      if (marker.iconSize) {
-        img.style.width = `${marker.iconSize.width}px`;
-        img.style.height = `${marker.iconSize.height}px`;
-      }
-      content = img;
-    } else {
-      const pinOptions: google.maps.marker.PinElementOptions = {
-        scale: marker.opacity ?? 1,
-        glyph: marker.title,
-        background: marker.tintColor
-          ? `rgb(${marker.tintColor.r}, ${marker.tintColor.g}, ${marker.tintColor.b})`
-          : undefined,
-      };
+  //   if (marker.iconUrl) {
+  //     const img = document.createElement('img');
+  //     img.src = marker.iconUrl;
+  //     if (marker.iconSize) {
+  //       img.style.width = `${marker.iconSize.width}px`;
+  //       img.style.height = `${marker.iconSize.height}px`;
+  //     }
+  //     content = img;
+  //   } else {
+  //     const pinOptions: google.maps.marker.PinElementOptions = {
+  //       scale: marker.opacity ?? 1,
+  //       glyph: marker.title,
+  //       background: marker.tintColor
+  //         ? `rgb(${marker.tintColor.r}, ${marker.tintColor.g}, ${marker.tintColor.b})`
+  //         : undefined,
+  //     };
 
-      const pin = new this.PinElement(pinOptions);
-      content = pin.element;
-    }
+  //     const pin = new this.PinElement(pinOptions);
+  //     content = pin.element;
+  //   }
 
-    const advancedMarker = new this.AdvancedMarkerElement({
-      position: marker.coordinate,
-      map: map,
-      content: content,
-      title: marker.title,
-      gmpDraggable: marker.draggable,
-    });
+  //   const advancedMarker = new this.AdvancedMarkerElement({
+  //     position: marker.coordinate,
+  //     map: map,
+  //     content: content,
+  //     title: marker.title,
+  //     gmpDraggable: marker.draggable,
+  //   });
 
-    return advancedMarker;
-  }
+  //   return advancedMarker;
+  // }
 
   //TODO A IMPLEMENTER PAR LA SUITE !!!
   async getVisibleRegion(): Promise<VisibleRegion> {
@@ -727,8 +691,8 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
   async getCameraZoom(_args: { id: string }): Promise<{ cameraZoom: number }> {
     throw new Error('Method not implemented.');
   }
- 
-  async addMarker(_args: AddMarkerArgs): Promise<Marker & {id:string}> {
+
+  async addMarker(_args: AddMarkerArgs): Promise<Marker & { id: string }> {
     // const advancedMarker = this.buildMarkerOpts(_args.marker, this.maps[_args.id].map);
 
     // const id = '' + this.currMarkerId;
@@ -739,6 +703,26 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
     // this.currMarkerId++;
 
     // return { id: id };
+    throw new Error('Method not implemented.');
+  }
+
+  async addMarkers(_args: AddMarkersArgs): Promise<{markers: (Marker & { id: string })[]}> {
+    // const markerIds: string[] = [];
+    // const map = this.maps[_args.id];
+
+    // for (const markerArgs of _args.markers) {
+    //   const advancedMarker = this.buildMarkerOpts(markerArgs, map.map);
+
+    //   const id = '' + this.currMarkerId;
+
+    //   map.markers[id] = advancedMarker;
+    //   await this.setMarkerListeners(_args.id, id, advancedMarker);
+
+    //   markerIds.push(id);
+    //   this.currMarkerId++;
+    // }
+
+    // return { ids: markerIds };
     throw new Error('Method not implemented.');
   }
 
@@ -753,12 +737,51 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
   async setMarkerZIndex(_args: MarkerZIndexArgs): Promise<void> {
     throw new Error('Method not implemented.');
   }
-  
+
   async setMarkerVisibility(_args: MarkerVisibilityArgs): Promise<void> {
     throw new Error('Method not implemented.');
   }
 
-  async getMarkerPosition(_args: MarkerPositionArgs): Promise<{position: LatLng}> {
+  async getMarkerPosition(_args: MarkerPositionArgs): Promise<{ position: LatLng }> {
+    throw new Error('Method not implemented.');
+  }
+
+  addPolyline(_args: AddPolylineArgs): Promise<Polyline & { id: string }> {
+    throw new Error('Method not implemented.');
+  }
+
+  setPolylineStrokeColor(_args: PolylineStrokeColorArgs): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+
+  setPolylineStrokeWidth(_args: PolylineStrokeWidthArgs): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+
+  removePolyline(_args: RemovePolylineArgs): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+
+  async addPolylines(_args: AddPolylinesArgs): Promise<{polylines: (Polyline & { id: string })[]}> {
+    // const lineIds: string[] = [];
+    // const map = this.maps[args.id];
+
+    // for (const polylineArgs of args.polylines) {
+    //   const polyline = new google.maps.Polyline(polylineArgs);
+    //   polyline.set('tag', polylineArgs.tag);
+    //   polyline.setMap(map.map);
+
+    //   const id = '' + this.currPolylineId;
+    //   this.maps[args.id].polylines[id] = polyline;
+    //   this.setPolylineListeners(args.id, id, polyline);
+
+    //   lineIds.push(id);
+    //   this.currPolylineId++;
+    // }
+
+    // return {
+    //   ids: lineIds,
+    // };
     throw new Error('Method not implemented.');
   }
 }

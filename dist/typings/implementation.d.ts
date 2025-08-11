@@ -1,5 +1,5 @@
 import type { Plugin } from '@capacitor/core';
-import type { CameraConfig, Circle, GoogleMapConfig, GoogleMapsOptions, LatLng, LatLngBounds, MapPadding, MapType, Marker, MarkerOption, Polygon, Polyline, Size, VisibleRegion } from './definitions';
+import type { CameraConfig, Circle, GoogleMapConfig, GoogleMapsOptions, LatLng, LatLngBounds, MapPadding, MapType, Marker, MarkerOption, Polygon, Polyline, PolylineOption, Size, VisibleRegion } from './definitions';
 /**
  * An interface containing the options used when creating a map.
  */
@@ -71,7 +71,7 @@ export interface RemoveCirclesArgs {
 }
 export interface AddPolylinesArgs {
     id: string;
-    polylines: Polyline[];
+    optionsList: PolylineOption[];
 }
 export interface RemovePolylinesArgs {
     id: string;
@@ -107,7 +107,7 @@ export interface CurrentLocArgs {
 }
 export interface AddMarkersArgs {
     id: string;
-    markers: Marker[];
+    optionsList: MarkerOption[];
 }
 export interface MapBoundsArgs {
     id: string;
@@ -195,6 +195,24 @@ export interface CameraBearingArgs {
     id: string;
     bearing: number;
 }
+export interface AddPolylineArgs {
+    id: string;
+    options: PolylineOption;
+}
+export interface PolylineStrokeColorArgs {
+    id: string;
+    polylineId: string;
+    strokeColor: string;
+}
+export interface PolylineStrokeWidthArgs {
+    id: string;
+    polylineId: string;
+    strokeWidth: number;
+}
+export interface RemovePolylineArgs {
+    id: string;
+    polylineId: string;
+}
 export interface CapacitorGoogleMapsPlugin extends Plugin {
     create(options: CreateMapArgs): Promise<void>;
     enableTouch(args: {
@@ -207,7 +225,9 @@ export interface CapacitorGoogleMapsPlugin extends Plugin {
         id: string;
     }>;
     addMarkers(args: AddMarkersArgs): Promise<{
-        ids: string[];
+        markers: (Marker & {
+            id: string;
+        })[];
     }>;
     removeMarker(args: RemoveMarkerArgs): Promise<void>;
     removeMarkers(args: RemoveMarkersArgs): Promise<void>;
@@ -220,7 +240,9 @@ export interface CapacitorGoogleMapsPlugin extends Plugin {
     }>;
     removeCircles(args: RemoveCirclesArgs): Promise<void>;
     addPolylines(args: AddPolylinesArgs): Promise<{
-        ids: string[];
+        polylines: (Polyline & {
+            id: string;
+        })[];
     }>;
     removePolylines(args: RemovePolylinesArgs): Promise<void>;
     enableClustering(args: EnableClusteringArgs): Promise<void>;
@@ -282,6 +304,12 @@ export interface CapacitorGoogleMapsPlugin extends Plugin {
     getMarkerPosition(args: MarkerPositionArgs): Promise<{
         position: LatLng;
     }>;
+    addPolyline(args: AddPolylineArgs): Promise<Polyline & {
+        id: string;
+    }>;
+    setPolylineStrokeColor(args: PolylineStrokeColorArgs): Promise<void>;
+    setPolylineStrokeWidth(args: PolylineStrokeWidthArgs): Promise<void>;
+    removePolyline(args: RemovePolylineArgs): Promise<void>;
 }
 declare const CapacitorGoogleMaps: CapacitorGoogleMapsPlugin;
 export { CapacitorGoogleMaps };

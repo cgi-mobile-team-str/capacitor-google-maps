@@ -1,0 +1,81 @@
+import UIKit
+
+enum ColorType {
+    case hex
+    case rgb
+    case rgba
+    case invalid
+}
+
+struct GoogleMapsUtils {
+    
+       static func detectColorType(_ color: String) -> ColorType {
+           let trimmed = color.trimmingCharacters(in: .whitespacesAndNewlines)
+           
+           // HEX check (with or without #)
+           let hexPart = trimmed.hasPrefix("#") ? String(trimmed.dropFirst()) : trimmed
+           let hexValid = hexPart.allSatisfy { $0.isHexDigit }
+           if hexValid && (hexPart.count == 3 || hexPart.count == 6) {
+               return .hex
+           }
+           
+           // RGB check
+           if trimmed.lowercased().hasPrefix("rgb(") && trimmed.hasSuffix(")") {
+               let parts = trimmed.dropFirst(4).dropLast().split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }
+               if parts.count == 3, parts.allSatisfy({ Int($0) ?? -1 >= 0 && Int($0) ?? -1 <= 255 }) {
+                   return .rgb
+               }
+           }
+           
+           // RGBA check
+           if trimmed.lowercased().hasPrefix("rgba(") && trimmed.hasSuffix(")") {
+               let parts = trimmed.dropFirst(5).dropLast().split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }
+               if parts.count == 4,
+                  parts[0...2].allSatisfy({ Int($0) ?? -1 >= 0 && Int($0) ?? -1 <= 255 }),
+                  let alpha = Float(parts[3]), alpha >= 0, alpha <= 1 {
+                   return .rgba
+               }
+           }
+           
+           return .invalid
+       }
+       
+       static func parseToUIColor(_ color: String) -> UIColor? {
+           switch detectColorType(color) {
+           case .rgb:
+               let parts = color.dropFirst(4).dropLast().split(separator: ",").compactMap { Int($0.trimmingCharacters(in: .whitespaces)) }
+               return UIColor(red: CGFloat(parts[0]) / 255, green: CGFloat(parts[1]) / 255, blue: CGFloat(parts[2]) / 255, alpha: 1)
+               
+           case .rgba:
+               let parts = color.dropFirst(5).dropLast().split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }
+               guard let r = Int(parts[0]), let g = Int(parts[1]), let b = Int(parts[2]), let a = Float(parts[3]) else { return nil }
+               return UIColor(red: CGFloat(r) / 255, green: CGFloat(g) / 255, blue: CGFloat(b) / 255, alpha: CGFloat(a))
+               
+           case .hex:
+               let hex = color.hasPrefix("#") ? String(color.dropFirst()) : color
+               var intVal: UInt64 = 0
+               Scanner(string: hex).scanHexInt64(&intVal)
+               if hex.count == 6 {
+                   let r = CGFloat((intVal >> 16) & 0xFF) / 255
+                   let g = CGFloat((intVal >> 8) & 0xFF) / 255
+                   let b = CGFloat(intVal & 0xFF) / 255
+                   return UIColor(red: r, green: g, blue: b, alpha: 1)
+               }
+               return nil
+               
+           default:
+               return nil
+           }
+       }
+    
+    static func hexStringFromColor(color: UIColor) -> String {
+        let components = color.cgColor.components
+        let r: CGFloat = components?[0] ?? 0.0
+        let g: CGFloat = components?[1] ?? 0.0
+        let b: CGFloat = components?[2] ?? 0.0
+
+        let hexString = String.init(format: "#%02lX%02lX%02lX", lroundf(Float(r * 255)), lroundf(Float(g * 255)), lroundf(Float(b * 255)))
+        print(hexString)
+        return hexString
+     }
+}

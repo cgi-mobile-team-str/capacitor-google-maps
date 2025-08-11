@@ -1,5 +1,5 @@
 import { Capacitor } from '@capacitor/core';
-import { MarkerClass, } from './definitions';
+import { MarkerClass, PolylineClass, } from './definitions';
 import { LatLngBounds, MapType } from './definitions';
 import { CapacitorGoogleMaps } from './implementation';
 class MapCustomElement extends HTMLElement {
@@ -223,12 +223,16 @@ export class GoogleMap {
      * @param markers
      * @returns array of created marker IDs
      */
-    async addMarkers(markers) {
+    async addMarkers(optionsList) {
         const res = await CapacitorGoogleMaps.addMarkers({
             id: this.id,
-            markers,
+            optionsList,
         });
-        return res.ids;
+        const markers = [];
+        res.markers.forEach((r) => {
+            markers.push(new MarkerClass(r, this.id));
+        });
+        return markers;
     }
     /**
      * Remove marker from the map
@@ -261,12 +265,24 @@ export class GoogleMap {
         });
         return res.ids;
     }
-    async addPolylines(polylines) {
+    async addPolylines(optionsList) {
         const res = await CapacitorGoogleMaps.addPolylines({
             id: this.id,
-            polylines,
+            optionsList,
         });
-        return res.ids;
+        const polylines = [];
+        res.polylines.forEach((r) => {
+            polylines.push(new PolylineClass(r, this.id));
+        });
+        return polylines;
+    }
+    async addPolyline(options) {
+        const res = await CapacitorGoogleMaps.addPolyline({
+            id: this.id,
+            options,
+        });
+        const polylineObj = new PolylineClass(res, this.id);
+        return polylineObj;
     }
     async removePolygons(ids) {
         return CapacitorGoogleMaps.removePolygons({

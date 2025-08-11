@@ -84,7 +84,7 @@ export interface Circle extends google.maps.CircleOptions {
 export interface Polyline extends google.maps.PolylineOptions {
     strokeColor?: string;
     strokeOpacity?: number;
-    strokeWeight?: number;
+    strokeWidth?: number;
     geodesic?: boolean;
     clickable?: boolean;
     tag?: string;
@@ -95,6 +95,32 @@ export interface Polyline extends google.maps.PolylineOptions {
      * Only on iOS and Android.
      */
     styleSpans?: StyleSpan[];
+}
+export interface PolylineOption {
+    points: LatLng[];
+    visible?: boolean;
+    geodesic?: boolean;
+    color?: string;
+    width?: number;
+    zIndex?: number;
+    clickable?: boolean;
+}
+export declare class PolylineClass implements Polyline {
+    mapId: string;
+    id: string;
+    points: LatLng[] | null | undefined;
+    visible?: boolean | null;
+    geodesic?: boolean;
+    strokeColor?: string;
+    strokeWidth?: number;
+    zIndex?: number | null;
+    clickable?: boolean;
+    constructor(obj: Polyline & {
+        id: string;
+    }, mapId: string);
+    setStrokeColor(color: string): Promise<void>;
+    setStrokeWidth(width: number): Promise<void>;
+    remove(): Promise<void>;
 }
 /**
  * Describes the style for some region of a polyline.

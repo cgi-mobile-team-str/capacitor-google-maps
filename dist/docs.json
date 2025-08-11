@@ -98,19 +98,20 @@
       },
       {
         "name": "addMarkers",
-        "signature": "(markers: Marker[]) => Promise<string[]>",
+        "signature": "(optionsList: MarkerOption[]) => Promise<MarkerClass[]>",
         "parameters": [
           {
-            "name": "markers",
+            "name": "optionsList",
             "docs": "",
-            "type": "Marker[]"
+            "type": "MarkerOption[]"
           }
         ],
-        "returns": "Promise<string[]>",
+        "returns": "Promise<MarkerClass[]>",
         "tags": [],
         "docs": "",
         "complexTypes": [
-          "Marker"
+          "MarkerClass",
+          "MarkerOption"
         ],
         "slug": "addmarkers"
       },
@@ -216,19 +217,20 @@
       },
       {
         "name": "addPolylines",
-        "signature": "(polylines: Polyline[]) => Promise<string[]>",
+        "signature": "(optionsList: PolylineOption[]) => Promise<PolylineClass>",
         "parameters": [
           {
-            "name": "polylines",
+            "name": "optionsList",
             "docs": "",
-            "type": "Polyline[]"
+            "type": "PolylineOption[]"
           }
         ],
-        "returns": "Promise<string[]>",
+        "returns": "Promise<PolylineClass>",
         "tags": [],
         "docs": "",
         "complexTypes": [
-          "Polyline"
+          "PolylineClass",
+          "PolylineOption"
         ],
         "slug": "addpolylines"
       },
@@ -932,6 +934,25 @@
         "docs": "",
         "complexTypes": [],
         "slug": "getcamerazoom"
+      },
+      {
+        "name": "addPolyline",
+        "signature": "(options: PolylineOption) => Promise<PolylineClass>",
+        "parameters": [
+          {
+            "name": "options",
+            "docs": "",
+            "type": "PolylineOption"
+          }
+        ],
+        "returns": "Promise<PolylineClass>",
+        "tags": [],
+        "docs": "",
+        "complexTypes": [
+          "PolylineClass",
+          "PolylineOption"
+        ],
+        "slug": "addpolyline"
       }
     ],
     "properties": []
@@ -1325,188 +1346,6 @@
       ]
     },
     {
-      "name": "Marker",
-      "slug": "marker",
-      "docs": "A marker is an icon placed at a particular point on the map's surface.",
-      "tags": [],
-      "methods": [],
-      "properties": [
-        {
-          "name": "coordinate",
-          "tags": [],
-          "docs": "Marker position",
-          "complexTypes": [
-            "LatLng"
-          ],
-          "type": "LatLng"
-        },
-        {
-          "name": "opacity",
-          "tags": [
-            {
-              "text": "1",
-              "name": "default"
-            }
-          ],
-          "docs": "Sets the opacity of the marker, between 0 (completely transparent) and 1 inclusive.",
-          "complexTypes": [],
-          "type": "number | undefined"
-        },
-        {
-          "name": "title",
-          "tags": [],
-          "docs": "Title, a short description of the overlay.",
-          "complexTypes": [],
-          "type": "string | undefined"
-        },
-        {
-          "name": "snippet",
-          "tags": [],
-          "docs": "Snippet text, shown beneath the title in the info window when selected.",
-          "complexTypes": [],
-          "type": "string | undefined"
-        },
-        {
-          "name": "isFlat",
-          "tags": [
-            {
-              "text": "false",
-              "name": "default"
-            }
-          ],
-          "docs": "Controls whether this marker should be flat against the Earth's surface or a billboard facing the camera.",
-          "complexTypes": [],
-          "type": "boolean | undefined"
-        },
-        {
-          "name": "iconUrl",
-          "tags": [
-            {
-              "text": "```typescript\n{\n...\n iconUrl: 'assets/icon/pin.png',\n ...\n}\n```",
-              "name": "usage"
-            },
-            {
-              "text": "4.2.0",
-              "name": "since"
-            }
-          ],
-          "docs": "Path to a marker icon to render. It can be relative to the web app public directory,\nor a https url of a remote marker icon.\n\n**SVGs are not supported on native platforms.**",
-          "complexTypes": [],
-          "type": "string | undefined"
-        },
-        {
-          "name": "iconSize",
-          "tags": [
-            {
-              "text": "4.2.0",
-              "name": "since"
-            }
-          ],
-          "docs": "Controls the scaled size of the marker image set in `iconUrl`.",
-          "complexTypes": [
-            "Size"
-          ],
-          "type": "Size"
-        },
-        {
-          "name": "iconOrigin",
-          "tags": [
-            {
-              "text": "4.2.0",
-              "name": "since"
-            }
-          ],
-          "docs": "The position of the image within a sprite, if any. By default, the origin is located at the top left corner of the image .",
-          "complexTypes": [
-            "Point"
-          ],
-          "type": "Point"
-        },
-        {
-          "name": "iconAnchor",
-          "tags": [
-            {
-              "text": "4.2.0",
-              "name": "since"
-            }
-          ],
-          "docs": "The position at which to anchor an image in correspondence to the location of the marker on the map. By default, the anchor is located along the center point of the bottom of the image.",
-          "complexTypes": [
-            "Point"
-          ],
-          "type": "Point"
-        },
-        {
-          "name": "tintColor",
-          "tags": [
-            {
-              "text": "4.2.0",
-              "name": "since"
-            }
-          ],
-          "docs": "Customizes the color of the default marker image.  Each value must be between 0 and 255.\n\nOnly for iOS and Android.",
-          "complexTypes": [],
-          "type": "{ r: number; g: number; b: number; a: number; } | undefined"
-        },
-        {
-          "name": "draggable",
-          "tags": [
-            {
-              "text": "false",
-              "name": "default"
-            }
-          ],
-          "docs": "Controls whether this marker can be dragged interactively",
-          "complexTypes": [],
-          "type": "boolean | undefined"
-        },
-        {
-          "name": "zIndex",
-          "tags": [
-            {
-              "text": "0",
-              "name": "default"
-            }
-          ],
-          "docs": "Specifies the stack order of this marker, relative to other markers on the map.\nA marker with a high z-index is drawn on top of markers with lower z-indexes",
-          "complexTypes": [],
-          "type": "number | undefined"
-        },
-        {
-          "name": "isVisible",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "boolean | undefined"
-        }
-      ]
-    },
-    {
-      "name": "Point",
-      "slug": "point",
-      "docs": "Point geometry object.\nhttps://tools.ietf.org/html/rfc7946#section-3.1.2",
-      "tags": [],
-      "methods": [],
-      "properties": [
-        {
-          "name": "type",
-          "tags": [],
-          "docs": "Specifies the type of GeoJSON object.",
-          "complexTypes": [],
-          "type": "'Point'"
-        },
-        {
-          "name": "coordinates",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [
-            "Position"
-          ],
-          "type": "Position"
-        }
-      ]
-    },
-    {
       "name": "Polygon",
       "slug": "polygon",
       "docs": "Polygon geometry object.\nhttps://tools.ietf.org/html/rfc7946#section-3.1.6",
@@ -1597,85 +1436,62 @@
       ]
     },
     {
-      "name": "Polyline",
-      "slug": "polyline",
-      "docs": "For web, all the javascript Polyline options are available as\nPolyline extends google.maps.PolylineOptions.\nFor iOS and Android only the config options declared on Polyline are available.",
+      "name": "PolylineOption",
+      "slug": "polylineoption",
+      "docs": "",
       "tags": [],
       "methods": [],
       "properties": [
         {
-          "name": "strokeColor",
+          "name": "points",
           "tags": [],
-          "docs": "The stroke color. All CSS3 colors are supported except for extended named\ncolors.",
-          "complexTypes": [],
-          "type": "string | undefined"
+          "docs": "",
+          "complexTypes": [
+            "LatLng"
+          ],
+          "type": "LatLng[]"
         },
         {
-          "name": "strokeOpacity",
+          "name": "visible",
           "tags": [],
-          "docs": "The stroke opacity between 0.0 and 1.0.",
+          "docs": "",
           "complexTypes": [],
-          "type": "number | undefined"
-        },
-        {
-          "name": "strokeWeight",
-          "tags": [],
-          "docs": "The stroke width in pixels.",
-          "complexTypes": [],
-          "type": "number | undefined"
+          "type": "boolean | undefined"
         },
         {
           "name": "geodesic",
           "tags": [],
-          "docs": "When <code>true</code>, edges of the polygon are interpreted as geodesic\nand will follow the curvature of the Earth. When <code>false</code>,\nedges of the polygon are rendered as straight lines in screen space. Note\nthat the shape of a geodesic polygon may appear to change when dragged,\nas the dimensions are maintained relative to the surface of the earth.",
+          "docs": "",
           "complexTypes": [],
           "type": "boolean | undefined"
         },
         {
-          "name": "clickable",
-          "tags": [],
-          "docs": "Indicates whether this <code>Polyline</code> handles mouse events.",
-          "complexTypes": [],
-          "type": "boolean | undefined"
-        },
-        {
-          "name": "tag",
+          "name": "color",
           "tags": [],
           "docs": "",
           "complexTypes": [],
           "type": "string | undefined"
         },
         {
-          "name": "styleSpans",
+          "name": "width",
           "tags": [],
-          "docs": "Used to specify the color of one or more segments of a polyline. The styleSpans property is an array of StyleSpan objects.\nSetting the spans property is the preferred way to change the color of a polyline.\n\nOnly on iOS and Android.",
-          "complexTypes": [
-            "StyleSpan"
-          ],
-          "type": "StyleSpan[] | undefined"
-        }
-      ]
-    },
-    {
-      "name": "StyleSpan",
-      "slug": "stylespan",
-      "docs": "Describes the style for some region of a polyline.",
-      "tags": [],
-      "methods": [],
-      "properties": [
-        {
-          "name": "color",
-          "tags": [],
-          "docs": "The stroke color. All CSS3 colors are supported except for extended named colors.",
-          "complexTypes": [],
-          "type": "string"
-        },
-        {
-          "name": "segments",
-          "tags": [],
-          "docs": "The length of this span in number of segments.",
+          "docs": "",
           "complexTypes": [],
           "type": "number | undefined"
+        },
+        {
+          "name": "zIndex",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "number | undefined"
+        },
+        {
+          "name": "clickable",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "boolean | undefined"
         }
       ]
     },
@@ -2438,25 +2254,6 @@
         {
           "text": "number[]",
           "complexTypes": []
-        }
-      ]
-    },
-    {
-      "name": "Marker",
-      "slug": "marker",
-      "docs": "Supports markers of either either \"legacy\" or \"advanced\" types.",
-      "types": [
-        {
-          "text": "google.maps.Marker",
-          "complexTypes": [
-            "google"
-          ]
-        },
-        {
-          "text": "google.maps.marker.AdvancedMarkerElement",
-          "complexTypes": [
-            "google"
-          ]
         }
       ]
     }

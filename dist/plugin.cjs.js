@@ -60,6 +60,30 @@ class LatLngBounds {
         return this;
     }
 }
+class PolylineClass {
+    constructor(obj, mapId) {
+        this.mapId = mapId;
+        this.id = obj.id;
+        this.points = obj.path;
+        this.visible = obj.visible;
+        this.geodesic = obj.geodesic;
+        this.strokeColor = obj.strokeColor;
+        this.strokeWidth = obj.strokeWidth;
+        this.zIndex = obj.zIndex;
+        this.clickable = obj.clickable;
+    }
+    async setStrokeColor(color) {
+        this.strokeColor = color;
+        return CapacitorGoogleMaps.setPolylineStrokeColor({ id: this.mapId, polylineId: this.id, strokeColor: color });
+    }
+    async setStrokeWidth(width) {
+        this.strokeWidth = width;
+        return CapacitorGoogleMaps.setPolylineStrokeWidth({ id: this.mapId, polylineId: this.id, strokeWidth: width });
+    }
+    async remove() {
+        return CapacitorGoogleMaps.removePolyline({ id: this.mapId, polylineId: this.id });
+    }
+}
 exports.MapType = void 0;
 (function (MapType) {
     /**
@@ -353,12 +377,16 @@ class GoogleMap {
      * @param markers
      * @returns array of created marker IDs
      */
-    async addMarkers(markers) {
+    async addMarkers(optionsList) {
         const res = await CapacitorGoogleMaps.addMarkers({
             id: this.id,
-            markers,
+            optionsList,
         });
-        return res.ids;
+        const markers = [];
+        res.markers.forEach((r) => {
+            markers.push(new MarkerClass(r, this.id));
+        });
+        return markers;
     }
     /**
      * Remove marker from the map
@@ -391,12 +419,24 @@ class GoogleMap {
         });
         return res.ids;
     }
-    async addPolylines(polylines) {
+    async addPolylines(optionsList) {
         const res = await CapacitorGoogleMaps.addPolylines({
             id: this.id,
-            polylines,
+            optionsList,
         });
-        return res.ids;
+        const polylines = [];
+        res.polylines.forEach((r) => {
+            polylines.push(new PolylineClass(r, this.id));
+        });
+        return polylines;
+    }
+    async addPolyline(options) {
+        const res = await CapacitorGoogleMaps.addPolyline({
+            id: this.id,
+            options,
+        });
+        const polylineObj = new PolylineClass(res, this.id);
+        return polylineObj;
     }
     async removePolygons(ids) {
         return CapacitorGoogleMaps.removePolygons({
@@ -1044,12 +1084,12 @@ class CapacitorGoogleMapsWeb extends core.WebPlugin {
         super(...arguments);
         this.gMapsRef = undefined;
         this.AdvancedMarkerElement = undefined;
-        this.PinElement = undefined;
+        // private PinElement: typeof google.maps.marker.PinElement | undefined = undefined;
         this.maps = {};
-        this.currMarkerId = 0;
+        // private currMarkerId = 0;
         this.currPolygonId = 0;
         this.currCircleId = 0;
-        this.currPolylineId = 0;
+        // private currPolylineId = 0;
         this.currMapId = 0;
         this.onClusterClickHandler = (_, cluster, map) => {
             var _a;
@@ -1108,9 +1148,12 @@ class CapacitorGoogleMapsWeb extends core.WebPlugin {
             const google = await loader.load();
             this.gMapsRef = google.maps;
             // Import marker library once
-            const { AdvancedMarkerElement, PinElement } = (await google.maps.importLibrary('marker'));
+            // const { AdvancedMarkerElement, PinElement } = (await google.maps.importLibrary(
+            //   'marker'
+            // )) as google.maps.MarkerLibrary;
+            const { AdvancedMarkerElement } = (await google.maps.importLibrary('marker'));
             this.AdvancedMarkerElement = AdvancedMarkerElement;
-            this.PinElement = PinElement;
+            // this.PinElement = PinElement;
             console.log('Loaded google maps API');
         }
     }
@@ -1227,19 +1270,6 @@ class CapacitorGoogleMapsWeb extends core.WebPlugin {
         const bounds = this.getLatLngBounds(_args.bounds);
         map.fitBounds(bounds, _args.padding);
     }
-    async addMarkers(_args) {
-        const markerIds = [];
-        const map = this.maps[_args.id];
-        for (const markerArgs of _args.markers) {
-            const advancedMarker = this.buildMarkerOpts(markerArgs, map.map);
-            const id = '' + this.currMarkerId;
-            map.markers[id] = advancedMarker;
-            await this.setMarkerListeners(_args.id, id, advancedMarker);
-            markerIds.push(id);
-            this.currMarkerId++;
-        }
-        return { ids: markerIds };
-    }
     async removeMarkers(_args) {
         const map = this.maps[_args.id];
         for (const id of _args.markerIds) {
@@ -1296,23 +1326,6 @@ class CapacitorGoogleMapsWeb extends core.WebPlugin {
             map.circles[id].setMap(null);
             delete map.circles[id];
         }
-    }
-    async addPolylines(args) {
-        const lineIds = [];
-        const map = this.maps[args.id];
-        for (const polylineArgs of args.polylines) {
-            const polyline = new google.maps.Polyline(polylineArgs);
-            polyline.set('tag', polylineArgs.tag);
-            polyline.setMap(map.map);
-            const id = '' + this.currPolylineId;
-            this.maps[args.id].polylines[id] = polyline;
-            this.setPolylineListeners(args.id, id, polyline);
-            lineIds.push(id);
-            this.currPolylineId++;
-        }
-        return {
-            ids: lineIds,
-        };
     }
     async removePolylines(args) {
         const map = this.maps[args.id];
@@ -1534,41 +1547,39 @@ class CapacitorGoogleMapsWeb extends core.WebPlugin {
             mapId: mapId,
         });
     }
-    buildMarkerOpts(marker, map) {
-        var _a;
-        if (!this.AdvancedMarkerElement || !this.PinElement) {
-            throw new Error('Marker library not loaded');
-        }
-        let content = undefined;
-        if (marker.iconUrl) {
-            const img = document.createElement('img');
-            img.src = marker.iconUrl;
-            if (marker.iconSize) {
-                img.style.width = `${marker.iconSize.width}px`;
-                img.style.height = `${marker.iconSize.height}px`;
-            }
-            content = img;
-        }
-        else {
-            const pinOptions = {
-                scale: (_a = marker.opacity) !== null && _a !== void 0 ? _a : 1,
-                glyph: marker.title,
-                background: marker.tintColor
-                    ? `rgb(${marker.tintColor.r}, ${marker.tintColor.g}, ${marker.tintColor.b})`
-                    : undefined,
-            };
-            const pin = new this.PinElement(pinOptions);
-            content = pin.element;
-        }
-        const advancedMarker = new this.AdvancedMarkerElement({
-            position: marker.coordinate,
-            map: map,
-            content: content,
-            title: marker.title,
-            gmpDraggable: marker.draggable,
-        });
-        return advancedMarker;
-    }
+    // private buildMarkerOpts(marker: Marker, map: google.maps.Map): google.maps.marker.AdvancedMarkerElement {
+    //   if (!this.AdvancedMarkerElement || !this.PinElement) {
+    //     throw new Error('Marker library not loaded');
+    //   }
+    //   let content: HTMLElement | undefined = undefined;
+    //   if (marker.iconUrl) {
+    //     const img = document.createElement('img');
+    //     img.src = marker.iconUrl;
+    //     if (marker.iconSize) {
+    //       img.style.width = `${marker.iconSize.width}px`;
+    //       img.style.height = `${marker.iconSize.height}px`;
+    //     }
+    //     content = img;
+    //   } else {
+    //     const pinOptions: google.maps.marker.PinElementOptions = {
+    //       scale: marker.opacity ?? 1,
+    //       glyph: marker.title,
+    //       background: marker.tintColor
+    //         ? `rgb(${marker.tintColor.r}, ${marker.tintColor.g}, ${marker.tintColor.b})`
+    //         : undefined,
+    //     };
+    //     const pin = new this.PinElement(pinOptions);
+    //     content = pin.element;
+    //   }
+    //   const advancedMarker = new this.AdvancedMarkerElement({
+    //     position: marker.coordinate,
+    //     map: map,
+    //     content: content,
+    //     title: marker.title,
+    //     gmpDraggable: marker.draggable,
+    //   });
+    //   return advancedMarker;
+    // }
     //TODO A IMPLEMENTER PAR LA SUITE !!!
     async getVisibleRegion() {
         throw new Error('Method not implemented.');
@@ -1612,6 +1623,20 @@ class CapacitorGoogleMapsWeb extends core.WebPlugin {
         // return { id: id };
         throw new Error('Method not implemented.');
     }
+    async addMarkers(_args) {
+        // const markerIds: string[] = [];
+        // const map = this.maps[_args.id];
+        // for (const markerArgs of _args.markers) {
+        //   const advancedMarker = this.buildMarkerOpts(markerArgs, map.map);
+        //   const id = '' + this.currMarkerId;
+        //   map.markers[id] = advancedMarker;
+        //   await this.setMarkerListeners(_args.id, id, advancedMarker);
+        //   markerIds.push(id);
+        //   this.currMarkerId++;
+        // }
+        // return { ids: markerIds };
+        throw new Error('Method not implemented.');
+    }
     async setMarkerIcon(_args) {
         throw new Error('Method not implemented.');
     }
@@ -1627,6 +1652,36 @@ class CapacitorGoogleMapsWeb extends core.WebPlugin {
     async getMarkerPosition(_args) {
         throw new Error('Method not implemented.');
     }
+    addPolyline(_args) {
+        throw new Error('Method not implemented.');
+    }
+    setPolylineStrokeColor(_args) {
+        throw new Error('Method not implemented.');
+    }
+    setPolylineStrokeWidth(_args) {
+        throw new Error('Method not implemented.');
+    }
+    removePolyline(_args) {
+        throw new Error('Method not implemented.');
+    }
+    async addPolylines(_args) {
+        // const lineIds: string[] = [];
+        // const map = this.maps[args.id];
+        // for (const polylineArgs of args.polylines) {
+        //   const polyline = new google.maps.Polyline(polylineArgs);
+        //   polyline.set('tag', polylineArgs.tag);
+        //   polyline.setMap(map.map);
+        //   const id = '' + this.currPolylineId;
+        //   this.maps[args.id].polylines[id] = polyline;
+        //   this.setPolylineListeners(args.id, id, polyline);
+        //   lineIds.push(id);
+        //   this.currPolylineId++;
+        // }
+        // return {
+        //   ids: lineIds,
+        // };
+        throw new Error('Method not implemented.');
+    }
 }
 
 var web = /*#__PURE__*/Object.freeze({
@@ -1636,4 +1691,6 @@ var web = /*#__PURE__*/Object.freeze({
 
 exports.GoogleMap = GoogleMap;
 exports.LatLngBounds = LatLngBounds;
+exports.MarkerClass = MarkerClass;
+exports.PolylineClass = PolylineClass;
 //# sourceMappingURL=plugin.cjs.js.map
