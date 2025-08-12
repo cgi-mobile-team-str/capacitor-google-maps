@@ -949,11 +949,11 @@ class CapacitorGoogleMap(
 
     // BEGIN POLYLINE METHODS
 
-    fun addPolylines(optionsList: List<CapacitorPolylineOptions>, callback: (pairsIdPolyline: Result<List<Pair<String, Polyline>>>) -> Unit) {
+    fun addPolylines(optionsList: List<CapacitorPolylineOptions>, callback: (pairsIdPolyline: Result<List<Pair<String, CapacitorGoogleMapPolyline>>>) -> Unit) {
         try {
             googleMap ?: throw GoogleMapNotAvailable()
             val newLines: MutableList<CapacitorGoogleMapPolyline> = mutableListOf()
-            val idPolylinePairs: MutableList<Pair<String, Polyline>> = mutableListOf()
+            val idPolylinePairs: MutableList<Pair<String, CapacitorGoogleMapPolyline>> = mutableListOf()
             optionsList.forEach {
                 val line = CapacitorGoogleMapPolyline(it)
                 newLines.add(line)
@@ -970,7 +970,7 @@ class CapacitorGoogleMap(
 
                     polylines[googleMapPolyline!!.id] = it
                     if(it.googleMapsPolyline != null) {
-                        idPolylinePairs.add(Pair(googleMapPolyline.id, it.googleMapsPolyline!!))
+                        idPolylinePairs.add(Pair(googleMapPolyline.id, it))
                     }
                 }
 
@@ -981,7 +981,7 @@ class CapacitorGoogleMap(
         }
     }
 
-    fun addPolyline(options: CapacitorPolylineOptions, callback: (polyline: Result<Pair<String, Polyline>>) -> Unit) {
+    fun addPolyline(options: CapacitorPolylineOptions, callback: (polyline: Result<Pair<String, CapacitorGoogleMapPolyline>>) -> Unit) {
         try {
             googleMap ?: throw GoogleMapNotAvailable()
 
@@ -997,7 +997,7 @@ class CapacitorGoogleMap(
 
                 polylines[googleMapPolyline!!.id] = polyline
 
-                callback(Result.success(Pair(googleMapPolyline.id, googleMapPolyline)))
+                callback(Result.success(Pair(googleMapPolyline.id, polyline)))
             }
         } catch (e: GoogleMapsError) {
             callback(Result.failure(e))

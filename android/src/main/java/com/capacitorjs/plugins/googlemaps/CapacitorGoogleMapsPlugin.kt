@@ -23,6 +23,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONArray
 import org.json.JSONObject
+import kotlin.collections.component1
+import kotlin.collections.component2
 
 @CapacitorPlugin(
         name = "CapacitorGoogleMaps",
@@ -1712,25 +1714,28 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
         return res
     }
 
-    private fun createPolylineJSObject(pairIdPolyline: Pair<String, Polyline>, id: String): JSObject {
-        val hexColor = Integer.toString(pairIdPolyline.second.color, 16)
+    private fun createPolylineJSObject(pairIdPolyline: Pair<String, CapacitorGoogleMapPolyline>, id: String): JSObject {
+        val hexColor = Integer.toString(pairIdPolyline.second.strokeColor, 16)
         val pointsJsonArray = JSONArray()
         val res = JSObject()
 
-        if(!pairIdPolyline.second.points.isNullOrEmpty()) {
-            for (i in 0 until pairIdPolyline.second.points.size) {
-                pointsJsonArray.put(latLngToJSObject(pairIdPolyline.second.points.get(i)))
+        if(!pairIdPolyline.second.path.isNullOrEmpty()) {
+            for (i in 0 until pairIdPolyline.second.path.size) {
+                pointsJsonArray.put(latLngToJSObject(pairIdPolyline.second.path.get(i)))
             }
         }
         res.put("id", pairIdPolyline.first)
         res.put("mapId", id)
         res.put("path", pointsJsonArray)
-        res.put("geoDesic", pairIdPolyline.second.isGeodesic)
+        res.put("geodesic", pairIdPolyline.second.geodesic)
         res.put("visible", pairIdPolyline.second.isVisible)
-        res.put("clickable", pairIdPolyline.second.isClickable)
-        res.put("strokeWidth", pairIdPolyline.second.width)
+        res.put("clickable", pairIdPolyline.second.clickable)
+        res.put("strokeWidth", pairIdPolyline.second.strokeWidth)
         res.put("strokeColor", hexColor)
         res.put("zIndex", pairIdPolyline.second.zIndex)
+        pairIdPolyline.second.extras.forEach { (key, value) ->
+            res.put(key, value)
+        }
         return res
     }
 }

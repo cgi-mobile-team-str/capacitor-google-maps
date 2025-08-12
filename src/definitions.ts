@@ -127,6 +127,11 @@ export interface Polyline extends google.maps.PolylineOptions {
    * Only on iOS and Android.
    */
   styleSpans?: StyleSpan[];
+  /**
+   * Accept own properties
+   * You can get the property later using `get()` method.
+   */
+  [key: string]: any;
 }
 
 export interface PolylineOption {
@@ -137,6 +142,7 @@ export interface PolylineOption {
   width?: number;
   zIndex?: number;
   clickable?: boolean;
+  [key: string]: any;
 }
 export class PolylineClass implements Polyline {
   mapId: string;
@@ -148,6 +154,7 @@ export class PolylineClass implements Polyline {
   strokeWidth?: number;
   zIndex?: number | null;
   clickable?: boolean;
+  [key: string]: any;
 
   constructor(obj: Polyline & { id: string }, mapId: string) {
     this.mapId = mapId;
@@ -159,6 +166,15 @@ export class PolylineClass implements Polyline {
     this.strokeWidth = obj.strokeWidth;
     this.zIndex = obj.zIndex;
     this.clickable = obj.clickable;
+    Object.assign(this, obj);
+  }
+
+  get(key: string): any {
+    return this[key];
+  }
+
+  set(key: string, value: any): void {
+    this[key] = value;
   }
 
   async setStrokeColor(color: string): Promise<void> {

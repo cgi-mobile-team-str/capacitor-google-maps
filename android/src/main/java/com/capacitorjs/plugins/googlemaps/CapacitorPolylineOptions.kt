@@ -12,8 +12,21 @@ class CapacitorPolylineOptions(fromJSONObject: JSONObject)  {
     var width: Float? = null
     var zIndex: Float? = null
     var clickable: Boolean? = false
+    var extras: MutableMap<String, Any?> = mutableMapOf()
 
     init {
+        val propertyNames = mutableSetOf(
+            "points",
+            "visible",
+            "geodesic",
+            "color",
+            "width",
+            "zIndex",
+            "clickable",
+            "extras"
+        )
+        val keys = fromJSONObject.keys()
+
         if(!fromJSONObject.has("points")) {
             throw InvalidArgumentsError("Polyline options object is missing the required 'points' property")
         }
@@ -38,5 +51,11 @@ class CapacitorPolylineOptions(fromJSONObject: JSONObject)  {
         width = fromJSONObject.optDouble("width", 0.0).toFloat()
         zIndex = fromJSONObject.optDouble("zIndex", 0.0).toFloat()
         clickable = fromJSONObject.optBoolean("clickable", false)
+        while (keys.hasNext()) {
+            val key = keys.next()
+            if (key !in propertyNames) {
+                extras[key] = fromJSONObject.get(key)
+            }
+        }
     }
 }

@@ -1143,7 +1143,7 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
             "id": String(polylineId),
             "mapId": mapId,
             "path": points,
-            "geoDesic": polyline.geodesic,
+            "geodesic": polyline.geodesic,
             "visible": polyline.map != nil,
             "clickable": polyline.isTappable,
             "strokeWidth": polyline.strokeWidth,

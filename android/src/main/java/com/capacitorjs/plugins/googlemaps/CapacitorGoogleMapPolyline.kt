@@ -16,6 +16,7 @@ class CapacitorGoogleMapPolyline() {
     var tag: String = ""
     var googleMapsPolyline: Polyline? = null
     var isVisible: Boolean? = true
+    var extras: MutableMap<String, Any?> = mutableMapOf()
 
     constructor(fromJSONObject: JSONObject): this() {
         if (!fromJSONObject.has("path")) {
@@ -75,5 +76,6 @@ class CapacitorGoogleMapPolyline() {
         strokeWidth = options.width ?: 0f
         zIndex = options.zIndex ?: 0f
         clickable = options.clickable == true
+        extras = options.extras
     }
 }
