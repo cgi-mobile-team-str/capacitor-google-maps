@@ -361,6 +361,12 @@ export class GoogleMap {
             bearing,
         });
     }
+    async setCameraTarget(target) {
+        return CapacitorGoogleMaps.setCameraTarget({
+            id: this.id,
+            target,
+        });
+    }
     async setOptions(config) {
         return CapacitorGoogleMaps.setOptions({
             id: this.id,

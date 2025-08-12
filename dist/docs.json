@@ -953,6 +953,24 @@
           "PolylineOption"
         ],
         "slug": "addpolyline"
+      },
+      {
+        "name": "setCameraTarget",
+        "signature": "(target: LatLng | LatLng[]) => Promise<void>",
+        "parameters": [
+          {
+            "name": "target",
+            "docs": "",
+            "type": "LatLng | LatLng[]"
+          }
+        ],
+        "returns": "Promise<void>",
+        "tags": [],
+        "docs": "",
+        "complexTypes": [
+          "LatLng"
+        ],
+        "slug": "setcameratarget"
       }
     ],
     "properties": []

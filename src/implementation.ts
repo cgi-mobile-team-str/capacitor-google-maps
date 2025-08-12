@@ -271,6 +271,11 @@ export interface RemovePolylineArgs {
   polylineId: string;
 }
 
+export interface SetCameraTargetArgs {
+  id: string;
+  target: LatLng | LatLng[]; 
+}
+
 export interface CapacitorGoogleMapsPlugin extends Plugin {
   create(options: CreateMapArgs): Promise<void>;
   enableTouch(args: { id: string }): Promise<void>;
@@ -325,7 +330,7 @@ export interface CapacitorGoogleMapsPlugin extends Plugin {
   setPolylineStrokeColor(args: PolylineStrokeColorArgs): Promise<void>;
   setPolylineStrokeWidth(args: PolylineStrokeWidthArgs): Promise<void>;
   removePolyline(args: RemovePolylineArgs): Promise<void>;
-
+  setCameraTarget(args: SetCameraTargetArgs): Promise<void>;
 }
 
 const CapacitorGoogleMaps = registerPlugin<CapacitorGoogleMapsPlugin>('CapacitorGoogleMaps', {

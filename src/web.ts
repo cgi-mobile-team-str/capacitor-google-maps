@@ -39,6 +39,7 @@ import type {
   PolylineStrokeColorArgs,
   PolylineStrokeWidthArgs,
   RemovePolylineArgs,
+  SetCameraTargetArgs,
 } from './implementation';
 
 export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogleMapsPlugin {
@@ -706,7 +707,7 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
     throw new Error('Method not implemented.');
   }
 
-  async addMarkers(_args: AddMarkersArgs): Promise<{markers: (Marker & { id: string })[]}> {
+  async addMarkers(_args: AddMarkersArgs): Promise<{ markers: (Marker & { id: string })[] }> {
     // const markerIds: string[] = [];
     // const map = this.maps[_args.id];
 
@@ -762,7 +763,7 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
     throw new Error('Method not implemented.');
   }
 
-  async addPolylines(_args: AddPolylinesArgs): Promise<{polylines: (Polyline & { id: string })[]}> {
+  async addPolylines(_args: AddPolylinesArgs): Promise<{ polylines: (Polyline & { id: string })[] }> {
     // const lineIds: string[] = [];
     // const map = this.maps[args.id];
 
@@ -782,6 +783,10 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
     // return {
     //   ids: lineIds,
     // };
+    throw new Error('Method not implemented.');
+  }
+
+  async setCameraTarget(_args: SetCameraTargetArgs): Promise<void> {
     throw new Error('Method not implemented.');
   }
 }

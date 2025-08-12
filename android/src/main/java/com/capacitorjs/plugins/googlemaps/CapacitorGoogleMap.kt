@@ -648,6 +648,36 @@ class CapacitorGoogleMap(
         }
     }
 
+    fun setCameraTarget(target: Any ,callback: (error: GoogleMapsError?) -> Unit) {
+        try {
+            googleMap ?: throw GoogleMapNotAvailable()
+            CoroutineScope(Dispatchers.Main).launch {
+                val currentPosition = googleMap!!.cameraPosition
+                var cameraTarget: LatLng
+                if(target is LatLng) {
+                    cameraTarget = target
+                    val updatedPosition =
+                        CameraPosition.Builder(currentPosition)
+                            .target(cameraTarget)
+                            .build()
+                    googleMap?.animateCamera(CameraUpdateFactory.newCameraPosition(updatedPosition))
+                }
+                if (target is Array<*> && target.isArrayOf<LatLng>()) {
+                    target
+                    val latlngBounds = createLatLngBoundsFromLatLngArray(target as Array<LatLng>)
+                    val updatedPosition =
+                        CameraPosition.Builder(currentPosition)
+                            .target(latlngBounds.center)
+                            .build()
+                    googleMap?.animateCamera(CameraUpdateFactory.newCameraPosition(updatedPosition))
+                }
+                callback(null)
+            }
+        } catch (e: GoogleMapsError) {
+            callback(e)
+        }
+    }
+
     fun getCameraZoom(callback: (cameraZoom: Float, error: GoogleMapsError?) -> Unit) {
         try {
             googleMap ?: throw GoogleMapNotAvailable()

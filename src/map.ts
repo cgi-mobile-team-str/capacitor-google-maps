@@ -23,6 +23,7 @@ import {
   MarkerOption,
   PolylineOption,
   PolylineClass,
+  LatLng,
 } from './definitions';
 import { LatLngBounds, MapType } from './definitions';
 import type { CreateMapArgs } from './implementation';
@@ -103,6 +104,7 @@ export interface GoogleMapInterface {
   setOptions(config: GoogleMapsOptions): Promise<void>;
   getCameraZoom(): Promise<number>;
   addPolyline(options: PolylineOption): Promise<PolylineClass>;
+  setCameraTarget(target: LatLng | LatLng[]): Promise<void>;
 }
 
 class MapCustomElement extends HTMLElement {
@@ -532,6 +534,13 @@ export class GoogleMap {
     return CapacitorGoogleMaps.setCameraBearing({
       id: this.id,
       bearing,
+    });
+  }
+
+  async setCameraTarget(target: LatLng | LatLng[]): Promise<void> {
+    return CapacitorGoogleMaps.setCameraTarget({
+      id: this.id,
+      target,
     });
   }
 

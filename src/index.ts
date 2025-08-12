@@ -39,7 +39,6 @@ export {
   GoogleMapZoomOptions,
   GoogleMapGestures,
   GoogleMapPreferences,
-
 };
 
 declare global {

@@ -529,6 +529,12 @@ class GoogleMap {
             bearing,
         });
     }
+    async setCameraTarget(target) {
+        return CapacitorGoogleMaps.setCameraTarget({
+            id: this.id,
+            target,
+        });
+    }
     async setOptions(config) {
         return CapacitorGoogleMaps.setOptions({
             id: this.id,
@@ -1694,6 +1700,9 @@ class CapacitorGoogleMapsWeb extends core.WebPlugin {
         // return {
         //   ids: lineIds,
         // };
+        throw new Error('Method not implemented.');
+    }
+    async setCameraTarget(_args) {
         throw new Error('Method not implemented.');
     }
 }

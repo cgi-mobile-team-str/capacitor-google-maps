@@ -507,6 +507,12 @@ var capacitorCapacitorGoogleMaps = (function (exports, core, markerclusterer) {
                 bearing,
             });
         }
+        async setCameraTarget(target) {
+            return CapacitorGoogleMaps.setCameraTarget({
+                id: this.id,
+                target,
+            });
+        }
         async setOptions(config) {
             return CapacitorGoogleMaps.setOptions({
                 id: this.id,
@@ -1672,6 +1678,9 @@ var capacitorCapacitorGoogleMaps = (function (exports, core, markerclusterer) {
             // return {
             //   ids: lineIds,
             // };
+            throw new Error('Method not implemented.');
+        }
+        async setCameraTarget(_args) {
             throw new Error('Method not implemented.');
         }
     }

@@ -350,6 +350,7 @@ export default MyMap;
 * [`setOptions(...)`](#setoptions)
 * [`getCameraZoom()`](#getcamerazoom)
 * [`addPolyline(...)`](#addpolyline)
+* [`setCameraTarget(...)`](#setcameratarget)
 * [Interfaces](#interfaces)
 * [Type Aliases](#type-aliases)
 * [Enums](#enums)
@@ -1069,6 +1070,19 @@ addPolyline(options: PolylineOption) => Promise<PolylineClass>
 | **`options`** | <code><a href="#polylineoption">PolylineOption</a></code> |
 
 **Returns:** <code>Promise&lt;PolylineClass&gt;</code>
+
+--------------------
+
+
+### setCameraTarget(...)
+
+```typescript
+setCameraTarget(target: LatLng | LatLng[]) => Promise<void>
+```
+
+| Param        | Type                                                  |
+| ------------ | ----------------------------------------------------- |
+| **`target`** | <code><a href="#latlng">LatLng</a> \| LatLng[]</code> |
 
 --------------------
 

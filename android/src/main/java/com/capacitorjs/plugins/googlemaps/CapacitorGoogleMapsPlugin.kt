@@ -825,6 +825,45 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
     }
 
     @PluginMethod
+    fun setCameraTarget(call: PluginCall) {
+        try {
+            val id = call.getString("id")
+            id ?: throw InvalidMapIdError()
+
+            val map = maps[id]
+            map ?: throw MapNotFoundError()
+
+            val targetArray = call.getArray("target")
+            if (targetArray != null) {
+                val targets: MutableList<LatLng> = ArrayList()
+                for (i in 0 until targetArray.length()) {
+                    val targetObj = targetArray.getJSONObject(i)
+                    val target = LatLng(targetObj.getDouble("lat"), targetObj.getDouble("lng"))
+
+                    targets.add(target)
+                }
+                map.setCameraTarget(targets) { err ->
+                    if (err != null) throw err
+                    call.resolve()
+                }
+            }
+
+            val targetObj = call.getObject("target")
+            if (targetObj != null) {
+                val target = LatLng(targetObj.getDouble("lat"), targetObj.getDouble("lng"))
+                map.setCameraTarget(target) { err ->
+                    if (err != null) throw err
+                    call.resolve()
+                }
+            }
+        } catch (e: GoogleMapsError) {
+            handleError(call, e)
+        } catch (e: Exception) {
+            handleError(call, e)
+        }
+    }
+
+    @PluginMethod
     fun setOptions(call: PluginCall) {
         try {
             val id = call.getString("id")
