@@ -380,6 +380,30 @@ public class Map {
         }
     }
     
+    func setCameraTarget(target: Any) throws {
+        let currentCamera = self.mapViewController.GMapView.camera
+        
+        DispatchQueue.main.sync {
+            if let singleTarget = target as? CLLocationCoordinate2D {
+                let cameraTarget = singleTarget
+                let updatedPosition = GMSCameraPosition.camera(
+                    withTarget: cameraTarget,
+                    zoom: currentCamera.zoom
+                )
+                self.mapViewController.GMapView.animate(to: updatedPosition)
+            }
+            if let targetArray = target as? [CLLocationCoordinate2D] {
+                let bounds = createLatLngBoundsFromLatLngArray(targetArray)
+                let coordinate: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude:  ((bounds.northEast.latitude + bounds.southWest.latitude) / 2), longitude: ((bounds.northEast.longitude + bounds.southWest.longitude) / 2))
+                let updatedPosition = GMSCameraPosition.camera(
+                    withTarget: coordinate,
+                    zoom: currentCamera.zoom
+                )
+                self.mapViewController.GMapView.animate(to: updatedPosition)
+            }
+        }
+    }
+    
     func setMapType(mapType: GMSMapViewType) throws {
         DispatchQueue.main.sync {
             self.mapViewController.GMapView.mapType = mapType

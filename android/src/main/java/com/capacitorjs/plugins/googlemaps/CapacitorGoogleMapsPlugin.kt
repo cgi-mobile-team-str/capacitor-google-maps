@@ -834,12 +834,17 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
             map ?: throw MapNotFoundError()
 
             val targetArray = call.getArray("target")
+            val targetObj = call.getObject("target")
+
+            if(targetObj == null && targetArray == null) {
+                throw InvalidArgumentsError("target is missing")
+            }
+
             if (targetArray != null) {
                 val targets: MutableList<LatLng> = ArrayList()
                 for (i in 0 until targetArray.length()) {
                     val targetObj = targetArray.getJSONObject(i)
                     val target = LatLng(targetObj.getDouble("lat"), targetObj.getDouble("lng"))
-
                     targets.add(target)
                 }
                 map.setCameraTarget(targets) { err ->
@@ -848,7 +853,6 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
                 }
             }
 
-            val targetObj = call.getObject("target")
             if (targetObj != null) {
                 val target = LatLng(targetObj.getDouble("lat"), targetObj.getDouble("lng"))
                 map.setCameraTarget(target) { err ->

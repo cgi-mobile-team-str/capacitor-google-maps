@@ -54,5 +54,5 @@ CAP_PLUGIN(CapacitorGoogleMapsPlugin, "CapacitorGoogleMaps",
    CAP_PLUGIN_METHOD(setPolylineStrokeColor, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(setPolylineStrokeWidth, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(removePolyline, CAPPluginReturnPromise);
-
+   CAP_PLUGIN_METHOD(setCameraTarget, CAPPluginReturnPromise);
 )

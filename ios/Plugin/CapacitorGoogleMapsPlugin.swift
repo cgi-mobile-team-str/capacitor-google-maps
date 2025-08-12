@@ -526,6 +526,44 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
         }
     }
     
+    @objc func setCameraTarget(_ call: CAPPluginCall) {
+        do {
+            guard let id = call.getString("id") else {
+                throw GoogleMapErrors.invalidMapId
+            }
+
+            guard let map = self.maps[id] else {
+                throw GoogleMapErrors.mapNotFound
+            }
+
+            let targetObj = call.getObject("target")
+            let targetArray = call.getArray("target")
+
+            if(targetObj == nil && targetArray == nil) {
+                throw GoogleMapErrors.invalidArguments("target is missing")
+            }
+            
+            if(targetObj != nil) {
+                let target: CLLocationCoordinate2D = try getCLLocationCoordinate(targetObj!)
+                try map.setCameraTarget(target: target)
+                call.resolve()
+            }
+            
+            if(targetArray != nil) {
+                var targets: [CLLocationCoordinate2D] = []
+               try targetArray!.forEach { target in
+                    let coordinate: CLLocationCoordinate2D = try getCLLocationCoordinate(target as! JSObject)
+                    targets.append(coordinate)
+                }
+                try map.setCameraTarget(target: targets)
+                call.resolve()
+            }
+   
+        } catch {
+            handleError(call, error: error)
+        }
+    }
+    
     @objc func setOptions(_ call: CAPPluginCall) {
         do {
             guard let id = call.getString("id") else {
