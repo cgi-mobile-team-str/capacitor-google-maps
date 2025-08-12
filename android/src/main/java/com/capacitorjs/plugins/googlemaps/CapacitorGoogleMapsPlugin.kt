@@ -1706,6 +1706,9 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
         res.put("draggable", pairIdMarker.second.draggable)
         res.put("colorHue", pairIdMarker.second.colorHue)
         res.put("isVisible", pairIdMarker.second.isVisible)
+        pairIdMarker.second.extras.forEach { (key, value) ->
+            res.put(key, value)
+        }
         return res
     }
 

@@ -4,7 +4,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import org.json.JSONObject
 
-class CapacitorMarkerOptions(fromJSONObject: JSONObject) {
+class  CapacitorMarkerOptions(fromJSONObject: JSONObject) {
     var icon: CapacitorMarkerIcon? = null
     var title: String? = null
     var snippet: String? = null
@@ -19,6 +19,7 @@ class CapacitorMarkerOptions(fromJSONObject: JSONObject) {
     var zIndex: Float? = null
     var disableAutoPan: Boolean? = null
     var alpha: Float? = 1f
+    var extras: MutableMap<String, Any?> = mutableMapOf()
 
     init {
         if(fromJSONObject.has("icon")) {
@@ -56,5 +57,14 @@ class CapacitorMarkerOptions(fromJSONObject: JSONObject) {
         animation = fromJSONObject.optString("animation")
         disableAutoPan = fromJSONObject.optBoolean("disableAutoPan")
         alpha = fromJSONObject.optDouble("alpha", 1.0).toFloat()
+        fromJSONObject.keys().forEach { key ->
+            if (key !in listOf(
+                    "coordinate", "title", "opacity", "snippet", "isFlat", "isVisible",
+                    "iconUrl", "iconSize", "iconAnchor", "tintColor", "draggable", "zIndex"
+                )
+            ) {
+                extras[key] = fromJSONObject.get(key)
+            }
+        }
     }
 }

@@ -371,6 +371,11 @@ export interface Marker {
      */
     zIndex?: number;
     isVisible?: boolean;
+    /**
+     * Accept own properties
+     * You can get the property later using `get()` method.
+     */
+    [key: string]: any;
 }
 export interface MarkerOption {
     icon?: MarkerIcon & {
@@ -389,6 +394,7 @@ export interface MarkerOption {
     zIndex?: number;
     disableAutoPan?: boolean;
     alpha?: number;
+    [key: string]: any;
 }
 export interface MarkerIcon {
     url?: string;
@@ -415,9 +421,12 @@ export declare class MarkerClass implements Marker {
     draggable?: boolean | undefined;
     zIndex?: number | undefined;
     isVisible?: boolean | undefined;
+    [key: string]: any;
     constructor(obj: Marker & {
         id: string;
     }, mapId: string);
+    get(key: string): any;
+    set(key: string, value: any): void;
     setIcon(icon: MarkerIcon): Promise<void>;
     setIconAnchor(x: number, y: number): Promise<void>;
     setZIndex(zIndex: number): Promise<void>;

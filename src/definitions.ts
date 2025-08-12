@@ -161,20 +161,19 @@ export class PolylineClass implements Polyline {
     this.clickable = obj.clickable;
   }
 
-  async setStrokeColor(color: string) : Promise<void> {
+  async setStrokeColor(color: string): Promise<void> {
     this.strokeColor = color;
-    return CapacitorGoogleMaps.setPolylineStrokeColor({id: this.mapId, polylineId: this.id, strokeColor: color});
+    return CapacitorGoogleMaps.setPolylineStrokeColor({ id: this.mapId, polylineId: this.id, strokeColor: color });
   }
 
-  async setStrokeWidth(width: number) : Promise<void> {
+  async setStrokeWidth(width: number): Promise<void> {
     this.strokeWidth = width;
-    return CapacitorGoogleMaps.setPolylineStrokeWidth({id: this.mapId, polylineId: this.id, strokeWidth: width});
+    return CapacitorGoogleMaps.setPolylineStrokeWidth({ id: this.mapId, polylineId: this.id, strokeWidth: width });
   }
 
   async remove(): Promise<void> {
-    return CapacitorGoogleMaps.removePolyline({id: this.mapId, polylineId: this.id});
+    return CapacitorGoogleMaps.removePolyline({ id: this.mapId, polylineId: this.id });
   }
-
 }
 
 /**
@@ -435,6 +434,11 @@ export interface Marker {
    */
   zIndex?: number;
   isVisible?: boolean;
+  /**
+   * Accept own properties
+   * You can get the property later using `get()` method.
+   */
+  [key: string]: any;
 }
 
 export interface MarkerOption {
@@ -452,6 +456,7 @@ export interface MarkerOption {
   zIndex?: number;
   disableAutoPan?: boolean;
   alpha?: number;
+  [key: string]: any;
 }
 
 export interface MarkerIcon {
@@ -475,6 +480,7 @@ export class MarkerClass implements Marker {
   draggable?: boolean | undefined;
   zIndex?: number | undefined;
   isVisible?: boolean | undefined;
+  [key: string]: any;
 
   constructor(obj: Marker & { id: string }, mapId: string) {
     this.mapId = mapId;
@@ -492,6 +498,15 @@ export class MarkerClass implements Marker {
     this.draggable = obj.draggable;
     this.zIndex = obj.zIndex;
     this.isVisible = obj.isVisible;
+    Object.assign(this, obj);
+  }
+
+  get(key: string): any {
+    return this[key];
+  }
+
+  set(key: string, value: any): void {
+    this[key] = value;
   }
 
   async setIcon(icon: MarkerIcon): Promise<void> {

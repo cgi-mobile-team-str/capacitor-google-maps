@@ -3,6 +3,7 @@ package com.capacitorjs.plugins.googlemaps
 import android.annotation.SuppressLint
 import android.graphics.*
 import android.location.Location
+import android.util.Base64
 import android.util.Log
 import android.util.Size
 import android.view.MotionEvent
@@ -820,6 +821,7 @@ class CapacitorGoogleMap(
                 val googleMapMarker = googleMap?.addMarker(markerOptions.await())
 
                 marker.googleMapMarker = googleMapMarker
+                marker.googleMapMarker = googleMapMarker
 
                 if (clusterManager != null) {
                     googleMapMarker?.remove()
@@ -1229,22 +1231,31 @@ class CapacitorGoogleMap(
             markerOptions.anchor(marker.iconAnchor!!.x, marker.iconAnchor!!.y)
         }
 
-
         if (!marker.iconUrl.isNullOrEmpty()) {
             if (this.markerIcons.contains(marker.iconUrl)) {
                 val cachedBitmap = this.markerIcons[marker.iconUrl]
                 markerOptions.icon(getResizedIcon(cachedBitmap!!, marker))
             } else {
                 try {
-                    var stream: InputStream? = null
-                    if (marker.iconUrl!!.startsWith("https:")) {
-                        stream = URL(marker.iconUrl).openConnection().getInputStream()
-                    } else {
-                        stream = this.delegate.context.assets.open("public/${marker.iconUrl}")
+                    val bitmap: Bitmap = when {
+                        marker.iconUrl!!.startsWith("https:") -> {
+                            val stream = URL(marker.iconUrl).openConnection().getInputStream()
+                            BitmapFactory.decodeStream(stream)
+                        }
+                        marker.iconUrl!!.startsWith("data:image") -> {
+                            val base64Data = marker.iconUrl!!.substringAfter(",")
+                            val decodedBytes = Base64.decode(base64Data, Base64.DEFAULT)
+                            BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
+                        }
+                        else -> {
+                            val stream = this.delegate.context.assets.open("public/${marker.iconUrl}")
+                            BitmapFactory.decodeStream(stream)
+                        }
                     }
-                    var bitmap = BitmapFactory.decodeStream(stream)
+
                     this.markerIcons[marker.iconUrl!!] = bitmap
                     markerOptions.icon(getResizedIcon(bitmap, marker))
+
                 } catch (e: Exception) {
                     var detailedMessage = "${e.javaClass} - ${e.localizedMessage}"
                     if (marker.iconUrl!!.endsWith(".svg")) {
@@ -1252,8 +1263,8 @@ class CapacitorGoogleMap(
                     }
 
                     Log.w(
-                            "CapacitorGoogleMaps",
-                            "Could not load image '${marker.iconUrl}': ${detailedMessage}. Using default marker icon."
+                        "CapacitorGoogleMaps",
+                        "Could not load image '${marker.iconUrl}': ${detailedMessage}. Using default marker icon."
                     )
                 }
             }

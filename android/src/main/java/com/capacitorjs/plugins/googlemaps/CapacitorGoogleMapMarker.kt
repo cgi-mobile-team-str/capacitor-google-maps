@@ -23,6 +23,7 @@ class CapacitorGoogleMapMarker(): ClusterItem {
     var colorHue: Float? = null
     var markerOptions: MarkerOptions? = null
     var isVisible: Boolean = true
+    var extras: MutableMap<String, Any?> = mutableMapOf()
 
     constructor(fromJSONObject: JSONObject): this() {
         if (!fromJSONObject.has("coordinate")) {
@@ -85,6 +86,7 @@ class CapacitorGoogleMapMarker(): ClusterItem {
         }
         draggable = options.draggable
         isVisible = options.visible
+        extras = options.extras
     }
 
     override fun getPosition(): LatLng {
