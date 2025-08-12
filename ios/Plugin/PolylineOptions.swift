@@ -9,9 +9,21 @@ public struct PolylineOptions {
     var width: Float?
     var zIndex: Float?
     var clickable: Bool?
-    
+    var extras: [String: Any?] = [:]
+
     init(fromJSObject: JSObject) throws {
         var points: [LatLng] = []
+        var propertyNames: [String] = [
+            "points",
+            "visible",
+            "geodesic",
+            "color",
+            "width",
+            "zIndex",
+            "clickable",
+            "extras"
+        ]
+        
         guard let latLngArray = fromJSObject["points"] as? [JSObject] else {
             throw GoogleMapErrors.invalidArguments("Polyline options object is missing the required 'points' property")
         }
@@ -31,6 +43,11 @@ public struct PolylineOptions {
         self.zIndex = fromJSObject["zIndex"] as? Float ?? 0
         self.clickable = fromJSObject["clickable"] as? Bool ?? false
 
+        for key in fromJSObject.keys {
+            if !propertyNames.contains(key) {
+                self.extras[key] = fromJSObject[key]
+            }
+        }
     }
 }
     

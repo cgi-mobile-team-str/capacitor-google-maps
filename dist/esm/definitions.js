@@ -34,6 +34,13 @@ export class PolylineClass {
         this.strokeWidth = obj.strokeWidth;
         this.zIndex = obj.zIndex;
         this.clickable = obj.clickable;
+        Object.assign(this, obj);
+    }
+    get(key) {
+        return this[key];
+    }
+    set(key, value) {
+        this[key] = value;
     }
     async setStrokeColor(color) {
         this.strokeColor = color;
