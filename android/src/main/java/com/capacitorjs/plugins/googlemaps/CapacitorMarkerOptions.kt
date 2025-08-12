@@ -4,7 +4,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import org.json.JSONObject
 
-class CapacitorMarkerOptions(fromJSONObject: JSONObject) {
+class  CapacitorMarkerOptions(fromJSONObject: JSONObject) {
     var icon: CapacitorMarkerIcon? = null
     var title: String? = null
     var snippet: String? = null
@@ -19,8 +19,28 @@ class CapacitorMarkerOptions(fromJSONObject: JSONObject) {
     var zIndex: Float? = null
     var disableAutoPan: Boolean? = null
     var alpha: Float? = 1f
+    var extras: MutableMap<String, Any?> = mutableMapOf()
 
     init {
+        val propertyNames = mutableSetOf(
+            "icon",
+            "title",
+            "snippet",
+            "position",
+            "infoWindowAnchor",
+            "anchor",
+            "draggable",
+            "flat",
+            "rotation",
+            "visible",
+            "animation",
+            "zIndex",
+            "disableAutoPan",
+            "alpha",
+            "extras"
+        )
+        val keys = fromJSONObject.keys()
+
         if(fromJSONObject.has("icon")) {
             val iconObj = fromJSONObject.getJSONObject("icon")
             icon =  CapacitorMarkerIcon(iconObj)
@@ -56,5 +76,11 @@ class CapacitorMarkerOptions(fromJSONObject: JSONObject) {
         animation = fromJSONObject.optString("animation")
         disableAutoPan = fromJSONObject.optBoolean("disableAutoPan")
         alpha = fromJSONObject.optDouble("alpha", 1.0).toFloat()
+        while (keys.hasNext()) {
+            val key = keys.next()
+            if (key !in propertyNames) {
+                extras[key] = fromJSONObject.get(key)
+            }
+        }
     }
 }

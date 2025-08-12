@@ -124,6 +124,13 @@ class MarkerClass {
         this.draggable = obj.draggable;
         this.zIndex = obj.zIndex;
         this.isVisible = obj.isVisible;
+        Object.assign(this, obj);
+    }
+    get(key) {
+        return this[key];
+    }
+    set(key, value) {
+        this[key] = value;
     }
     async setIcon(icon) {
         if (icon.url !== null && icon.url !== undefined) {
