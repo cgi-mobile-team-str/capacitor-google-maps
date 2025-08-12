@@ -22,6 +22,25 @@ class  CapacitorMarkerOptions(fromJSONObject: JSONObject) {
     var extras: MutableMap<String, Any?> = mutableMapOf()
 
     init {
+        val propertyNames = mutableSetOf(
+            "icon",
+            "title",
+            "snippet",
+            "position",
+            "infoWindowAnchor",
+            "anchor",
+            "draggable",
+            "flat",
+            "rotation",
+            "visible",
+            "animation",
+            "zIndex",
+            "disableAutoPan",
+            "alpha",
+            "extras"
+        )
+        val keys = fromJSONObject.keys()
+
         if(fromJSONObject.has("icon")) {
             val iconObj = fromJSONObject.getJSONObject("icon")
             icon =  CapacitorMarkerIcon(iconObj)
@@ -57,12 +76,9 @@ class  CapacitorMarkerOptions(fromJSONObject: JSONObject) {
         animation = fromJSONObject.optString("animation")
         disableAutoPan = fromJSONObject.optBoolean("disableAutoPan")
         alpha = fromJSONObject.optDouble("alpha", 1.0).toFloat()
-        fromJSONObject.keys().forEach { key ->
-            if (key !in listOf(
-                    "coordinate", "title", "opacity", "snippet", "isFlat", "isVisible",
-                    "iconUrl", "iconSize", "iconAnchor", "tintColor", "draggable", "zIndex"
-                )
-            ) {
+        while (keys.hasNext()) {
+            val key = keys.next()
+            if (key !in propertyNames) {
                 extras[key] = fromJSONObject.get(key)
             }
         }

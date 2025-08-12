@@ -1093,7 +1093,7 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
     }
     
     private func formatMarkerForResponse(markerId: Int, mapId: String, marker: Marker) -> PluginCallResultData {
-        return [
+        var results: PluginCallResultData = [
             "id": String(markerId),
             "mapId": mapId,
             "coordinate": [
@@ -1118,6 +1118,12 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
             "colorHue": marker.color,
             "isVisible": marker.isVisible
         ]
+
+        for (key, value) in marker.extras {
+            results[key] = value
+        }
+        
+        return results
     }
     
     private func formatPolylineForResponse(polylineId: Int, mapId: String, polyline: GMSPolyline) -> PluginCallResultData {

@@ -17,12 +17,30 @@ public struct MarkerOptions {
     let zIndex: Float?
     let disableAutoPan: Bool?
     let alpha: Float?
-    
+    var extras: [String: Any?] = [:]
+
     init(fromJSObject: JSObject) throws {
         var icon: MarkerIcon?
         var infoWindowAnchor: [Float] = []
         var anchor: [Float] = []
+        var propertyNames: [String] = [
+            "icon",
+            "title",
+            "snippet",
+            "position",
+            "infoWindowAnchor",
+            "anchor",
+            "draggable",
+            "flat",
+            "rotation",
+            "visible",
+            "animation",
+            "zIndex",
+            "disableAutoPan",
+            "alpha",
+            "extras"
 
+        ]
         if let iconObj = fromJSObject["icon"] as? JSObject {
             icon = try MarkerIcon(fromJSObject: iconObj)
         }
@@ -65,5 +83,11 @@ public struct MarkerOptions {
         self.zIndex = fromJSObject["snippet"] as? Float
         self.disableAutoPan = fromJSObject["disableAutoPan"] as? Bool
         self.alpha = fromJSObject["alpha"] as? Float ?? 1
+        
+        for key in fromJSObject.keys {
+            if !propertyNames.contains(key) {
+                self.extras[key] = fromJSObject[key]
+            }
+        }
     }
 }

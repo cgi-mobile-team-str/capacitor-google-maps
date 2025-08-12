@@ -917,7 +917,6 @@ public class Map {
             newMarker.groundAnchor = iconAnchor
         }
 
-        // cache and reuse marker icon uiimages
         if let iconUrl = marker.iconUrl {
             if let iconImage = self.markerIcons[iconUrl] {
                 newMarker.icon = getResizedIcon(iconImage, marker)
@@ -933,16 +932,25 @@ public class Map {
                             }
                         }.resume()
                     }
+                } else if iconUrl.starts(with: "data:image") {
+                    if let commaIndex = iconUrl.firstIndex(of: ",") {
+                        let base64String = String(iconUrl.suffix(from: iconUrl.index(after: commaIndex)))
+                        if let imageData = Data(base64Encoded: base64String),
+                           let iconImage = UIImage(data: imageData) {
+                            self.markerIcons[iconUrl] = iconImage
+                            newMarker.icon = getResizedIcon(iconImage, marker)
+                        } else {
+                            print("CapacitorGoogleMaps Warning: Invalid base64 image data for '\(iconUrl)'. Using default marker icon.")
+                        }
+                    }
                 } else if let iconImage = UIImage(named: "public/\(iconUrl)") {
                     self.markerIcons[iconUrl] = iconImage
                     newMarker.icon = getResizedIcon(iconImage, marker)
                 } else {
                     var detailedMessage = ""
-
                     if iconUrl.hasSuffix(".svg") {
                         detailedMessage = "SVG not supported."
                     }
-
                     print("CapacitorGoogleMaps Warning: could not load image '\(iconUrl)'. \(detailedMessage)  Using default marker icon.")
                 }
             }
@@ -951,7 +959,6 @@ public class Map {
                 newMarker.icon = GMSMarker.markerImage(with: color)
             }
         }
-
         return newMarker
     }
 }
