@@ -1126,29 +1126,35 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
         return results
     }
     
-    private func formatPolylineForResponse(polylineId: Int, mapId: String, polyline: GMSPolyline) -> PluginCallResultData {
+    private func formatPolylineForResponse(polylineId: Int, mapId: String, polyline: Polyline) -> PluginCallResultData {
         let hexColor =  GoogleMapsUtils.hexStringFromColor(color: polyline.strokeColor)
         var points: JSArray = []
-        if let path = polyline.path {
-            for i in 0..<path.count() {
-                let coord = path.coordinate(at: i)
-                points.append([
-                    "lat": coord.latitude,
-                    "lng": coord.longitude
-                ])
-            }
+        
+        for i in 0..<polyline.path.count {
+            let coord = polyline.path[i]
+            points.append([
+                "lat": coord.lat,
+                "lng": coord.lng
+            ])
         }
         
-        return [
+        var results: PluginCallResultData = [
             "id": String(polylineId),
             "mapId": mapId,
             "path": points,
             "geodesic": polyline.geodesic,
-            "visible": polyline.map != nil,
-            "clickable": polyline.isTappable,
+            "visible": polyline.isVisible,
+            "clickable": polyline.tappable,
             "strokeWidth": polyline.strokeWidth,
             "strokeColor": hexColor
         ]
+        
+        
+        for (key, value) in polyline.extras {
+            results[key] = value
+        }
+        
+        return results
     }
     
     
@@ -1612,7 +1618,7 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
     
     @objc func addPolylines(_ call: CAPPluginCall) {
         do {
-            var pairsIdPolyline: [(Int, GMSPolyline)] = []
+            var pairsIdPolyline: [(Int, Polyline)] = []
             guard let id = call.getString("id") else {
                 throw GoogleMapErrors.invalidMapId
             }

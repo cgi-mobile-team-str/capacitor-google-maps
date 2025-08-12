@@ -17,7 +17,8 @@ public struct Polyline {
     let tag: String?
     let styleSpans: [StyleSpan]
     let isVisible: Bool?
-    
+    var extras: [String: Any?] = [:]
+
     init(fromJSObject: JSObject) throws {
         var strokeColor = UIColor.blue
         var strokeWidth: CGFloat = 1.0
@@ -90,5 +91,6 @@ public struct Polyline {
         self.styleSpans = []
         self.tag = ""
         self.title = ""
+        self.extras = options.extras
     }
 }

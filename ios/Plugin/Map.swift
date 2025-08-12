@@ -691,8 +691,8 @@ public class Map {
     
     // BEGIN POLYLINE METHODS
     
-    func addPolylines(optionsList: [PolylineOptions]) throws -> [(Int, GMSPolyline)] {
-        var pairsIdPolyline: [(Int, GMSPolyline)] = []
+    func addPolylines(optionsList: [PolylineOptions]) throws -> [(Int, Polyline)] {
+        var pairsIdPolyline: [(Int, Polyline)] = []
         var lines: [Polyline] = []
        try optionsList.forEach{ options in
             let line =  try Polyline(options: options)
@@ -705,14 +705,14 @@ public class Map {
 
                 self.polylines[newLine.hash.hashValue] = newLine
 
-                pairsIdPolyline.append((newLine.hash.hashValue, addedPolyline: newLine))
+                pairsIdPolyline.append((newLine.hash.hashValue, addedPolyline: line))
             }
         }
 
         return pairsIdPolyline
     }
     
-    func addPolyline(options: PolylineOptions) throws -> (Int, GMSPolyline) {
+    func addPolyline(options: PolylineOptions) throws -> (Int, Polyline) {
         var polylineHash:Int = 0
         var newLine: GMSPolyline = GMSPolyline()
         let line = try Polyline(options: options)
@@ -725,7 +725,7 @@ public class Map {
             polylineHash = newLine.hash.hashValue
         }
 
-        return (polylineHash, newLine)
+        return (polylineHash, line)
     }
     
     func setPolylineStrokeColor(polylineId: Int, strokeColor: String) throws {
