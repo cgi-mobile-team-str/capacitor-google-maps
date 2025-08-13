@@ -241,7 +241,7 @@ export interface EnableTiltRotateGestureArgs {
 export interface SetMapPreferencesArgs {
   id: string;
   padding?: MapPadding;
-  isBuildingsEnabled?: boolean;
+  building?: boolean;
 }
 
 export interface CameraBearingArgs {

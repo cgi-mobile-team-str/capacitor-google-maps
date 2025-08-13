@@ -149,7 +149,7 @@ export interface StyleSpan {
  * GoogleMapConfig extends google.maps.MapOptions.
  * For iOS and Android only the config options declared on GoogleMapConfig are available.
  */
-export interface GoogleMapConfig extends google.maps.MapOptions {
+export interface GoogleMapConfig extends Omit<google.maps.MapOptions, 'styles'> {
     /**
      * Override width for native map.
      */
@@ -167,14 +167,6 @@ export interface GoogleMapConfig extends google.maps.MapOptions {
      */
     y?: number;
     /**
-     * Default location on the Earth towards which the camera points.
-     */
-    center: LatLng;
-    /**
-     * Sets the zoom of the map.
-     */
-    zoom: number;
-    /**
      * Enables image-based lite mode on Android.
      *
      * @default false
@@ -191,7 +183,7 @@ export interface GoogleMapConfig extends google.maps.MapOptions {
      *
      * @since 4.3.0
      */
-    styles?: google.maps.MapTypeStyle[] | null;
+    styles?: string | null;
     /**
      * A map id associated with a specific map style or feature.
      *
@@ -222,19 +214,19 @@ export interface GoogleMapConfig extends google.maps.MapOptions {
      * @since 5.4.0
      */
     iOSMapId?: string;
+    controls?: GoogleMapControls;
+    gestures?: GoogleMapGestures;
+    camera?: CameraConfig;
+    preferences?: GoogleMapPreferences;
 }
 /**
  * Configuration properties for a Google Map Camera
  */
 export interface CameraConfig {
     /**
-     * Location on the Earth towards which the camera points.
+     * Location on the Earth towards which the camera points or multiple locations towards which the camera points in the center .
      */
-    coordinate?: LatLng;
-    /**
-     * Multiple locations towards which the camera points in the center.
-     */
-    coordinates?: LatLng[];
+    target?: LatLng | LatLng[];
     /**
      * Sets the zoom of the map.
      */
@@ -284,10 +276,10 @@ export declare enum MapType {
  * Controls for setting padding on the 'visible' region of the view.
  */
 export interface MapPadding {
-    top: number;
-    left: number;
-    right: number;
-    bottom: number;
+    top?: number;
+    left?: number;
+    right?: number;
+    bottom?: number;
 }
 /**
  * A marker is an icon placed at a particular point on the map's surface.
@@ -535,9 +527,9 @@ export interface GoogleMapGestures {
 }
 export interface GoogleMapPreferences {
     padding?: MapPadding;
-    isBuildingsEnabled?: boolean;
+    building?: boolean;
     gestureBounds?: LatLng[];
-    zoom: GoogleMapZoomOptions;
+    zoom?: GoogleMapZoomOptions;
 }
 export interface GoogleMapsOptions {
     mapType?: MapType;

@@ -69,7 +69,7 @@ export interface GoogleMapInterface {
     enableAllGestures(isEnabled: boolean): Promise<void>;
     enableTiltGesture(isEnabled: boolean): Promise<void>;
     enableTiltRotateGesture(isEnabled: boolean): Promise<void>;
-    setMapPreferences(padding?: MapPadding, isBuildingsEnabled?: boolean): Promise<void>;
+    setMapPreferences(padding?: MapPadding, building?: boolean): Promise<void>;
     setCameraBearing(bearing: number): Promise<void>;
     setOptions(config: GoogleMapsOptions): Promise<void>;
     getCameraZoom(): Promise<number>;
@@ -263,7 +263,7 @@ export declare class GoogleMap {
     enableAllGestures(isEnabled: boolean): Promise<void>;
     enableTiltGesture(isEnabled: boolean): Promise<void>;
     enableTiltRotateGesture(isEnabled: boolean): Promise<void>;
-    setMapPreferences(padding?: MapPadding, isBuildingsEnabled?: boolean): Promise<void>;
+    setMapPreferences(padding?: MapPadding, building?: boolean): Promise<void>;
     fitBounds(bounds: LatLngBounds, padding?: number): Promise<void>;
     initScrolling(): void;
     disableScrolling(): void;

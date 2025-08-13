@@ -5,18 +5,20 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import org.json.JSONObject
 
-class GoogleMapConfig(fromJSONObject: JSONObject) {
+class GoogleMapConfig(fromJSONObject: JSONObject): GoogleMapSettings {
     var width: Int = 0
     var height: Int = 0
     var x: Int = 0
     var y: Int = 0
-    var center: LatLng = LatLng(0.0, 0.0)
     var googleMapOptions: GoogleMapOptions? = null
-    var zoom: Int = 0
     var liteMode: Boolean = false
     var devicePixelRatio: Float = 1.00f
     var styles: String? = null
     var mapId: String? = null
+    override var controls: GoogleMapControls? = null
+    override var gestures: GoogleMapGestures? = null
+    override var preferences: GoogleMapsPreferences? = null
+    var camera: GoogleMapCameraConfig? = null
 
     init {
         if (!fromJSONObject.has("width")) {
@@ -43,28 +45,8 @@ class GoogleMapConfig(fromJSONObject: JSONObject) {
             )
         }
 
-        if (!fromJSONObject.has("zoom")) {
-            throw InvalidArgumentsError(
-                    "GoogleMapConfig object is missing the required 'zoom' property"
-            )
-        }
-
         if (fromJSONObject.has("devicePixelRatio")) {
             devicePixelRatio = fromJSONObject.getDouble("devicePixelRatio").toFloat()
-        }
-
-        if (!fromJSONObject.has("center")) {
-            throw InvalidArgumentsError(
-                    "GoogleMapConfig object is missing the required 'center' property"
-            )
-        }
-
-        val centerJSONObject = fromJSONObject.getJSONObject("center")
-
-        if (!centerJSONObject.has("lat") || !centerJSONObject.has("lng")) {
-            throw InvalidArgumentsError(
-                    "LatLng object is missing the required 'lat' and/or 'lng' property"
-            )
         }
 
         liteMode =
@@ -75,12 +57,24 @@ class GoogleMapConfig(fromJSONObject: JSONObject) {
         height = fromJSONObject.getInt("height")
         x = fromJSONObject.getInt("x")
         y = fromJSONObject.getInt("y")
-        zoom = fromJSONObject.getInt("zoom")
+        if (fromJSONObject.has("camera")) {
+            val cameraObject = fromJSONObject.getJSONObject("camera")
+            camera = GoogleMapCameraConfig(cameraObject)
+        }
 
-        val lat = centerJSONObject.getDouble("lat")
-        val lng = centerJSONObject.getDouble("lng")
-        center = LatLng(lat, lng)
+        val zoom = camera?.zoom ?: 11.0
+        var center = LatLng(0.0, 0.0)
+        val target = camera?.target
+        if(target != null) {
+            if (target is LatLng) {
+                center = target
+            }
 
+            if(target is Array<*> && target.isArrayOf<LatLng>()) {
+                val latlngBounds = CapacitorGoogleMapsUtils.createLatLngBoundsFromLatLngArray(target as Array<LatLng>)
+                center = latlngBounds.center
+            }
+        }
         val cameraPosition = CameraPosition(center, zoom.toFloat(), 0.0F, 0.0F)
 
         styles = fromJSONObject.getString("styles")
@@ -90,6 +84,21 @@ class GoogleMapConfig(fromJSONObject: JSONObject) {
         googleMapOptions = GoogleMapOptions().camera(cameraPosition).liteMode(liteMode)
         if (mapId != null) {
             googleMapOptions?.mapId(mapId!!)
+        }
+
+        if (fromJSONObject.has("controls")) {
+            val controlsObject = fromJSONObject.getJSONObject("controls")
+            controls = GoogleMapControls(controlsObject)
+        }
+
+        if (fromJSONObject.has("gestures")) {
+            val gesturesObject = fromJSONObject.getJSONObject("gestures")
+            gestures = GoogleMapGestures(gesturesObject)
+        }
+
+        if (fromJSONObject.has("preferences")) {
+            val preferencesObject = fromJSONObject.getJSONObject("preferences")
+            preferences = GoogleMapsPreferences(preferencesObject)
         }
     }
 }

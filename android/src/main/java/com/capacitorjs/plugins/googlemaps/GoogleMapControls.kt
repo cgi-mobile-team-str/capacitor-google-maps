@@ -17,7 +17,7 @@ class GoogleMapControls(fromJSONObject: JSONObject) {
 
     init {
         if (fromJSONObject.has("compass")) {
-            compass = fromJSONObject.getBoolean("mapType")
+            compass = fromJSONObject.getBoolean("compass")
         }
         if (fromJSONObject.has("myLocationButton")) {
             myLocationButton = fromJSONObject.getBoolean("myLocationButton")

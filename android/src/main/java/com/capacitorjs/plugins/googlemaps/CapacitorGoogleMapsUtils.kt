@@ -1,6 +1,8 @@
 package com.capacitorjs.plugins.googlemaps
 
 import android.graphics.Color
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 
 object CapacitorGoogleMapsUtils {
     fun processColor(color: String, opacity: Double?): Int {
@@ -41,4 +43,11 @@ object CapacitorGoogleMapsUtils {
         }
     }
 
+    fun createLatLngBoundsFromLatLngArray(latLngArray: Array<LatLng>): LatLngBounds {
+        val builder = LatLngBounds.Builder()
+        for (latLng in latLngArray) {
+            builder.include(latLng)
+        }
+        return builder.build()
+    }
 }

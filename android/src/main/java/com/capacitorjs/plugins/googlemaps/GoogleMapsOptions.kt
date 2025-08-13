@@ -3,14 +3,14 @@ package com.capacitorjs.plugins.googlemaps
 import com.google.android.gms.maps.model.MapStyleOptions
 import org.json.JSONObject
 
-class GoogleMapsOptions(fromJSONObject: JSONObject) {
+class GoogleMapsOptions(fromJSONObject: JSONObject): GoogleMapSettings {
 
     var mapType: String? = null
-    var controls: GoogleMapControls? = null
-    var gestures: GoogleMapGestures? = null
     var styles: MapStyleOptions? = null
     var camera: GoogleMapCameraConfig? = null
-    var preferences: GoogleMapsPreferences? = null
+    override var controls: GoogleMapControls? = null
+    override var gestures: GoogleMapGestures? = null
+    override var preferences: GoogleMapsPreferences? = null
 
     init {
         if (fromJSONObject.has("mapType")) {

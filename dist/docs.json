@@ -870,7 +870,7 @@
       },
       {
         "name": "setMapPreferences",
-        "signature": "(padding?: MapPadding | undefined, isBuildingsEnabled?: boolean | undefined) => Promise<void>",
+        "signature": "(padding?: MapPadding | undefined, building?: boolean | undefined) => Promise<void>",
         "parameters": [
           {
             "name": "padding",
@@ -878,7 +878,7 @@
             "type": "MapPadding | undefined"
           },
           {
-            "name": "isBuildingsEnabled",
+            "name": "building",
             "docs": "",
             "type": "boolean | undefined"
           }
@@ -1079,22 +1079,6 @@
           "type": "number | undefined"
         },
         {
-          "name": "center",
-          "tags": [],
-          "docs": "Default location on the Earth towards which the camera points.",
-          "complexTypes": [
-            "LatLng"
-          ],
-          "type": "LatLng"
-        },
-        {
-          "name": "zoom",
-          "tags": [],
-          "docs": "Sets the zoom of the map.",
-          "complexTypes": [],
-          "type": "number"
-        },
-        {
           "name": "androidLiteMode",
           "tags": [
             {
@@ -1122,10 +1106,8 @@
             }
           ],
           "docs": "Styles to apply to each of the default map types. Note that for\nsatellite, hybrid and terrain modes,\nthese styles will only apply to labels and geometry.",
-          "complexTypes": [
-            "google"
-          ],
-          "type": "MapTypeStyle[] | null | undefined"
+          "complexTypes": [],
+          "type": "string | null | undefined"
         },
         {
           "name": "mapId",
@@ -1162,6 +1144,186 @@
           "docs": "A map id associated with a specific map style or feature.\n\n[Use Map IDs](https://developers.google.com/maps/documentation/get-map-id)\n\nOnly for iOS.",
           "complexTypes": [],
           "type": "string | undefined"
+        },
+        {
+          "name": "controls",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [
+            "GoogleMapControls"
+          ],
+          "type": "GoogleMapControls"
+        },
+        {
+          "name": "gestures",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [
+            "GoogleMapGestures"
+          ],
+          "type": "GoogleMapGestures"
+        },
+        {
+          "name": "camera",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [
+            "CameraConfig"
+          ],
+          "type": "CameraConfig"
+        },
+        {
+          "name": "preferences",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [
+            "GoogleMapPreferences"
+          ],
+          "type": "GoogleMapPreferences"
+        }
+      ]
+    },
+    {
+      "name": "GoogleMapControls",
+      "slug": "googlemapcontrols",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "compass",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "myLocationButton",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "myLocation",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "indoorPicker",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "zoom",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "mapToolbar",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "boolean | undefined"
+        }
+      ]
+    },
+    {
+      "name": "GoogleMapGestures",
+      "slug": "googlemapgestures",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "scroll",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "zoom",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "tilt",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "rotate",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "boolean | undefined"
+        }
+      ]
+    },
+    {
+      "name": "CameraConfig",
+      "slug": "cameraconfig",
+      "docs": "Configuration properties for a Google Map Camera",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "target",
+          "tags": [],
+          "docs": "Location on the Earth towards which the camera points or multiple locations towards which the camera points in the center .",
+          "complexTypes": [
+            "LatLng"
+          ],
+          "type": "LatLng | LatLng[] | undefined"
+        },
+        {
+          "name": "zoom",
+          "tags": [],
+          "docs": "Sets the zoom of the map.",
+          "complexTypes": [],
+          "type": "number | undefined"
+        },
+        {
+          "name": "bearing",
+          "tags": [
+            {
+              "text": "0",
+              "name": "default"
+            }
+          ],
+          "docs": "Bearing of the camera, in degrees clockwise from true north.",
+          "complexTypes": [],
+          "type": "number | undefined"
+        },
+        {
+          "name": "tilt",
+          "tags": [
+            {
+              "text": "0",
+              "name": "default"
+            }
+          ],
+          "docs": "The angle, in degrees, of the camera from the nadir (directly facing the Earth).\n\nThe only allowed values are 0 and 45.",
+          "complexTypes": [],
+          "type": "number | undefined"
+        },
+        {
+          "name": "duration",
+          "tags": [],
+          "docs": "This configuration option is not being used.",
+          "complexTypes": [],
+          "type": "number | undefined"
         }
       ]
     },
@@ -1185,6 +1347,109 @@
           "docs": "Coordinate longitude, in degrees. This value is in the range [-180, 180].",
           "complexTypes": [],
           "type": "number"
+        }
+      ]
+    },
+    {
+      "name": "GoogleMapPreferences",
+      "slug": "googlemappreferences",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "padding",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [
+            "MapPadding"
+          ],
+          "type": "MapPadding"
+        },
+        {
+          "name": "building",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "gestureBounds",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [
+            "LatLng"
+          ],
+          "type": "LatLng[] | undefined"
+        },
+        {
+          "name": "zoom",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [
+            "GoogleMapZoomOptions"
+          ],
+          "type": "GoogleMapZoomOptions"
+        }
+      ]
+    },
+    {
+      "name": "MapPadding",
+      "slug": "mappadding",
+      "docs": "Controls for setting padding on the 'visible' region of the view.",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "top",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "number | undefined"
+        },
+        {
+          "name": "left",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "number | undefined"
+        },
+        {
+          "name": "right",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "number | undefined"
+        },
+        {
+          "name": "bottom",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "number | undefined"
+        }
+      ]
+    },
+    {
+      "name": "GoogleMapZoomOptions",
+      "slug": "googlemapzoomoptions",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "minZoom",
+          "tags": [],
+          "docs": "The minimum zoom level of the map.",
+          "complexTypes": [],
+          "type": "number | undefined"
+        },
+        {
+          "name": "maxZoom",
+          "tags": [],
+          "docs": "The maximum zoom level of the map.",
+          "complexTypes": [],
+          "type": "number | undefined"
         }
       ]
     },
@@ -1510,108 +1775,6 @@
           "docs": "",
           "complexTypes": [],
           "type": "boolean | undefined"
-        }
-      ]
-    },
-    {
-      "name": "CameraConfig",
-      "slug": "cameraconfig",
-      "docs": "Configuration properties for a Google Map Camera",
-      "tags": [],
-      "methods": [],
-      "properties": [
-        {
-          "name": "coordinate",
-          "tags": [],
-          "docs": "Location on the Earth towards which the camera points.",
-          "complexTypes": [
-            "LatLng"
-          ],
-          "type": "LatLng"
-        },
-        {
-          "name": "coordinates",
-          "tags": [],
-          "docs": "Multiple locations towards which the camera points in the center.",
-          "complexTypes": [
-            "LatLng"
-          ],
-          "type": "LatLng[] | undefined"
-        },
-        {
-          "name": "zoom",
-          "tags": [],
-          "docs": "Sets the zoom of the map.",
-          "complexTypes": [],
-          "type": "number | undefined"
-        },
-        {
-          "name": "bearing",
-          "tags": [
-            {
-              "text": "0",
-              "name": "default"
-            }
-          ],
-          "docs": "Bearing of the camera, in degrees clockwise from true north.",
-          "complexTypes": [],
-          "type": "number | undefined"
-        },
-        {
-          "name": "tilt",
-          "tags": [
-            {
-              "text": "0",
-              "name": "default"
-            }
-          ],
-          "docs": "The angle, in degrees, of the camera from the nadir (directly facing the Earth).\n\nThe only allowed values are 0 and 45.",
-          "complexTypes": [],
-          "type": "number | undefined"
-        },
-        {
-          "name": "duration",
-          "tags": [],
-          "docs": "This configuration option is not being used.",
-          "complexTypes": [],
-          "type": "number | undefined"
-        }
-      ]
-    },
-    {
-      "name": "MapPadding",
-      "slug": "mappadding",
-      "docs": "Controls for setting padding on the 'visible' region of the view.",
-      "tags": [],
-      "methods": [],
-      "properties": [
-        {
-          "name": "top",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "number"
-        },
-        {
-          "name": "left",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "number"
-        },
-        {
-          "name": "right",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "number"
-        },
-        {
-          "name": "bottom",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "number"
         }
       ]
     },
@@ -2054,160 +2217,6 @@
             "GoogleMapPreferences"
           ],
           "type": "GoogleMapPreferences"
-        }
-      ]
-    },
-    {
-      "name": "GoogleMapControls",
-      "slug": "googlemapcontrols",
-      "docs": "",
-      "tags": [],
-      "methods": [],
-      "properties": [
-        {
-          "name": "compass",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "boolean | undefined"
-        },
-        {
-          "name": "myLocationButton",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "boolean | undefined"
-        },
-        {
-          "name": "myLocation",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "boolean | undefined"
-        },
-        {
-          "name": "indoorPicker",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "boolean | undefined"
-        },
-        {
-          "name": "zoom",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "boolean | undefined"
-        },
-        {
-          "name": "mapToolbar",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "boolean | undefined"
-        }
-      ]
-    },
-    {
-      "name": "GoogleMapGestures",
-      "slug": "googlemapgestures",
-      "docs": "",
-      "tags": [],
-      "methods": [],
-      "properties": [
-        {
-          "name": "scroll",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "boolean | undefined"
-        },
-        {
-          "name": "zoom",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "boolean | undefined"
-        },
-        {
-          "name": "tilt",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "boolean | undefined"
-        },
-        {
-          "name": "rotate",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "boolean | undefined"
-        }
-      ]
-    },
-    {
-      "name": "GoogleMapPreferences",
-      "slug": "googlemappreferences",
-      "docs": "",
-      "tags": [],
-      "methods": [],
-      "properties": [
-        {
-          "name": "padding",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [
-            "MapPadding"
-          ],
-          "type": "MapPadding"
-        },
-        {
-          "name": "isBuildingsEnabled",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "boolean | undefined"
-        },
-        {
-          "name": "gestureBounds",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [
-            "LatLng"
-          ],
-          "type": "LatLng[] | undefined"
-        },
-        {
-          "name": "zoom",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [
-            "GoogleMapZoomOptions"
-          ],
-          "type": "GoogleMapZoomOptions"
-        }
-      ]
-    },
-    {
-      "name": "GoogleMapZoomOptions",
-      "slug": "googlemapzoomoptions",
-      "docs": "",
-      "tags": [],
-      "methods": [],
-      "properties": [
-        {
-          "name": "minZoom",
-          "tags": [],
-          "docs": "The minimum zoom level of the map.",
-          "complexTypes": [],
-          "type": "number | undefined"
-        },
-        {
-          "name": "maxZoom",
-          "tags": [],
-          "docs": "The maximum zoom level of the map.",
-          "complexTypes": [],
-          "type": "number | undefined"
         }
       ]
     }

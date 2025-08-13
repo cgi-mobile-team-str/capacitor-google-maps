@@ -1,6 +1,8 @@
 package com.capacitorjs.plugins.googlemaps
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.content.pm.PackageManager
 import android.graphics.*
 import android.location.Location
 import android.util.Base64
@@ -10,6 +12,8 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.annotation.RequiresPermission
+import androidx.core.content.ContextCompat
 import com.getcapacitor.Bridge
 import com.getcapacitor.JSArray
 import com.getcapacitor.JSObject
@@ -107,6 +111,11 @@ class CapacitorGoogleMap(
                 bridge.webView.setBackgroundColor(Color.TRANSPARENT)
                 if (config.styles != null) {
                     googleMap?.setMapStyle(MapStyleOptions(config.styles!!))
+                }
+
+                setMapSettings(config)
+                if(config.camera != null) {
+                    moveGoogleCamera(config.camera!!)
                 }
             }
         }
@@ -266,15 +275,15 @@ class CapacitorGoogleMap(
         }
     }
 
-    fun setMapPreferences(padding: GoogleMapPadding?, isBuildingsEnabled: Boolean?, callback: (error: GoogleMapsError?) -> Unit) {
+    fun setMapPreferences(padding: GoogleMapPadding?, building: Boolean?, callback: (error: GoogleMapsError?) -> Unit) {
         try {
             googleMap ?: throw GoogleMapNotAvailable()
             CoroutineScope(Dispatchers.Main).launch {
                 if(padding != null) {
-                    googleMap?.setPadding(padding.left, padding.top, padding.right, padding.bottom)
+                    googleMap?.setPadding(padding.left ?: 0, padding.top ?: 0, padding.right ?: 0, padding.bottom ?: 0)
                 }
-                if(isBuildingsEnabled!= null) {
-                    googleMap?.isBuildingsEnabled = isBuildingsEnabled
+                if(building!= null) {
+                    googleMap?.isBuildingsEnabled = building
                 }
                 callback(null)
             }
@@ -559,62 +568,7 @@ class CapacitorGoogleMap(
                     googleMap?.mapType = getMapTypeInt(config.mapType!!)
                 }
 
-                if(config.controls != null) {
-                    if( config.controls?.compass != null) {
-                        googleMap?.uiSettings?.isCompassEnabled = config.controls?.compass!!
-                    }
-                    if( config.controls?.myLocationButton != null) {
-                        googleMap?.uiSettings?.isMyLocationButtonEnabled = config.controls?.myLocationButton!!
-                    }
-                    if( config.controls?.myLocation != null) {
-                        googleMap?.isMyLocationEnabled = config.controls?.myLocation!!
-                    }
-                    if( config.controls?.indoorPicker != null) {
-                        googleMap?.uiSettings?.isIndoorLevelPickerEnabled = config.controls?.indoorPicker!!
-                    }
-                    if( config.controls?.mapToolbar != null) {
-                        googleMap?.uiSettings?.isMapToolbarEnabled = config.controls?.mapToolbar!!
-                    }
-                    if( config.controls?.zoom != null) {
-                        googleMap?.uiSettings?.isZoomControlsEnabled = config.controls?.zoom!!
-                    }
-                }
-
-                if(config.gestures != null) {
-                    if(config.gestures?.tilt != null) {
-                        googleMap?.uiSettings?.isTiltGesturesEnabled = config.gestures?.tilt!!
-                    }
-                    if(config.gestures?.zoom != null) {
-                        googleMap?.uiSettings?.isZoomGesturesEnabled = config.gestures?.zoom!!
-                    }
-                    if(config.gestures?.rotate != null) {
-                        googleMap?.uiSettings?.isRotateGesturesEnabled = config.gestures?.rotate!!
-                    }
-                    if(config.gestures?.scroll != null) {
-                        googleMap?.uiSettings?.isScrollGesturesEnabled = config.gestures?.scroll!!
-                    }
-                }
-
-                if(config.preferences != null) {
-                    if(config.preferences?.building != null) {
-                        googleMap?.isBuildingsEnabled = config.preferences?.building!!
-                    }
-                    if(config.preferences?.zoom != null) {
-                        if(config.preferences?.zoom?.maxZoom !=null) {
-                            googleMap?.setMaxZoomPreference(config.preferences?.zoom?.maxZoom!!.toFloat())
-                        }
-                        if(config.preferences?.zoom?.minZoom !=null) {
-                            googleMap?.setMinZoomPreference(config.preferences?.zoom?.minZoom!!.toFloat())
-                        }
-                    }
-                    if(config.preferences?.padding != null) {
-                        googleMap?.setPadding(config.preferences?.padding?.left ?:0,config.preferences?.padding?.top ?:0, config.preferences?.padding?.right ?:0, config.preferences?.padding?.bottom ?:0 )
-                    }
-                    if(!config.preferences?.gestureBounds.isNullOrEmpty()) {
-                        val latlngBounds = createLatLngBoundsFromLatLngArray(config.preferences?.gestureBounds!!)
-                        googleMap?.setLatLngBoundsForCameraTarget(latlngBounds)
-                    }
-                }
+                setMapSettings(config)
 
                 if(config.styles != null) {
                     googleMap?.setMapStyle(config.styles!!)
@@ -663,8 +617,7 @@ class CapacitorGoogleMap(
                     googleMap?.animateCamera(CameraUpdateFactory.newCameraPosition(updatedPosition))
                 }
                 if (target is Array<*> && target.isArrayOf<LatLng>()) {
-                    target
-                    val latlngBounds = createLatLngBoundsFromLatLngArray(target as Array<LatLng>)
+                    val latlngBounds = CapacitorGoogleMapsUtils.createLatLngBoundsFromLatLngArray(target as Array<LatLng>)
                     val updatedPosition =
                         CameraPosition.Builder(currentPosition)
                             .target(latlngBounds.center)
@@ -765,7 +718,7 @@ class CapacitorGoogleMap(
         try {
             googleMap ?: throw GoogleMapNotAvailable()
             CoroutineScope(Dispatchers.Main).launch {
-                googleMap?.setPadding(padding.left, padding.top, padding.right, padding.bottom)
+                googleMap?.setPadding(padding.left ?: 0, padding.top?: 0, padding.right?: 0, padding.bottom?: 0)
                 callback(null)
             }
         } catch (e: GoogleMapsError) {
@@ -1117,14 +1070,14 @@ class CapacitorGoogleMap(
     private fun setUpCameraPosition(config: GoogleMapCameraConfig): CameraPosition {
         val currentPosition = googleMap!!.cameraPosition
         var updatedTarget: LatLng? = null
-        val configCoordinates = config.coordinates
+        val target = config.target
 
-        if(config.coordinate != null) {
-            updatedTarget = config.coordinate
-
+        if (target is LatLng ) {
+            updatedTarget = target
         }
-        if (!configCoordinates.isNullOrEmpty()) {
-            val latlngBounds = createLatLngBoundsFromLatLngArray(configCoordinates)
+
+        if (target is Array<*> && target.isArrayOf<LatLng>()) {
+            val latlngBounds = CapacitorGoogleMapsUtils.createLatLngBoundsFromLatLngArray(target as Array<LatLng>)
             updatedTarget = latlngBounds.center
         }
 
@@ -1155,13 +1108,6 @@ class CapacitorGoogleMap(
                 .tilt(tilt.toFloat())
                 .build()
         return updatedPosition
-    }
-    private fun createLatLngBoundsFromLatLngArray(latLngArray: Array<LatLng>): LatLngBounds {
-        val builder = LatLngBounds.Builder()
-        for (latLng in latLngArray) {
-            builder.include(latLng)
-        }
-        return builder.build()
     }
 
     private fun getScaledPixels(bridge: Bridge, pixels: Int): Int {
@@ -1324,6 +1270,76 @@ class CapacitorGoogleMap(
                     )
         }
         return BitmapDescriptorFactory.fromBitmap(bitmap)
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun setMapSettings (config: GoogleMapSettings) {
+        if(config.controls != null) {
+            if( config.controls?.compass != null) {
+                googleMap?.uiSettings?.isCompassEnabled = config.controls?.compass!!
+            }
+            if( config.controls?.myLocationButton != null) {
+                googleMap?.uiSettings?.isMyLocationButtonEnabled = config.controls?.myLocationButton!!
+            }
+            if( config.controls?.myLocation != null) {
+                val hasFineLocation = ContextCompat.checkSelfPermission(
+                    delegate.bridge.context, Manifest.permission.ACCESS_FINE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED
+
+                val hasCoarseLocation = ContextCompat.checkSelfPermission(
+                    delegate.bridge.context, Manifest.permission.ACCESS_COARSE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED
+
+                if (hasFineLocation || hasCoarseLocation) {
+                    googleMap?.isMyLocationEnabled = config.controls?.myLocation!!
+                }
+            }
+            if( config.controls?.indoorPicker != null) {
+                googleMap?.uiSettings?.isIndoorLevelPickerEnabled = config.controls?.indoorPicker!!
+            }
+            if( config.controls?.mapToolbar != null) {
+                googleMap?.uiSettings?.isMapToolbarEnabled = config.controls?.mapToolbar!!
+            }
+            if( config.controls?.zoom != null) {
+                googleMap?.uiSettings?.isZoomControlsEnabled = config.controls?.zoom!!
+            }
+        }
+
+        if(config.gestures != null) {
+            if(config.gestures?.tilt != null) {
+                googleMap?.uiSettings?.isTiltGesturesEnabled = config.gestures?.tilt!!
+            }
+            if(config.gestures?.zoom != null) {
+                googleMap?.uiSettings?.isZoomGesturesEnabled = config.gestures?.zoom!!
+            }
+            if(config.gestures?.rotate != null) {
+                googleMap?.uiSettings?.isRotateGesturesEnabled = config.gestures?.rotate!!
+            }
+            if(config.gestures?.scroll != null) {
+                googleMap?.uiSettings?.isScrollGesturesEnabled = config.gestures?.scroll!!
+            }
+        }
+
+        if(config.preferences != null) {
+            if(config.preferences?.building != null) {
+                googleMap?.isBuildingsEnabled = config.preferences?.building!!
+            }
+            if(config.preferences?.zoom != null) {
+                if(config.preferences?.zoom?.maxZoom !=null) {
+                    googleMap?.setMaxZoomPreference(config.preferences?.zoom?.maxZoom!!.toFloat())
+                }
+                if(config.preferences?.zoom?.minZoom !=null) {
+                    googleMap?.setMinZoomPreference(config.preferences?.zoom?.minZoom!!.toFloat())
+                }
+            }
+            if(config.preferences?.padding != null) {
+                googleMap?.setPadding(config.preferences?.padding?.left ?:0,config.preferences?.padding?.top ?:0, config.preferences?.padding?.right ?:0, config.preferences?.padding?.bottom ?:0 )
+            }
+            if(!config.preferences?.gestureBounds.isNullOrEmpty()) {
+                val latlngBounds = CapacitorGoogleMapsUtils.createLatLngBoundsFromLatLngArray(config.preferences?.gestureBounds!!)
+                googleMap?.setLatLngBoundsForCameraTarget(latlngBounds)
+            }
+        }
     }
 
     fun onStart() {

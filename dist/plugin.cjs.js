@@ -664,11 +664,11 @@ class GoogleMap {
     async enableTiltRotateGesture(isEnabled) {
         return CapacitorGoogleMaps.enableTiltRotateGesture({ id: this.id, isEnabled });
     }
-    async setMapPreferences(padding, isBuildingsEnabled) {
+    async setMapPreferences(padding, building) {
         return CapacitorGoogleMaps.setMapPreferences({
             id: this.id,
             padding,
-            isBuildingsEnabled,
+            building,
         });
     }
     async fitBounds(bounds, padding) {
@@ -1186,7 +1186,8 @@ class CapacitorGoogleMapsWeb extends core.WebPlugin {
     async moveCamera(_args) {
         // Animation not supported yet...
         this.maps[_args.id].map.moveCamera({
-            center: _args.config.coordinate,
+            //TODO UPDATE CENTER
+            // center: _args.config.target,
             heading: _args.config.bearing,
             tilt: _args.config.tilt,
             zoom: _args.config.zoom,
@@ -1195,7 +1196,8 @@ class CapacitorGoogleMapsWeb extends core.WebPlugin {
     async animateCamera(_args) {
         // Animation not supported yet...
         this.maps[_args.id].map.moveCamera({
-            center: _args.config.coordinate,
+            //TODO UPDATE CENTER
+            // center: _args.config.target,
             heading: _args.config.bearing,
             tilt: _args.config.tilt,
             zoom: _args.config.zoom,
@@ -1398,7 +1400,8 @@ class CapacitorGoogleMapsWeb extends core.WebPlugin {
             config.mapId = `capacitor_map_${this.currMapId++}`;
         }
         this.maps[_args.id] = {
-            map: new window.google.maps.Map(_args.element, config),
+            //TODO MODIFY STYLES HERE
+            map: new window.google.maps.Map(_args.element, Object.assign(Object.assign({}, config), { styles: [] })),
             element: _args.element,
             markers: {},
             polygons: {},

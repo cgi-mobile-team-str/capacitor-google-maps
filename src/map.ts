@@ -99,7 +99,7 @@ export interface GoogleMapInterface {
   enableAllGestures(isEnabled: boolean): Promise<void>;
   enableTiltGesture(isEnabled: boolean): Promise<void>;
   enableTiltRotateGesture(isEnabled: boolean): Promise<void>;
-  setMapPreferences(padding?: MapPadding, isBuildingsEnabled?: boolean): Promise<void>;
+  setMapPreferences(padding?: MapPadding, building?: boolean): Promise<void>;
   setCameraBearing(bearing: number): Promise<void>;
   setOptions(config: GoogleMapsOptions): Promise<void>;
   getCameraZoom(): Promise<number>;
@@ -692,11 +692,11 @@ export class GoogleMap {
     return CapacitorGoogleMaps.enableTiltRotateGesture({ id: this.id, isEnabled });
   }
 
-  async setMapPreferences(padding?: MapPadding, isBuildingsEnabled?: boolean): Promise<void> {
+  async setMapPreferences(padding?: MapPadding, building?: boolean): Promise<void> {
     return CapacitorGoogleMaps.setMapPreferences({
       id: this.id,
       padding,
-      isBuildingsEnabled,
+      building,
     });
   }
 

@@ -496,11 +496,11 @@ export class GoogleMap {
     async enableTiltRotateGesture(isEnabled) {
         return CapacitorGoogleMaps.enableTiltRotateGesture({ id: this.id, isEnabled });
     }
-    async setMapPreferences(padding, isBuildingsEnabled) {
+    async setMapPreferences(padding, building) {
         return CapacitorGoogleMaps.setMapPreferences({
             id: this.id,
             padding,
-            isBuildingsEnabled,
+            building,
         });
     }
     async fitBounds(bounds, padding) {

@@ -380,7 +380,7 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
             id ?: throw InvalidMapIdError()
 
             val paddingObj = call.getObject("padding", null)
-            val isBuildingsEnabled = call.getBoolean("isBuildingsEnabled", false)
+            val building = call.getBoolean("building", false)
 
             val map = maps[id]
             map ?: throw MapNotFoundError()
@@ -390,7 +390,7 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
                  padding = GoogleMapPadding(paddingObj)
             }
 
-            map.setMapPreferences(padding, isBuildingsEnabled) { err ->
+            map.setMapPreferences(padding, building) { err ->
                 if (err != null) {
                     throw err
                 }

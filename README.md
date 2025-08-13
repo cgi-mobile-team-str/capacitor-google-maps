@@ -1011,13 +1011,13 @@ enableTiltRotateGesture(isEnabled: boolean) => Promise<void>
 ### setMapPreferences(...)
 
 ```typescript
-setMapPreferences(padding?: MapPadding | undefined, isBuildingsEnabled?: boolean | undefined) => Promise<void>
+setMapPreferences(padding?: MapPadding | undefined, building?: boolean | undefined) => Promise<void>
 ```
 
-| Param                    | Type                                              |
-| ------------------------ | ------------------------------------------------- |
-| **`padding`**            | <code><a href="#mappadding">MapPadding</a></code> |
-| **`isBuildingsEnabled`** | <code>boolean</code>                              |
+| Param          | Type                                              |
+| -------------- | ------------------------------------------------- |
+| **`padding`**  | <code><a href="#mappadding">MapPadding</a></code> |
+| **`building`** | <code>boolean</code>                              |
 
 --------------------
 
@@ -1111,20 +1111,57 @@ For web, all the javascript Google Maps options are available as
 GoogleMapConfig extends google.maps.MapOptions.
 For iOS and Android only the config options declared on <a href="#googlemapconfig">GoogleMapConfig</a> are available.
 
-| Prop                   | Type                                      | Description                                                                                                                                               | Default            | Since |
-| ---------------------- | ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ | ----- |
-| **`width`**            | <code>number</code>                       | Override width for native map.                                                                                                                            |                    |       |
-| **`height`**           | <code>number</code>                       | Override height for native map.                                                                                                                           |                    |       |
-| **`x`**                | <code>number</code>                       | Override absolute x coordinate position for native map.                                                                                                   |                    |       |
-| **`y`**                | <code>number</code>                       | Override absolute y coordinate position for native map.                                                                                                   |                    |       |
-| **`center`**           | <code><a href="#latlng">LatLng</a></code> | Default location on the Earth towards which the camera points.                                                                                            |                    |       |
-| **`zoom`**             | <code>number</code>                       | Sets the zoom of the map.                                                                                                                                 |                    |       |
-| **`androidLiteMode`**  | <code>boolean</code>                      | Enables image-based lite mode on Android.                                                                                                                 | <code>false</code> |       |
-| **`devicePixelRatio`** | <code>number</code>                       | Override pixel ratio for native map.                                                                                                                      |                    |       |
-| **`styles`**           | <code>MapTypeStyle[] \| null</code>       | Styles to apply to each of the default map types. Note that for satellite, hybrid and terrain modes, these styles will only apply to labels and geometry. |                    | 4.3.0 |
-| **`mapId`**            | <code>string</code>                       | A map id associated with a specific map style or feature. [Use Map IDs](https://developers.google.com/maps/documentation/get-map-id) Only for Web.        |                    | 5.4.0 |
-| **`androidMapId`**     | <code>string</code>                       | A map id associated with a specific map style or feature. [Use Map IDs](https://developers.google.com/maps/documentation/get-map-id) Only for Android.    |                    | 5.4.0 |
-| **`iOSMapId`**         | <code>string</code>                       | A map id associated with a specific map style or feature. [Use Map IDs](https://developers.google.com/maps/documentation/get-map-id) Only for iOS.        |                    | 5.4.0 |
+| Prop                   | Type                                                                  | Description                                                                                                                                               | Default            | Since |
+| ---------------------- | --------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ | ----- |
+| **`width`**            | <code>number</code>                                                   | Override width for native map.                                                                                                                            |                    |       |
+| **`height`**           | <code>number</code>                                                   | Override height for native map.                                                                                                                           |                    |       |
+| **`x`**                | <code>number</code>                                                   | Override absolute x coordinate position for native map.                                                                                                   |                    |       |
+| **`y`**                | <code>number</code>                                                   | Override absolute y coordinate position for native map.                                                                                                   |                    |       |
+| **`androidLiteMode`**  | <code>boolean</code>                                                  | Enables image-based lite mode on Android.                                                                                                                 | <code>false</code> |       |
+| **`devicePixelRatio`** | <code>number</code>                                                   | Override pixel ratio for native map.                                                                                                                      |                    |       |
+| **`styles`**           | <code>string \| null</code>                                           | Styles to apply to each of the default map types. Note that for satellite, hybrid and terrain modes, these styles will only apply to labels and geometry. |                    | 4.3.0 |
+| **`mapId`**            | <code>string</code>                                                   | A map id associated with a specific map style or feature. [Use Map IDs](https://developers.google.com/maps/documentation/get-map-id) Only for Web.        |                    | 5.4.0 |
+| **`androidMapId`**     | <code>string</code>                                                   | A map id associated with a specific map style or feature. [Use Map IDs](https://developers.google.com/maps/documentation/get-map-id) Only for Android.    |                    | 5.4.0 |
+| **`iOSMapId`**         | <code>string</code>                                                   | A map id associated with a specific map style or feature. [Use Map IDs](https://developers.google.com/maps/documentation/get-map-id) Only for iOS.        |                    | 5.4.0 |
+| **`controls`**         | <code><a href="#googlemapcontrols">GoogleMapControls</a></code>       |                                                                                                                                                           |                    |       |
+| **`gestures`**         | <code><a href="#googlemapgestures">GoogleMapGestures</a></code>       |                                                                                                                                                           |                    |       |
+| **`camera`**           | <code><a href="#cameraconfig">CameraConfig</a></code>                 |                                                                                                                                                           |                    |       |
+| **`preferences`**      | <code><a href="#googlemappreferences">GoogleMapPreferences</a></code> |                                                                                                                                                           |                    |       |
+
+
+#### GoogleMapControls
+
+| Prop                   | Type                 |
+| ---------------------- | -------------------- |
+| **`compass`**          | <code>boolean</code> |
+| **`myLocationButton`** | <code>boolean</code> |
+| **`myLocation`**       | <code>boolean</code> |
+| **`indoorPicker`**     | <code>boolean</code> |
+| **`zoom`**             | <code>boolean</code> |
+| **`mapToolbar`**       | <code>boolean</code> |
+
+
+#### GoogleMapGestures
+
+| Prop         | Type                 |
+| ------------ | -------------------- |
+| **`scroll`** | <code>boolean</code> |
+| **`zoom`**   | <code>boolean</code> |
+| **`tilt`**   | <code>boolean</code> |
+| **`rotate`** | <code>boolean</code> |
+
+
+#### CameraConfig
+
+Configuration properties for a Google Map Camera
+
+| Prop           | Type                                                  | Description                                                                                                                 | Default        |
+| -------------- | ----------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- | -------------- |
+| **`target`**   | <code><a href="#latlng">LatLng</a> \| LatLng[]</code> | Location on the Earth towards which the camera points or multiple locations towards which the camera points in the center . |                |
+| **`zoom`**     | <code>number</code>                                   | Sets the zoom of the map.                                                                                                   |                |
+| **`bearing`**  | <code>number</code>                                   | Bearing of the camera, in degrees clockwise from true north.                                                                | <code>0</code> |
+| **`tilt`**     | <code>number</code>                                   | The angle, in degrees, of the camera from the nadir (directly facing the Earth). The only allowed values are 0 and 45.      | <code>0</code> |
+| **`duration`** | <code>number</code>                                   | This configuration option is not being used.                                                                                |                |
 
 
 #### LatLng
@@ -1135,6 +1172,36 @@ An interface representing a pair of latitude and longitude coordinates.
 | --------- | ------------------- | ------------------------------------------------------------------------- |
 | **`lat`** | <code>number</code> | Coordinate latitude, in degrees. This value is in the range [-90, 90].    |
 | **`lng`** | <code>number</code> | Coordinate longitude, in degrees. This value is in the range [-180, 180]. |
+
+
+#### GoogleMapPreferences
+
+| Prop                | Type                                                                  |
+| ------------------- | --------------------------------------------------------------------- |
+| **`padding`**       | <code><a href="#mappadding">MapPadding</a></code>                     |
+| **`building`**      | <code>boolean</code>                                                  |
+| **`gestureBounds`** | <code>LatLng[]</code>                                                 |
+| **`zoom`**          | <code><a href="#googlemapzoomoptions">GoogleMapZoomOptions</a></code> |
+
+
+#### MapPadding
+
+Controls for setting padding on the 'visible' region of the view.
+
+| Prop         | Type                |
+| ------------ | ------------------- |
+| **`top`**    | <code>number</code> |
+| **`left`**   | <code>number</code> |
+| **`right`**  | <code>number</code> |
+| **`bottom`** | <code>number</code> |
+
+
+#### GoogleMapZoomOptions
+
+| Prop          | Type                | Description                        |
+| ------------- | ------------------- | ---------------------------------- |
+| **`minZoom`** | <code>number</code> | The minimum zoom level of the map. |
+| **`maxZoom`** | <code>number</code> | The maximum zoom level of the map. |
 
 
 #### MapReadyCallbackData
@@ -1220,32 +1287,6 @@ For iOS and Android only the config options declared on <a href="#circle">Circle
 | **`width`**     | <code>number</code>   |
 | **`zIndex`**    | <code>number</code>   |
 | **`clickable`** | <code>boolean</code>  |
-
-
-#### CameraConfig
-
-Configuration properties for a Google Map Camera
-
-| Prop              | Type                                      | Description                                                                                                            | Default        |
-| ----------------- | ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | -------------- |
-| **`coordinate`**  | <code><a href="#latlng">LatLng</a></code> | Location on the Earth towards which the camera points.                                                                 |                |
-| **`coordinates`** | <code>LatLng[]</code>                     | Multiple locations towards which the camera points in the center.                                                      |                |
-| **`zoom`**        | <code>number</code>                       | Sets the zoom of the map.                                                                                              |                |
-| **`bearing`**     | <code>number</code>                       | Bearing of the camera, in degrees clockwise from true north.                                                           | <code>0</code> |
-| **`tilt`**        | <code>number</code>                       | The angle, in degrees, of the camera from the nadir (directly facing the Earth). The only allowed values are 0 and 45. | <code>0</code> |
-| **`duration`**    | <code>number</code>                       | This configuration option is not being used.                                                                           |                |
-
-
-#### MapPadding
-
-Controls for setting padding on the 'visible' region of the view.
-
-| Prop         | Type                |
-| ------------ | ------------------- |
-| **`top`**    | <code>number</code> |
-| **`left`**   | <code>number</code> |
-| **`right`**  | <code>number</code> |
-| **`bottom`** | <code>number</code> |
 
 
 #### CameraIdleCallbackData
@@ -1362,46 +1403,6 @@ Controls for setting padding on the 'visible' region of the view.
 | **`styles`**      | <code>any[]</code>                                                    |
 | **`camera`**      | <code><a href="#cameraconfig">CameraConfig</a></code>                 |
 | **`preferences`** | <code><a href="#googlemappreferences">GoogleMapPreferences</a></code> |
-
-
-#### GoogleMapControls
-
-| Prop                   | Type                 |
-| ---------------------- | -------------------- |
-| **`compass`**          | <code>boolean</code> |
-| **`myLocationButton`** | <code>boolean</code> |
-| **`myLocation`**       | <code>boolean</code> |
-| **`indoorPicker`**     | <code>boolean</code> |
-| **`zoom`**             | <code>boolean</code> |
-| **`mapToolbar`**       | <code>boolean</code> |
-
-
-#### GoogleMapGestures
-
-| Prop         | Type                 |
-| ------------ | -------------------- |
-| **`scroll`** | <code>boolean</code> |
-| **`zoom`**   | <code>boolean</code> |
-| **`tilt`**   | <code>boolean</code> |
-| **`rotate`** | <code>boolean</code> |
-
-
-#### GoogleMapPreferences
-
-| Prop                     | Type                                                                  |
-| ------------------------ | --------------------------------------------------------------------- |
-| **`padding`**            | <code><a href="#mappadding">MapPadding</a></code>                     |
-| **`isBuildingsEnabled`** | <code>boolean</code>                                                  |
-| **`gestureBounds`**      | <code>LatLng[]</code>                                                 |
-| **`zoom`**               | <code><a href="#googlemapzoomoptions">GoogleMapZoomOptions</a></code> |
-
-
-#### GoogleMapZoomOptions
-
-| Prop          | Type                | Description                        |
-| ------------- | ------------------- | ---------------------------------- |
-| **`minZoom`** | <code>number</code> | The minimum zoom level of the map. |
-| **`maxZoom`** | <code>number</code> | The maximum zoom level of the map. |
 
 
 ### Type Aliases
