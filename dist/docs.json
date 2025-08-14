@@ -983,6 +983,24 @@
           "LatLng"
         ],
         "slug": "getcameratarget"
+      },
+      {
+        "name": "fromPointToLatLng",
+        "signature": "(points: number[]) => Promise<LatLng>",
+        "parameters": [
+          {
+            "name": "points",
+            "docs": "",
+            "type": "number[]"
+          }
+        ],
+        "returns": "Promise<LatLng>",
+        "tags": [],
+        "docs": "",
+        "complexTypes": [
+          "LatLng"
+        ],
+        "slug": "frompointtolatlng"
       }
     ],
     "properties": []

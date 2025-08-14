@@ -553,6 +553,10 @@ class GoogleMap {
         const { cameraTarget } = await CapacitorGoogleMaps.getCameraTarget({ id: this.id });
         return cameraTarget;
     }
+    async fromPointToLatLng(points) {
+        const { latLng } = await CapacitorGoogleMaps.fromPointToLatLng({ id: this.id, points });
+        return latLng;
+    }
     /**
      * Sets the type of map tiles that should be displayed.
      *
@@ -1713,6 +1717,9 @@ class CapacitorGoogleMapsWeb extends core.WebPlugin {
         throw new Error('Method not implemented.');
     }
     async getCameraTarget(_args) {
+        throw new Error('Method not implemented.');
+    }
+    async fromPointToLatLng(_args) {
         throw new Error('Method not implemented.');
     }
 }

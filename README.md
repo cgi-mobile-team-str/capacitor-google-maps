@@ -352,6 +352,7 @@ export default MyMap;
 * [`addPolyline(...)`](#addpolyline)
 * [`setCameraTarget(...)`](#setcameratarget)
 * [`getCameraTarget()`](#getcameratarget)
+* [`fromPointToLatLng(...)`](#frompointtolatlng)
 * [Interfaces](#interfaces)
 * [Type Aliases](#type-aliases)
 * [Enums](#enums)
@@ -1093,6 +1094,21 @@ setCameraTarget(target: LatLng | LatLng[]) => Promise<void>
 ```typescript
 getCameraTarget() => Promise<LatLng>
 ```
+
+**Returns:** <code>Promise&lt;<a href="#latlng">LatLng</a>&gt;</code>
+
+--------------------
+
+
+### fromPointToLatLng(...)
+
+```typescript
+fromPointToLatLng(points: number[]) => Promise<LatLng>
+```
+
+| Param        | Type                  |
+| ------------ | --------------------- |
+| **`points`** | <code>number[]</code> |
 
 **Returns:** <code>Promise&lt;<a href="#latlng">LatLng</a>&gt;</code>
 

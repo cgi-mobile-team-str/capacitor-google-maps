@@ -106,6 +106,7 @@ export interface GoogleMapInterface {
   addPolyline(options: PolylineOption): Promise<PolylineClass>;
   setCameraTarget(target: LatLng | LatLng[]): Promise<void>;
   getCameraTarget(): Promise<LatLng>;
+  fromPointToLatLng(points: number[]): Promise<LatLng>;
 }
 
 class MapCustomElement extends HTMLElement {
@@ -567,6 +568,10 @@ export class GoogleMap {
     return cameraTarget;
   }
 
+  async fromPointToLatLng(points: number[]): Promise<LatLng> {
+    const { latLng } = await CapacitorGoogleMaps.fromPointToLatLng({ id: this.id , points});
+    return latLng;
+  }
   /**
    * Sets the type of map tiles that should be displayed.
    *

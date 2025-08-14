@@ -1046,6 +1046,33 @@ class CapacitorGoogleMap(
     }
     // END POLYLINE METHODS
 
+    fun fromPointToLatLng(
+        points: Array<Double>,
+        callback: (latLng: LatLng?, error: GoogleMapsError?) -> Unit
+    ) {
+        try {
+            googleMap ?: throw GoogleMapNotAvailable()
+            if (points.size != 2) {
+                callback(null, GoogleMapsError("Expected exactly 2 elements: [x, y]"))
+            }
+
+            val density = delegate.bridge.activity.resources.displayMetrics.density
+            val point = Point((points[0] * density).toInt(), (points[1] * density).toInt())
+
+            CoroutineScope(Dispatchers.Main).launch {
+                try {
+                    val projection = googleMap!!.projection
+                    val latLng = projection.fromScreenLocation(point)
+                    callback(latLng, null)
+                } catch (e: Exception) {
+                    callback(null, GoogleMapsError(e.message ?: "Unknown error"))
+                }
+            }
+        } catch (e: GoogleMapsError) {
+            callback(null, e)
+        }
+    }
+
     private fun getMapTypeInt(mapType: String): Int {
         val mapTypeInt: Int =
             when (mapType) {

@@ -40,6 +40,7 @@ import type {
   PolylineStrokeWidthArgs,
   RemovePolylineArgs,
   SetCameraTargetArgs,
+  FromPointToLatLngArgs,
 } from './implementation';
 
 export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogleMapsPlugin {
@@ -794,6 +795,10 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
   }
 
   async getCameraTarget(_args: { id: string; }): Promise<{ cameraTarget: LatLng; }> {
+    throw new Error('Method not implemented.');
+  }
+
+  async fromPointToLatLng(_args: FromPointToLatLngArgs): Promise<{ latLng: LatLng; }> {
     throw new Error('Method not implemented.');
   }
 }

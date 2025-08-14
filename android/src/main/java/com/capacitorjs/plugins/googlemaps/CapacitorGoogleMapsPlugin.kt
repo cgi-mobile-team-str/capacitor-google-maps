@@ -1655,6 +1655,41 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
 
     // END POLYLINE METHODS
 
+    @PluginMethod
+    fun fromPointToLatLng(call: PluginCall) {
+        try {
+            val id = call.getString("id")
+            id ?: throw InvalidMapIdError()
+
+            val pointsArr = call.getArray("points")
+            pointsArr ?: throw InvalidArgumentsError("pointsArr is invalid or missing")
+
+                var points: MutableList<Double> = mutableListOf<Double>()
+
+            for (i in 0 until pointsArr.length()) {
+                val pointObj = pointsArr.getDouble(i)
+                points.add(pointObj)
+            }
+
+            val map = maps[id]
+            map ?: throw MapNotFoundError()
+
+            map.fromPointToLatLng (points.toTypedArray()) { latLng, err ->
+                if (err != null) {
+                    throw err
+                }
+                val data = JSObject()
+                data.put("latLng", latLngToJSObject(latLng))
+                call.resolve(data)
+                call.resolve()
+            }
+        } catch (e: GoogleMapsError) {
+            handleError(call, e)
+        } catch (e: Exception) {
+            handleError(call, e)
+        }
+    }
+
     private fun createLatLng(point: JSObject): LatLng {
         return LatLng(
             point.getDouble("lat"),

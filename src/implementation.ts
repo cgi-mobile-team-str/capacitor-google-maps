@@ -276,6 +276,10 @@ export interface SetCameraTargetArgs {
   target: LatLng | LatLng[]; 
 }
 
+export interface FromPointToLatLngArgs {
+  id: string;
+  points: number[]; 
+}
 export interface CapacitorGoogleMapsPlugin extends Plugin {
   create(options: CreateMapArgs): Promise<void>;
   enableTouch(args: { id: string }): Promise<void>;
@@ -332,6 +336,7 @@ export interface CapacitorGoogleMapsPlugin extends Plugin {
   removePolyline(args: RemovePolylineArgs): Promise<void>;
   setCameraTarget(args: SetCameraTargetArgs): Promise<void>;
   getCameraTarget(args: { id: string }): Promise<{cameraTarget: LatLng}>
+  fromPointToLatLng(args: FromPointToLatLngArgs): Promise<{latLng: LatLng}>
 }
 
 const CapacitorGoogleMaps = registerPlugin<CapacitorGoogleMapsPlugin>('CapacitorGoogleMaps', {

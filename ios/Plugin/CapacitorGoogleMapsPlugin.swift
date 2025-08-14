@@ -1079,6 +1079,39 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
             handleError(call, error: error)
         }
     }
+    
+    @objc func fromPointToLatLng(_ call: CAPPluginCall) {
+        do {
+            guard let id = call.getString("id") else {
+                throw GoogleMapErrors.invalidMapId
+            }
+
+            guard let map = self.maps[id] else {
+                throw GoogleMapErrors.mapNotFound
+            }
+
+            guard let pointsArr = call.getArray("points") as? [Double] else {
+                throw GoogleMapErrors.invalidArguments("points is missing")
+            }
+            
+            var points: [Double] = []
+            
+            for point in pointsArr {
+                points.append(point)
+            }
+
+            let latLng = try map.fromPointToLatLng(points: points)
+
+            call.resolve([
+                "latLng": [
+                    "lat": latLng.lat,
+                    "lng": latLng.lng
+                ]
+            ])
+        } catch {
+            handleError(call, error: error)
+        }
+    }
 
     private func getGMSCoordinateBounds(_ bounds: JSObject) throws -> GMSCoordinateBounds {
         guard let southwest = bounds["southwest"] as? JSObject else {

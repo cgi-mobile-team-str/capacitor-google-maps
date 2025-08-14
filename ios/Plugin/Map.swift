@@ -762,6 +762,19 @@ public class Map {
     
     // END POLYLINE METHODS
 
+    func fromPointToLatLng(points: [Double]) throws -> LatLng {
+        guard points.count == 2 else {
+            throw GoogleMapErrors.invalidArguments("Expected exactly 2 elements: [x, y]")
+        }
+        
+        let pointX = CGFloat(points[0])
+        let pointY = CGFloat(points[1])
+        
+        let cgPoint = CGPoint(x: pointX, y: pointY)
+        let cllocation = self.mapViewController.GMapView.projection.coordinate(for: cgPoint)
+        return LatLng(lat: cllocation.latitude, lng: cllocation.longitude)
+    }
+    
     private func setupCameraPosition(config: GoogleMapCameraConfig) -> GMSCameraPosition {
         let currentCamera = self.mapViewController.GMapView.camera
         var lat: Double = currentCamera.target.latitude

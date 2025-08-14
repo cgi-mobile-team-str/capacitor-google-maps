@@ -385,6 +385,10 @@ export class GoogleMap {
         const { cameraTarget } = await CapacitorGoogleMaps.getCameraTarget({ id: this.id });
         return cameraTarget;
     }
+    async fromPointToLatLng(points) {
+        const { latLng } = await CapacitorGoogleMaps.fromPointToLatLng({ id: this.id, points });
+        return latLng;
+    }
     /**
      * Sets the type of map tiles that should be displayed.
      *

@@ -76,6 +76,7 @@ export interface GoogleMapInterface {
     addPolyline(options: PolylineOption): Promise<PolylineClass>;
     setCameraTarget(target: LatLng | LatLng[]): Promise<void>;
     getCameraTarget(): Promise<LatLng>;
+    fromPointToLatLng(points: number[]): Promise<LatLng>;
 }
 export declare class GoogleMap {
     private id;
@@ -198,6 +199,7 @@ export declare class GoogleMap {
     getMapType(): Promise<MapType>;
     getCameraZoom(): Promise<number>;
     getCameraTarget(): Promise<LatLng>;
+    fromPointToLatLng(points: number[]): Promise<LatLng>;
     /**
      * Sets the type of map tiles that should be displayed.
      *
