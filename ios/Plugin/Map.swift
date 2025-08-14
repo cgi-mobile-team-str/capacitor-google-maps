@@ -99,6 +99,25 @@ public class Map {
 
     func render() {
         DispatchQueue.main.async {
+            let zoom = self.config.camera?.zoom ?? 11.0
+            var center = LatLng(lat: 0, lng: 0)
+            let target = self.config.camera?.target
+            
+            if case .point(let targetPoint) = target {
+                center = targetPoint
+            }
+
+            if case .points(let targetArray) = target {
+                var targets: [CLLocationCoordinate2D] = []
+               targetArray.forEach { target in
+                   let coordinate: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: target.lat, longitude: target.lng)
+                    targets.append(coordinate)
+                }
+                let bounds = GoogleMapsUtils.createLatLngBoundsFromLatLngArray(targets)
+                let centerBound = GoogleMapsUtils.getCenterFromBound(bounds)
+                center = LatLng(lat: centerBound.latitude, lng: centerBound.longitude)
+            }
+            
             self.mapViewController.mapViewBounds = [
                 "width": self.config.width,
                 "height": self.config.height,
@@ -107,9 +126,9 @@ public class Map {
             ]
 
             self.mapViewController.cameraPosition = [
-                "latitude": self.config.center.lat,
-                "longitude": self.config.center.lng,
-                "zoom": self.config.zoom
+                "latitude": center.lat,
+                "longitude": center.lng,
+                "zoom": Double(zoom)
             ]
 
             self.targetViewController = self.getTargetContainer(refWidth: self.config.width, refHeight: self.config.height)
@@ -129,6 +148,8 @@ public class Map {
                     CAPLog.print("Invalid Google Maps styles")
                 }
             }
+            
+            setMapSettings(self.config, mapViewController: self.mapViewController)
 
             self.delegate.notifyListeners("onMapReady", data: [
                 "mapId": self.id
@@ -393,8 +414,9 @@ public class Map {
                 self.mapViewController.GMapView.animate(to: updatedPosition)
             }
             if let targetArray = target as? [CLLocationCoordinate2D] {
-                let bounds = createLatLngBoundsFromLatLngArray(targetArray)
-                let coordinate: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude:  ((bounds.northEast.latitude + bounds.southWest.latitude) / 2), longitude: ((bounds.northEast.longitude + bounds.southWest.longitude) / 2))
+                let bounds = GoogleMapsUtils.createLatLngBoundsFromLatLngArray(targetArray)
+                let center: CLLocationCoordinate2D = GoogleMapsUtils.getCenterFromBound(bounds)
+                let coordinate: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude:  center.latitude, longitude: center.longitude)
                 let updatedPosition = GMSCameraPosition.camera(
                     withTarget: coordinate,
                     zoom: currentCamera.zoom
@@ -417,36 +439,6 @@ public class Map {
                 self.mapViewController.GMapView.mapType = mapType
             }
             
-            if let controls = config.controls {
-                if let compass = controls.compass {
-                    self.mapViewController.GMapView.settings.compassButton = compass
-                }
-                if let myLocationButton = controls.myLocationButton {
-                    self.mapViewController.GMapView.settings.myLocationButton = myLocationButton
-                }
-                if let myLocation = controls.myLocation {
-                    self.mapViewController.GMapView.isMyLocationEnabled = myLocation
-                }
-                if let indoorPicker = controls.indoorPicker {
-                    self.mapViewController.GMapView.settings.indoorPicker = indoorPicker
-                }
-            }
-            
-            if let gestures = config.gestures {
-                if let scroll = gestures.scroll {
-                    self.mapViewController.GMapView.settings.scrollGestures = scroll
-                }
-                if let zoom = gestures.zoom {
-                    self.mapViewController.GMapView.settings.zoomGestures = zoom
-                }
-                if let rotate = gestures.rotate {
-                    self.mapViewController.GMapView.settings.rotateGestures = rotate
-                }
-                if let tilt = gestures.tilt {
-                    self.mapViewController.GMapView.settings.tiltGestures = tilt
-                }
-            }
-            
             if let styles = config.styles {
                 self.mapViewController.GMapView.mapStyle = styles
             }
@@ -456,28 +448,7 @@ public class Map {
                 self.mapViewController.GMapView.animate(to: newCamera )
             }
             
-            if let preferences = config.preferences {
-                if let building = preferences.building {
-                    self.mapViewController.GMapView.isBuildingsEnabled = building
-                }
-                if let zoom = preferences.zoom {
-                    if let minZoom = zoom.minZoom, let maxZoom = zoom.maxZoom {
-                        self.mapViewController.GMapView.setMinZoom(minZoom, maxZoom: maxZoom)
-                    }
-                }
-                if let padding = preferences.padding {
-                    let mapInsets = UIEdgeInsets(top: CGFloat(padding.top), left: CGFloat(padding.left), bottom: CGFloat(padding.bottom), right: CGFloat(padding.right))
-                    self.mapViewController.GMapView.padding = mapInsets
-                }
-                if let gestureBounds = preferences.gestureBounds {
-                    var locationCoordinates: [CLLocationCoordinate2D] = []
-                    for gestureBound in gestureBounds {
-                        locationCoordinates.append(CLLocationCoordinate2D.init(latitude: gestureBound.lat, longitude: gestureBound.lng))
-                    }
-                    let latlngBounds = createLatLngBoundsFromLatLngArray(locationCoordinates)
-                    self.mapViewController.GMapView.cameraTargetBounds = latlngBounds
-                }
-            }
+            setMapSettings(config, mapViewController: self.mapViewController)
         }
     }
 
@@ -507,7 +478,7 @@ public class Map {
 
     func setPadding(padding: GoogleMapPadding) throws {
         DispatchQueue.main.sync {
-            let mapInsets = UIEdgeInsets(top: CGFloat(padding.top), left: CGFloat(padding.left), bottom: CGFloat(padding.bottom), right: CGFloat(padding.right))
+            let mapInsets = UIEdgeInsets(top: CGFloat(padding.top ?? 0), left: CGFloat(padding.left ?? 0), bottom: CGFloat(padding.bottom ?? 0), right: CGFloat(padding.right ?? 0))
             self.mapViewController.GMapView.padding = mapInsets
         }
     }
@@ -568,11 +539,11 @@ public class Map {
         }
     }
     
-    func setMapPreferences(padding: GoogleMapPadding?, isBuildingsEnabled: Bool?) throws {
+    func setMapPreferences(padding: GoogleMapPadding?, building: Bool?) throws {
         DispatchQueue.main.sync {
                 let mapInsets = UIEdgeInsets(top: CGFloat(padding?.top ?? 0), left: CGFloat(padding?.left  ?? 0), bottom: CGFloat(padding?.bottom  ?? 0), right: CGFloat(padding?.right  ?? 0))
                 self.mapViewController.GMapView.padding = mapInsets
-                self.mapViewController.GMapView.isBuildingsEnabled = isBuildingsEnabled ?? false
+                self.mapViewController.GMapView.isBuildingsEnabled = building ?? false
             
         }
     }
@@ -787,37 +758,37 @@ public class Map {
     
     // END POLYLINE METHODS
 
-    private func setupCameraPosition(config: GoogleMapCameraConfig ) -> GMSCameraPosition {
+    private func setupCameraPosition(config: GoogleMapCameraConfig) -> GMSCameraPosition {
         let currentCamera = self.mapViewController.GMapView.camera
         var lat: Double = currentCamera.target.latitude
         var lng: Double = currentCamera.target.longitude
-        if(config.coordinate != nil) {
-             lat = config.coordinate?.lat ?? currentCamera.target.latitude
-             lng = config.coordinate?.lng ?? currentCamera.target.longitude
+        if case .point(let targetPoint) = config.target {
+            lat = targetPoint.lat
+            lng = targetPoint.lng
         }
-        if(config.coordinates != nil && config.coordinates?.isEmpty != true) {
+
+        if case .points(let targetArray) = config.target {
             var locationCoordinates: [CLLocationCoordinate2D] = []
-            for coordinate in config.coordinates ?? []{
+            for coordinate in targetArray{
                 locationCoordinates.append(CLLocationCoordinate2D.init(latitude: coordinate.lat, longitude: coordinate.lng))
             }
-            let latlngBounds = createLatLngBoundsFromLatLngArray(locationCoordinates)
-            lat = (latlngBounds.northEast.latitude + latlngBounds.southWest.latitude) / 2
-            lng = (latlngBounds.northEast.longitude + latlngBounds.southWest.longitude) / 2
+            let latlngBounds = GoogleMapsUtils.createLatLngBoundsFromLatLngArray(locationCoordinates)
+            let center = GoogleMapsUtils.getCenterFromBound(latlngBounds)
+            lat = center.latitude
+            lng = center.longitude
         }
+        
+        if case .none = config.target {
+            lat = currentCamera.target.latitude
+            lng = currentCamera.target.longitude
+        }
+        
         let zoom = config.zoom ?? currentCamera.zoom
         let bearing = config.bearing ?? Double(currentCamera.bearing)
         let angle = config.angle ?? currentCamera.viewingAngle
         
         let newCamera = GMSCameraPosition(latitude: lat, longitude: lng, zoom: zoom, bearing: bearing, viewingAngle: angle)
         return newCamera
-    }
-    
-    private func createLatLngBoundsFromLatLngArray(_ coordinates: [CLLocationCoordinate2D]) -> GMSCoordinateBounds {
-        var latLngBounds: GMSCoordinateBounds = GMSCoordinateBounds()
-        for coordinate in coordinates {
-            latLngBounds = latLngBounds.includingCoordinate(coordinate)
-        }
-        return latLngBounds
     }
     
     private func getFrameOverflowBounds(frame: CGRect, mapBounds: CGRect) -> [CGRect] {
@@ -984,6 +955,61 @@ public class Map {
             }
         }
         return newMarker
+    }
+}
+
+private func setMapSettings(_ config: GoogleMapSettings, mapViewController : GMViewController) {
+    if let controls = config.controls {
+        if let compass = controls.compass {
+            mapViewController.GMapView.settings.compassButton = compass
+        }
+        if let myLocationButton = controls.myLocationButton {
+            mapViewController.GMapView.settings.myLocationButton = myLocationButton
+        }
+        if let myLocation = controls.myLocation {
+            mapViewController.GMapView.isMyLocationEnabled = myLocation
+        }
+        if let indoorPicker = controls.indoorPicker {
+            mapViewController.GMapView.settings.indoorPicker = indoorPicker
+        }
+    }
+    
+    if let gestures = config.gestures {
+        if let scroll = gestures.scroll {
+            mapViewController.GMapView.settings.scrollGestures = scroll
+        }
+        if let zoom = gestures.zoom {
+            mapViewController.GMapView.settings.zoomGestures = zoom
+        }
+        if let rotate = gestures.rotate {
+            mapViewController.GMapView.settings.rotateGestures = rotate
+        }
+        if let tilt = gestures.tilt {
+            mapViewController.GMapView.settings.tiltGestures = tilt
+        }
+    }
+    
+    if let preferences = config.preferences {
+        if let building = preferences.building {
+            mapViewController.GMapView.isBuildingsEnabled = building
+        }
+        if let zoom = preferences.zoom {
+            if let minZoom = zoom.minZoom, let maxZoom = zoom.maxZoom {
+                mapViewController.GMapView.setMinZoom(minZoom, maxZoom: maxZoom)
+            }
+        }
+        if let padding = preferences.padding {
+            let mapInsets = UIEdgeInsets(top: CGFloat(padding.top ?? 0), left: CGFloat(padding.left ?? 0), bottom: CGFloat(padding.bottom ?? 0), right: CGFloat(padding.right ?? 0))
+            mapViewController.GMapView.padding = mapInsets
+        }
+        if let gestureBounds = preferences.gestureBounds {
+            var locationCoordinates: [CLLocationCoordinate2D] = []
+            for gestureBound in gestureBounds {
+                locationCoordinates.append(CLLocationCoordinate2D.init(latitude: gestureBound.lat, longitude: gestureBound.lng))
+            }
+            let latlngBounds = GoogleMapsUtils.createLatLngBoundsFromLatLngArray(locationCoordinates)
+            mapViewController.GMapView.cameraTargetBounds = latlngBounds
+        }
     }
 }
 

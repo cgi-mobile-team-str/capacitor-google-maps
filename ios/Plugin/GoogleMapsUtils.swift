@@ -1,4 +1,6 @@
 import UIKit
+import GoogleMaps
+import Capacitor
 
 enum ColorType {
     case hex
@@ -39,6 +41,7 @@ struct GoogleMapsUtils {
            
            return .invalid
        }
+    
        
        static func parseToUIColor(_ color: String) -> UIColor? {
            switch detectColorType(color) {
@@ -78,4 +81,31 @@ struct GoogleMapsUtils {
         print(hexString)
         return hexString
      }
+
+    static func createLatLngBoundsFromLatLngArray(_ coordinates: [CLLocationCoordinate2D]) -> GMSCoordinateBounds {
+        var latLngBounds: GMSCoordinateBounds = GMSCoordinateBounds()
+        for coordinate in coordinates {
+            latLngBounds = latLngBounds.includingCoordinate(coordinate)
+        }
+        return latLngBounds
+    }
+    
+    static func getCLLocationCoordinate(_ point: JSObject) throws -> CLLocationCoordinate2D {
+        guard let lat = point["lat"] as? Double else {
+            throw GoogleMapErrors.unhandledError("Point lat property not formatted properly.")
+        }
+
+        guard let lng = point["lng"] as? Double else {
+            throw GoogleMapErrors.unhandledError("Point lng property not formatted properly.")
+        }
+
+        return CLLocationCoordinate2D(latitude: lat, longitude: lng)
+    }
+    
+    static func getCenterFromBound(_ bounds: GMSCoordinateBounds) -> CLLocationCoordinate2D {
+        let centerLatitude = (bounds.southWest.latitude + bounds.northEast.latitude) / 2.0
+        let centerLongitude = (bounds.southWest.longitude + bounds.northEast.longitude) / 2.0
+        
+        return CLLocationCoordinate2D(latitude: centerLatitude, longitude: centerLongitude)
+    }
 }

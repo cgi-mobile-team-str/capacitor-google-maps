@@ -1,16 +1,18 @@
 import Foundation
 import Capacitor
 
-public struct GoogleMapConfig: Codable {
+public struct GoogleMapConfig: Codable, GoogleMapSettings {
     let width: Double
     let height: Double
     let x: Double
     let y: Double
-    let center: LatLng
-    let zoom: Double
     let styles: String?
     var mapId: String?
-
+    var controls: GoogleMapControls?
+    var gestures: GoogleMapGestures?
+    var preferences: GoogleMapsPreferences?
+    var camera : GoogleMapCameraConfig?
+    
     init(fromJSObject: JSObject) throws {
         guard let width = fromJSObject["width"] as? Double else {
             throw GoogleMapErrors.invalidArguments("GoogleMapConfig object is missing the required 'width' property")
@@ -27,25 +29,33 @@ public struct GoogleMapConfig: Codable {
         guard let y = fromJSObject["y"] as? Double else {
             throw GoogleMapErrors.invalidArguments("GoogleMapConfig object is missing the required 'y' property")
         }
-
-        guard let zoom = fromJSObject["zoom"] as? Double else {
-            throw GoogleMapErrors.invalidArguments("GoogleMapConfig object is missing the required 'zoom' property")
+        if let controlsJSObject = fromJSObject["controls"] as? JSObject {
+            self.controls = try? GoogleMapControls(fromJSObject: controlsJSObject)
+        } else {
+            self.controls = nil
         }
-
-        guard let latLngObj = fromJSObject["center"] as? JSObject else {
-            throw GoogleMapErrors.invalidArguments("GoogleMapConfig object is missing the required 'center' property")
+        if let gesturesJSObject = fromJSObject["gestures"] as? JSObject {
+            self.gestures = try? GoogleMapGestures(fromJSObject: gesturesJSObject)
+        } else {
+            self.gestures = nil
         }
-
-        guard let lat = latLngObj["lat"] as? Double, let lng = latLngObj["lng"] as? Double else {
-            throw GoogleMapErrors.invalidArguments("LatLng object is missing the required 'lat' and/or 'lng' property")
+        if let preferencesJSObject = fromJSObject["preferences"] as? JSObject {
+            self.preferences = try? GoogleMapsPreferences(fromJSObject: preferencesJSObject)
+        } else {
+            self.preferences = nil
+        }
+        
+        if let cameraJSObject = fromJSObject["camera"] as? JSObject {
+            self.camera = try? GoogleMapCameraConfig(fromJSObject: cameraJSObject)
+        } else {
+            self.camera = nil
         }
 
         self.width = round(width)
         self.height = round(height)
         self.x = x
         self.y = y
-        self.zoom = zoom
-        self.center = LatLng(lat: lat, lng: lng)
+
         if let stylesArray = fromJSObject["styles"] as? JSArray, let jsonData = try? JSONSerialization.data(withJSONObject: stylesArray, options: []) {
             self.styles = String(data: jsonData, encoding: .utf8)
         } else {

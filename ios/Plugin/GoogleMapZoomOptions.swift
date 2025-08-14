@@ -1,7 +1,7 @@
 import Foundation
 import Capacitor
 
-public struct GoogleMapZoomOptions{
+public struct GoogleMapZoomOptions : Codable {
     let minZoom: Float?
     let maxZoom: Float?
     init(fromJSObject: JSObject) throws  {

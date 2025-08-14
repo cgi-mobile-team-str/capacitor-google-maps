@@ -544,7 +544,7 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
             }
             
             if(targetObj != nil) {
-                let target: CLLocationCoordinate2D = try getCLLocationCoordinate(targetObj!)
+                let target: CLLocationCoordinate2D = try GoogleMapsUtils.getCLLocationCoordinate(targetObj!)
                 try map.setCameraTarget(target: target)
                 call.resolve()
             }
@@ -552,7 +552,7 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
             if(targetArray != nil) {
                 var targets: [CLLocationCoordinate2D] = []
                try targetArray!.forEach { target in
-                    let coordinate: CLLocationCoordinate2D = try getCLLocationCoordinate(target as! JSObject)
+                   let coordinate: CLLocationCoordinate2D = try GoogleMapsUtils.getCLLocationCoordinate(target as! JSObject)
                     targets.append(coordinate)
                 }
                 try map.setCameraTarget(target: targets)
@@ -975,13 +975,13 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
                 throw GoogleMapErrors.mapNotFound
             }
 
-            let isBuildingsEnabled = call.getBool("isBuildingsEnabled")
+            let building = call.getBool("building")
             let paddingObj = call.getObject("padding")
             var padding: GoogleMapPadding? = nil
             if(paddingObj != nil) {
                 padding = try GoogleMapPadding.init(fromJSObject: paddingObj!)
             }
-            try map.setMapPreferences(padding: padding, isBuildingsEnabled: isBuildingsEnabled)
+            try map.setMapPreferences(padding: padding, building: building)
             call.resolve()
         } catch {
             handleError(call, error: error)
@@ -999,7 +999,7 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
             }
 
             let bounds = try getGMSCoordinateBounds(boundsObject)
-            let point = try getCLLocationCoordinate(pointObject)
+            let point = try GoogleMapsUtils.getCLLocationCoordinate(pointObject)
 
             call.resolve([
                 "contains": bounds.contains(point)
@@ -1044,7 +1044,7 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
             }
 
             let bounds = try getGMSCoordinateBounds(boundsObject)
-            let point = try getCLLocationCoordinate(pointObject)
+            let point = try GoogleMapsUtils.getCLLocationCoordinate(pointObject)
 
             DispatchQueue.main.sync {
                 let newBounds = bounds.includingCoordinate(point)
@@ -1067,21 +1067,9 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
         }
 
         return GMSCoordinateBounds(
-            coordinate: try getCLLocationCoordinate(southwest),
-            coordinate: try getCLLocationCoordinate(northeast)
+            coordinate: try GoogleMapsUtils.getCLLocationCoordinate(southwest),
+            coordinate: try GoogleMapsUtils.getCLLocationCoordinate(northeast)
         )
-    }
-
-    private func getCLLocationCoordinate(_ point: JSObject) throws -> CLLocationCoordinate2D {
-        guard let lat = point["lat"] as? Double else {
-            throw GoogleMapErrors.unhandledError("Point lat property not formatted properly.")
-        }
-
-        guard let lng = point["lng"] as? Double else {
-            throw GoogleMapErrors.unhandledError("Point lng property not formatted properly.")
-        }
-
-        return CLLocationCoordinate2D(latitude: lat, longitude: lng)
     }
 
     private func formatMapBoundsForResponse(bounds: GMSCoordinateBounds?, cameraPosition: GMSCameraPosition) -> PluginCallResultData {
@@ -1197,17 +1185,14 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
     
     
     private func formatMapBoundsForResponse(_ bounds: GMSCoordinateBounds) -> PluginCallResultData {
-        let centerLatitude = (bounds.southWest.latitude + bounds.northEast.latitude) / 2.0
-        let centerLongitude = (bounds.southWest.longitude + bounds.northEast.longitude) / 2.0
-
         return [
             "southwest": [
                 "lat": bounds.southWest.latitude,
                 "lng": bounds.southWest.longitude
             ],
             "center": [
-                "lat": centerLatitude,
-                "lng": centerLongitude
+                "lat": GoogleMapsUtils.getCenterFromBound(bounds).latitude,
+                "lng": GoogleMapsUtils.getCenterFromBound(bounds).longitude
             ],
             "northeast": [
                 "lat": bounds.northEast.latitude,

@@ -1,7 +1,7 @@
 import Foundation
 import Capacitor
 
-public struct GoogleMapsPreferences{
+public struct GoogleMapsPreferences: Codable {
         let zoom: GoogleMapZoomOptions?
         let padding: GoogleMapPadding?
         let building: Bool?

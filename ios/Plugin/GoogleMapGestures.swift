@@ -1,7 +1,7 @@
 import Foundation
 import Capacitor
 
-public struct GoogleMapGestures {
+public struct GoogleMapGestures: Codable {
     var scroll: Bool? = true
     var tilt: Bool? = true
     var zoom: Bool? = true
