@@ -922,6 +922,32 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
     }
 
     @PluginMethod
+    fun getCameraTarget(call: PluginCall) {
+        try {
+            val id = call.getString("id")
+            id ?: throw InvalidMapIdError()
+
+            val map = maps[id]
+            map ?: throw MapNotFoundError()
+
+            map.getCameraTarget() { cameraTarget, err ->
+                if (err != null) {
+                    throw err
+                }
+                val data = JSObject()
+                val targetObj = latLngToJSObject(cameraTarget)
+                data.put("cameraTarget", targetObj)
+                call.resolve(data)
+            }
+        } catch (e: GoogleMapsError) {
+            handleError(call, e)
+        } catch (e: Exception) {
+            handleError(call, e)
+        }
+    }
+
+
+    @PluginMethod
     fun getMapType(call: PluginCall) {
         try {
             val id = call.getString("id")

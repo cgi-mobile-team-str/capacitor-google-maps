@@ -105,6 +105,7 @@ export interface GoogleMapInterface {
   getCameraZoom(): Promise<number>;
   addPolyline(options: PolylineOption): Promise<PolylineClass>;
   setCameraTarget(target: LatLng | LatLng[]): Promise<void>;
+  getCameraTarget(): Promise<LatLng>;
 }
 
 class MapCustomElement extends HTMLElement {
@@ -559,6 +560,11 @@ export class GoogleMap {
   async getCameraZoom(): Promise<number> {
     const { cameraZoom } = await CapacitorGoogleMaps.getCameraZoom({ id: this.id });
     return cameraZoom;
+  }
+
+  async getCameraTarget(): Promise<LatLng> {
+    const { cameraTarget } = await CapacitorGoogleMaps.getCameraTarget({ id: this.id });
+    return cameraTarget;
   }
 
   /**

@@ -381,6 +381,10 @@ public class Map {
     func getCameraZoom() -> Float {
         return self.mapViewController.GMapView.camera.zoom
     }
+    
+    func getCameraTarget() -> LatLng {
+        return LatLng(lat:self.mapViewController.GMapView.camera.target.latitude, lng:self.mapViewController.GMapView.camera.target.longitude )
+    }
 
     func getMapType() -> GMSMapViewType {
         return self.mapViewController.GMapView.mapType

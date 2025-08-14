@@ -483,6 +483,29 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
             handleError(call, error: error)
         }
     }
+    
+    @objc func getCameraTarget(_ call: CAPPluginCall) {
+        do {
+            guard let id = call.getString("id") else {
+                throw GoogleMapErrors.invalidMapId
+            }
+
+            guard let map = self.maps[id] else {
+                throw GoogleMapErrors.mapNotFound
+            }
+
+            let cameraTarget = map.getCameraTarget()
+
+            call.resolve([
+                "cameraTarget":  [
+                    "lat": cameraTarget.lat,
+                    "lng": cameraTarget.lng
+                ]
+            ])
+        } catch {
+            handleError(call, error: error)
+        }
+    }
 
     @objc func getMapType(_ call: CAPPluginCall) {
         do {

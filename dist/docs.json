@@ -971,6 +971,18 @@
           "LatLng"
         ],
         "slug": "setcameratarget"
+      },
+      {
+        "name": "getCameraTarget",
+        "signature": "() => Promise<LatLng>",
+        "parameters": [],
+        "returns": "Promise<LatLng>",
+        "tags": [],
+        "docs": "",
+        "complexTypes": [
+          "LatLng"
+        ],
+        "slug": "getcameratarget"
       }
     ],
     "properties": []

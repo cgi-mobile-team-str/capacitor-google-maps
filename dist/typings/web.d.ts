@@ -133,4 +133,9 @@ export declare class CapacitorGoogleMapsWeb extends WebPlugin implements Capacit
         })[];
     }>;
     setCameraTarget(_args: SetCameraTargetArgs): Promise<void>;
+    getCameraTarget(_args: {
+        id: string;
+    }): Promise<{
+        cameraTarget: LatLng;
+    }>;
 }

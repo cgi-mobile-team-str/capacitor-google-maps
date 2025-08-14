@@ -527,6 +527,10 @@ var capacitorCapacitorGoogleMaps = (function (exports, core, markerclusterer) {
             const { cameraZoom } = await CapacitorGoogleMaps.getCameraZoom({ id: this.id });
             return cameraZoom;
         }
+        async getCameraTarget() {
+            const { cameraTarget } = await CapacitorGoogleMaps.getCameraTarget({ id: this.id });
+            return cameraTarget;
+        }
         /**
          * Sets the type of map tiles that should be displayed.
          *
@@ -1684,6 +1688,9 @@ var capacitorCapacitorGoogleMaps = (function (exports, core, markerclusterer) {
             throw new Error('Method not implemented.');
         }
         async setCameraTarget(_args) {
+            throw new Error('Method not implemented.');
+        }
+        async getCameraTarget(_args) {
             throw new Error('Method not implemented.');
         }
     }

@@ -644,6 +644,18 @@ class CapacitorGoogleMap(
         }
     }
 
+    fun getCameraTarget(callback: (cameraTarget: LatLng?, error: GoogleMapsError?) -> Unit) {
+        try {
+            googleMap ?: throw GoogleMapNotAvailable()
+            CoroutineScope(Dispatchers.Main).launch {
+                val cameraTarget = googleMap!!.cameraPosition.target
+                callback(cameraTarget, null)
+            }
+        } catch (e: GoogleMapsError) {
+            callback(null, e)
+        }
+    }
+
     fun getMapType(callback: (type: String, error: GoogleMapsError?) -> Unit) {
         try {
             googleMap ?: throw GoogleMapNotAvailable()

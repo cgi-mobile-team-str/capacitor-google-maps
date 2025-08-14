@@ -792,4 +792,8 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
   async setCameraTarget(_args: SetCameraTargetArgs): Promise<void> {
     throw new Error('Method not implemented.');
   }
+
+  async getCameraTarget(_args: { id: string; }): Promise<{ cameraTarget: LatLng; }> {
+    throw new Error('Method not implemented.');
+  }
 }

@@ -315,6 +315,11 @@ export interface CapacitorGoogleMapsPlugin extends Plugin {
     setPolylineStrokeWidth(args: PolylineStrokeWidthArgs): Promise<void>;
     removePolyline(args: RemovePolylineArgs): Promise<void>;
     setCameraTarget(args: SetCameraTargetArgs): Promise<void>;
+    getCameraTarget(args: {
+        id: string;
+    }): Promise<{
+        cameraTarget: LatLng;
+    }>;
 }
 declare const CapacitorGoogleMaps: CapacitorGoogleMapsPlugin;
 export { CapacitorGoogleMaps };
