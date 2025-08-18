@@ -3,6 +3,7 @@ package com.capacitorjs.plugins.googlemaps
 import android.graphics.Color
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
+import org.json.JSONArray
 
 object CapacitorGoogleMapsUtils {
     fun processColor(color: String, opacity: Double?): Int {
@@ -49,5 +50,23 @@ object CapacitorGoogleMapsUtils {
             builder.include(latLng)
         }
         return builder.build()
+    }
+
+    fun processShape(shapeArr: JSONArray): MutableList<LatLng> {
+        var shape = mutableListOf<LatLng>()
+
+        for (i in 0 until shapeArr.length()) {
+            val obj = shapeArr.getJSONObject(i)
+            if (!obj.has("lat") || !obj.has("lng")) {
+                throw InvalidArgumentsError("LatLng object is missing the required 'lat' and/or 'lng' property")
+            }
+
+            val lat = obj.getDouble("lat")
+            val lng = obj.getDouble("lng")
+
+            shape.add(LatLng(lat, lng))
+        }
+
+        return shape
     }
 }

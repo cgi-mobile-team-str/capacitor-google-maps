@@ -433,166 +433,6 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
     }
 
     @PluginMethod
-    fun addPolygons(call: PluginCall) {
-        try {
-            val id = call.getString("id")
-            id ?: throw InvalidMapIdError()
-
-            val polygonsObjectArray = call.getArray("polygons", null)
-            polygonsObjectArray ?: throw InvalidArgumentsError("polygons array is missing")
-
-            if (polygonsObjectArray.length() == 0) {
-                throw InvalidArgumentsError("polygons requires at least one shape")
-            }
-
-            val map = maps[id]
-            map ?: throw MapNotFoundError()
-
-            val polygons: MutableList<CapacitorGoogleMapsPolygon> = mutableListOf()
-
-            for (i in 0 until polygonsObjectArray.length()) {
-                val polygonObj = polygonsObjectArray.getJSONObject(i)
-                val polygon = CapacitorGoogleMapsPolygon(polygonObj)
-
-                polygons.add(polygon)
-            }
-
-            map.addPolygons(polygons) { result ->
-                val ids = result.getOrThrow()
-
-                val jsonIDs = JSONArray()
-                ids.forEach { jsonIDs.put(it) }
-
-                val res = JSObject()
-                res.put("ids", jsonIDs)
-                call.resolve(res)
-            }
-
-        } catch (e: GoogleMapsError) {
-            handleError(call, e)
-        } catch (e: Exception) {
-            handleError(call, e)
-        }
-    }
-
-    @PluginMethod
-    fun removePolygons(call: PluginCall) {
-        try {
-            val id = call.getString("id")
-            id ?: throw InvalidMapIdError()
-
-            val shapeIdsArray = call.getArray("polygonIds")
-            shapeIdsArray ?: throw InvalidArgumentsError("polygonIds are invalid or missing")
-
-            if (shapeIdsArray.length() == 0) {
-                throw InvalidArgumentsError("polygonIds requires at least one shape id")
-            }
-
-            val map = maps[id]
-            map ?: throw MapNotFoundError()
-
-            val shapeIds: MutableList<String> = mutableListOf()
-
-            for (i in 0 until shapeIdsArray.length()) {
-                val shapeId = shapeIdsArray.getString(i)
-                shapeIds.add(shapeId)
-            }
-
-            map.removePolygons(shapeIds) { err ->
-                if (err != null) {
-                    throw err
-                }
-
-                call.resolve()
-            }
-        } catch (e: GoogleMapsError) {
-            handleError(call, e)
-        } catch (e: Exception) {
-            handleError(call, e)
-        }
-    }
-
-    @PluginMethod
-    fun addCircles(call: PluginCall) {
-        try {
-            val id = call.getString("id")
-            id ?: throw InvalidMapIdError()
-
-            val circlesObjectArray = call.getArray("circles", null)
-            circlesObjectArray ?: throw InvalidArgumentsError("circles array is missing")
-
-            if (circlesObjectArray.length() == 0) {
-                throw InvalidArgumentsError("circles array requires at least one circle")
-            }
-
-            val map = maps[id]
-            map ?: throw MapNotFoundError()
-
-            val circles: MutableList<CapacitorGoogleMapsCircle> = mutableListOf()
-
-            for (i in 0 until circlesObjectArray.length()) {
-                val circleObj = circlesObjectArray.getJSONObject(i)
-                val circle = CapacitorGoogleMapsCircle(circleObj)
-
-                circles.add(circle)
-            }
-
-            map.addCircles(circles) { result ->
-                val ids = result.getOrThrow()
-
-                val jsonIDs = JSONArray()
-                ids.forEach { jsonIDs.put(it) }
-
-                val res = JSObject()
-                res.put("ids", jsonIDs)
-                call.resolve(res)
-            }
-
-        } catch (e: GoogleMapsError) {
-            handleError(call, e)
-        } catch (e: Exception) {
-            handleError(call, e)
-        }
-    }
-
-    @PluginMethod
-    fun removeCircles(call: PluginCall) {
-        try {
-            val id = call.getString("id")
-            id ?: throw InvalidMapIdError()
-
-            val circleIdsArray = call.getArray("circleIds")
-            circleIdsArray ?: throw InvalidArgumentsError("circleIds are invalid or missing")
-
-            if (circleIdsArray.length() == 0) {
-                throw InvalidArgumentsError("circleIds requires at least one circle id")
-            }
-
-            val map = maps[id]
-            map ?: throw MapNotFoundError()
-
-            val circleIds: MutableList<String> = mutableListOf()
-
-            for (i in 0 until circleIdsArray.length()) {
-                val circleId = circleIdsArray.getString(i)
-                circleIds.add(circleId)
-            }
-
-            map.removeCircles(circleIds) { err ->
-                if (err != null) {
-                    throw err
-                }
-
-                call.resolve()
-            }
-        } catch (e: GoogleMapsError) {
-            handleError(call, e)
-        } catch (e: Exception) {
-            handleError(call, e)
-        }
-    }
-
-    @PluginMethod
     fun enableClustering(call: PluginCall) {
         try {
             val id = call.getString("id")
@@ -1655,6 +1495,309 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
 
     // END POLYLINE METHODS
 
+    // BEGIN CIRCLE METHODS
+
+    @PluginMethod
+    fun addCircles(call: PluginCall) {
+        try {
+            val id = call.getString("id")
+            id ?: throw InvalidMapIdError()
+
+            val optionsArray = call.getArray("optionsList", null)
+            optionsArray ?: throw InvalidArgumentsError("options array is missing")
+
+            if (optionsArray.length() == 0) {
+                throw InvalidArgumentsError("options requires at least one option")
+            }
+
+            val map = maps[id]
+            map ?: throw MapNotFoundError()
+
+            val optionsList: MutableList<CapacitorCircleOptions> = mutableListOf()
+
+            for (i in 0 until optionsArray.length()) {
+                val optionObj = optionsArray.getJSONObject(i)
+                val opts = CapacitorCircleOptions(optionObj)
+
+                optionsList.add(opts)
+            }
+
+            map.addCircles(optionsList) { result ->
+                val pairsIdCircle = result.getOrThrow()
+
+                val results = JSONArray()
+                pairsIdCircle.forEach {
+                    val pairObj = createCircleJSObject(it, id)
+                    results.put(pairObj)
+                }
+
+                val res = JSObject()
+                res.put("circles", results)
+                call.resolve(res)
+            }
+
+        } catch (e: GoogleMapsError) {
+            handleError(call, e)
+        } catch (e: Exception) {
+            handleError(call, e)
+        }
+    }
+
+    @PluginMethod
+    fun removeCircles(call: PluginCall) {
+        try {
+            val id = call.getString("id")
+            id ?: throw InvalidMapIdError()
+
+            val circleIdsArray = call.getArray("circleIds")
+            circleIdsArray ?: throw InvalidArgumentsError("circleIds are invalid or missing")
+
+            if (circleIdsArray.length() == 0) {
+                throw InvalidArgumentsError("circleIds requires at least one circle id")
+            }
+
+            val map = maps[id]
+            map ?: throw MapNotFoundError()
+
+            val circleIds: MutableList<String> = mutableListOf()
+
+            for (i in 0 until circleIdsArray.length()) {
+                val circleId = circleIdsArray.getString(i)
+                circleIds.add(circleId)
+            }
+
+            map.removeCircles(circleIds) { err ->
+                if (err != null) {
+                    throw err
+                }
+
+                call.resolve()
+            }
+        } catch (e: GoogleMapsError) {
+            handleError(call, e)
+        } catch (e: Exception) {
+            handleError(call, e)
+        }
+    }
+
+    @PluginMethod
+    fun addCircle(call: PluginCall) {
+        try {
+            val id = call.getString("id")
+            id ?: throw InvalidMapIdError()
+
+            val optionsObj = call.getObject("options", null)
+            optionsObj ?: throw InvalidArgumentsError("options object is missing")
+
+            val map = maps[id]
+            map ?: throw MapNotFoundError()
+
+            val options = CapacitorCircleOptions(optionsObj)
+            map.addCircle(options) { result ->
+                val pairIdCircle = result.getOrThrow()
+                val res = createCircleJSObject(pairIdCircle,id)
+                call.resolve(res)
+            }
+        } catch (e: GoogleMapsError) {
+            handleError(call, e)
+        } catch (e: Exception) {
+            handleError(call, e)
+        }
+    }
+
+    @PluginMethod
+    fun setCircleCenter(call: PluginCall) {
+        try {
+            val id = call.getString("id")
+            id ?: throw InvalidMapIdError()
+
+            val circleId = call.getString("circleId", null)
+            circleId ?: throw InvalidArgumentsError("circleId is missing or invalid")
+
+            val centerObj = call.getObject("center", null)
+            centerObj ?: throw InvalidArgumentsError("center is missing or invalid")
+            val center: LatLng = LatLng(centerObj.getDouble("lat"), centerObj.getDouble("lng"))
+
+            val map = maps[id]
+            map ?: throw MapNotFoundError()
+
+            map.setCircleCenter(circleId, center) { err ->
+                if (err != null) {
+                    throw err
+                }
+                call.resolve()
+            }
+
+        } catch (e: GoogleMapsError) {
+            handleError(call, e)
+        } catch (e: Exception) {
+            handleError(call, e)
+        }
+    }
+
+    @PluginMethod
+    fun removeCircle(call: PluginCall) {
+        try {
+            val id = call.getString("id")
+            id ?: throw InvalidMapIdError()
+
+            val circleId = call.getString("circleId")
+            circleId ?: throw InvalidArgumentsError("circleId is invalid or missing")
+
+            val map = maps[id]
+            map ?: throw MapNotFoundError()
+
+            map.removeCircle(circleId) { err ->
+                if (err != null) {
+                    throw err
+                }
+                call.resolve()
+            }
+        } catch (e: GoogleMapsError) {
+            handleError(call, e)
+        } catch (e: Exception) {
+            handleError(call, e)
+        }
+    }
+
+    // END CIRCLE METHODS
+
+    // BEGIN POLYGON METHODS
+
+    @PluginMethod
+    fun addPolygons(call: PluginCall) {
+        try {
+            val id = call.getString("id")
+            id ?: throw InvalidMapIdError()
+
+            val optionsArray = call.getArray("optionsList", null)
+            optionsArray ?: throw InvalidArgumentsError("options array is missing")
+
+            if (optionsArray.length() == 0) {
+                throw InvalidArgumentsError("options requires at least one option")
+            }
+
+            val map = maps[id]
+            map ?: throw MapNotFoundError()
+
+            val optionsList: MutableList<CapacitorPolygonOptions> = mutableListOf()
+
+            for (i in 0 until optionsArray.length()) {
+                val optionObj = optionsArray.getJSONObject(i)
+                val opts = CapacitorPolygonOptions(optionObj)
+
+                optionsList.add(opts)
+            }
+
+            map.addPolygons(optionsList) { result ->
+                val pairsIdPolygon = result.getOrThrow()
+
+                val results = JSONArray()
+                pairsIdPolygon.forEach {
+                    val pairObj = createPolygonJSObject(it, id)
+                    results.put(pairObj)
+                }
+
+                val res = JSObject()
+                res.put("polygons", results)
+                call.resolve(res)
+            }
+
+        } catch (e: GoogleMapsError) {
+            handleError(call, e)
+        } catch (e: Exception) {
+            handleError(call, e)
+        }
+    }
+
+    @PluginMethod
+    fun addPolygon(call: PluginCall) {
+        try {
+            val id = call.getString("id")
+            id ?: throw InvalidMapIdError()
+
+            val optionsObj = call.getObject("options", null)
+            optionsObj ?: throw InvalidArgumentsError("options object is missing")
+
+            val map = maps[id]
+            map ?: throw MapNotFoundError()
+
+            val options = CapacitorPolygonOptions(optionsObj)
+            map.addPolygon(options) { result ->
+                val pairIdPolygon = result.getOrThrow()
+                val res = createPolygonJSObject(pairIdPolygon,id)
+                call.resolve(res)
+            }
+        } catch (e: GoogleMapsError) {
+            handleError(call, e)
+        } catch (e: Exception) {
+            handleError(call, e)
+        }
+    }
+
+    @PluginMethod
+    fun removePolygons(call: PluginCall) {
+        try {
+            val id = call.getString("id")
+            id ?: throw InvalidMapIdError()
+
+            val shapeIdsArray = call.getArray("polygonIds")
+            shapeIdsArray ?: throw InvalidArgumentsError("polygonIds are invalid or missing")
+
+            if (shapeIdsArray.length() == 0) {
+                throw InvalidArgumentsError("polygonIds requires at least one shape id")
+            }
+
+            val map = maps[id]
+            map ?: throw MapNotFoundError()
+
+            val shapeIds: MutableList<String> = mutableListOf()
+
+            for (i in 0 until shapeIdsArray.length()) {
+                val shapeId = shapeIdsArray.getString(i)
+                shapeIds.add(shapeId)
+            }
+
+            map.removePolygons(shapeIds) { err ->
+                if (err != null) {
+                    throw err
+                }
+
+                call.resolve()
+            }
+        } catch (e: GoogleMapsError) {
+            handleError(call, e)
+        } catch (e: Exception) {
+            handleError(call, e)
+        }
+    }
+
+    @PluginMethod
+    fun removePolygon(call: PluginCall) {
+        try {
+            val id = call.getString("id")
+            id ?: throw InvalidMapIdError()
+
+            val polygonId = call.getString("polygonId")
+            polygonId ?: throw InvalidArgumentsError("polygonId is invalid or missing")
+
+            val map = maps[id]
+            map ?: throw MapNotFoundError()
+
+            map.removePolygon(polygonId) { err ->
+                if (err != null) {
+                    throw err
+                }
+                call.resolve()
+            }
+        } catch (e: GoogleMapsError) {
+            handleError(call, e)
+        } catch (e: Exception) {
+            handleError(call, e)
+        }
+    }
+    // END POLYGON METHODS
+
     @PluginMethod
     fun fromPointToLatLng(call: PluginCall) {
         try {
@@ -1840,6 +1983,55 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
         pairIdPolyline.second.extras.forEach { (key, value) ->
             res.put(key, value)
         }
+        return res
+    }
+
+    private fun createCircleJSObject(pairIdCircle: Pair<String, CapacitorGoogleMapsCircle>, id: String): JSObject {
+        val hexStrokeColor = Integer.toString(pairIdCircle.second.strokeColor, 16)
+        val hexFillColor = Integer.toString(pairIdCircle.second.fillColor, 16)
+        var centerJSObject = JSObject()
+        val res = JSObject()
+
+        centerJSObject = latLngToJSObject(pairIdCircle.second.center)
+        res.put("id", pairIdCircle.first)
+        res.put("mapId", id)
+        res.put("center", centerJSObject)
+        res.put("radius", pairIdCircle.second.radius)
+        res.put("visible", pairIdCircle.second.visible)
+        res.put("clickable", pairIdCircle.second.clickable)
+        res.put("strokeWidth", pairIdCircle.second.strokeWidth)
+        res.put("strokeColor", hexStrokeColor)
+        res.put("fillColor", hexFillColor)
+        res.put("zIndex", pairIdCircle.second.zIndex)
+        return res
+    }
+
+    private fun createPolygonJSObject(pairIdPolygon: Pair<String, CapacitorGoogleMapsPolygon>, id: String): JSObject {
+        val hexStrokeColor = Integer.toString(pairIdPolygon.second.strokeColor, 16)
+        val hexFillColor = Integer.toString(pairIdPolygon.second.fillColor, 16)
+        val shapesJsonArray = JSONArray()
+        val res = JSObject()
+        if (!pairIdPolygon.second.shapes.isNullOrEmpty()) {
+            for (i in 0 until pairIdPolygon.second.shapes.size) {
+                val pointsJsonArray = JSONArray()
+                for (j in 0 until pairIdPolygon.second.shapes[i].size) {
+                    pointsJsonArray.put(
+                        latLngToJSObject(pairIdPolygon.second.shapes[i][j])
+                    )
+                }
+                shapesJsonArray.put(pointsJsonArray)
+            }
+        }
+        res.put("id", pairIdPolygon.first)
+        res.put("mapId", id)
+        res.put("shapes", shapesJsonArray)
+        res.put("geodesic", pairIdPolygon.second.geodesic)
+        res.put("visible", pairIdPolygon.second.visible)
+        res.put("clickable", pairIdPolygon.second.clickable)
+        res.put("strokeWidth", pairIdPolygon.second.strokeWidth)
+        res.put("strokeColor", hexStrokeColor)
+        res.put("fillColor", hexFillColor)
+        res.put("zIndex", pairIdPolygon.second.zIndex)
         return res
     }
 }

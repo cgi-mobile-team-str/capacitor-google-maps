@@ -1,4 +1,4 @@
-import { CameraConfig, MapPadding, MapListenerCallback, MapReadyCallbackData, CameraIdleCallbackData, CameraMoveStartedCallbackData, ClusterClickCallbackData, MapClickCallbackData, MarkerClickCallbackData, MyLocationButtonClickCallbackData, Polygon, PolygonClickCallbackData, Circle, CircleClickCallbackData, PolylineCallbackData, VisibleRegion, GoogleMapsOptions, MarkerClass, MarkerOption, PolylineOption, PolylineClass, LatLng } from './definitions';
+import { CameraConfig, MapPadding, MapListenerCallback, MapReadyCallbackData, CameraIdleCallbackData, CameraMoveStartedCallbackData, ClusterClickCallbackData, MapClickCallbackData, MarkerClickCallbackData, MyLocationButtonClickCallbackData, Polygon, PolygonClickCallbackData, CircleClickCallbackData, PolylineCallbackData, VisibleRegion, GoogleMapsOptions, CapacitorMarker, MarkerOption, PolylineOption, CapacitorPolyline, LatLng, CircleOption, CapacitorCircle, PolygonOption, CapacitorPolygon } from './definitions';
 import { LatLngBounds, MapType } from './definitions';
 import type { CreateMapArgs } from './implementation';
 export interface GoogleMapInterface {
@@ -11,15 +11,17 @@ export interface GoogleMapInterface {
      */
     minClusterSize?: number): Promise<void>;
     disableClustering(): Promise<void>;
-    addMarker(options: MarkerOption): Promise<MarkerClass>;
-    addMarkers(optionsList: MarkerOption[]): Promise<MarkerClass[]>;
+    addMarker(options: MarkerOption): Promise<CapacitorMarker>;
+    addMarkers(optionsList: MarkerOption[]): Promise<CapacitorMarker[]>;
     removeMarker(id: string): Promise<void>;
     removeMarkers(ids: string[]): Promise<void>;
     addPolygons(polygons: Polygon[]): Promise<string[]>;
     removePolygons(ids: string[]): Promise<void>;
-    addCircles(circles: Circle[]): Promise<string[]>;
+    addCircles(optionsList: CircleOption[]): Promise<CapacitorCircle[]>;
+    addCircle(options: CircleOption): Promise<CapacitorCircle>;
     removeCircles(ids: string[]): Promise<void>;
-    addPolylines(optionsList: PolylineOption[]): Promise<PolylineClass>;
+    addPolylines(optionsList: PolylineOption[]): Promise<CapacitorPolyline[]>;
+    addPolyline(options: PolylineOption): Promise<CapacitorPolyline>;
     removePolylines(ids: string[]): Promise<void>;
     destroy(): Promise<void>;
     moveCamera(config: CameraConfig): Promise<void>;
@@ -73,7 +75,6 @@ export interface GoogleMapInterface {
     setCameraBearing(bearing: number): Promise<void>;
     setOptions(config: GoogleMapsOptions): Promise<void>;
     getCameraZoom(): Promise<number>;
-    addPolyline(options: PolylineOption): Promise<PolylineClass>;
     setCameraTarget(target: LatLng | LatLng[]): Promise<void>;
     getCameraTarget(): Promise<LatLng>;
     fromPointToLatLng(points: number[]): Promise<LatLng>;
@@ -140,14 +141,14 @@ export declare class GoogleMap {
      * @param marker
      * @returns created marker id
      */
-    addMarker(options: MarkerOption): Promise<MarkerClass>;
+    addMarker(options: MarkerOption): Promise<CapacitorMarker>;
     /**
      * Adds multiple markers to the map
      *
      * @param markers
      * @returns array of created marker IDs
      */
-    addMarkers(optionsList: MarkerOption[]): Promise<MarkerClass[]>;
+    addMarkers(optionsList: MarkerOption[]): Promise<CapacitorMarker[]>;
     /**
      * Remove marker from the map
      *
@@ -162,11 +163,13 @@ export declare class GoogleMap {
      * @returns
      */
     removeMarkers(ids: string[]): Promise<void>;
-    addPolygons(polygons: Polygon[]): Promise<string[]>;
-    addPolylines(optionsList: PolylineOption[]): Promise<PolylineClass[]>;
-    addPolyline(options: PolylineOption): Promise<PolylineClass>;
+    addPolygons(optionsList: PolygonOption[]): Promise<CapacitorPolygon[]>;
+    addPolygon(options: PolygonOption): Promise<CapacitorPolygon>;
+    addPolylines(optionsList: PolylineOption[]): Promise<CapacitorPolyline[]>;
+    addPolyline(options: PolylineOption): Promise<CapacitorPolyline>;
     removePolygons(ids: string[]): Promise<void>;
-    addCircles(circles: Circle[]): Promise<string[]>;
+    addCircles(optionsList: CircleOption[]): Promise<CapacitorCircle[]>;
+    addCircle(options: CircleOption): Promise<CapacitorCircle>;
     removeCircles(ids: string[]): Promise<void>;
     removePolylines(ids: string[]): Promise<void>;
     /**

@@ -3,7 +3,7 @@ import { WebPlugin } from '@capacitor/core';
 import type { Cluster, onClusterClickHandler } from '@googlemaps/markerclusterer';
 import { MarkerClusterer, SuperClusterAlgorithm } from '@googlemaps/markerclusterer';
 
-import type { LatLng, MapPadding, Marker, Polyline, VisibleRegion } from './definitions';
+import type { Circle, LatLng, Marker, Polygon, Polyline, VisibleRegion } from './definitions';
 import { MapType, LatLngBounds } from './definitions';
 import type {
   AddMarkerArgs,
@@ -41,6 +41,18 @@ import type {
   RemovePolylineArgs,
   SetCameraTargetArgs,
   FromPointToLatLngArgs,
+  AddCircleArgs,
+  RemoveCircleArgs,
+  SetCircleCenterArgs,
+  EnableToolbarArgs,
+  EnableMyLocationArgs,
+  EnableAllGesturesArgs,
+  EnableTiltGestureArgs,
+  CameraBearingArgs,
+  SetMapPreferencesArgs,
+  EnableTiltRotateGestureArgs,
+  AddPolygonArgs,
+  RemovePolygonArgs,
 } from './implementation';
 
 export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogleMapsPlugin {
@@ -67,10 +79,11 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
       trafficLayer?: google.maps.TrafficLayer;
     };
   } = {};
-  // private currMarkerId = 0;
+
+  private currMarkerId = 0;
   private currPolygonId = 0;
   private currCircleId = 0;
-  // private currPolylineId = 0;
+  private currPolylineId = 0;
   private currMapId = 0;
 
   private onClusterClickHandler: onClusterClickHandler = (
@@ -306,23 +319,25 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
     }
   }
 
-  async addPolygons(args: AddPolygonsArgs): Promise<{ ids: string[] }> {
-    const polygonIds: string[] = [];
-    const map = this.maps[args.id];
+  async addPolygons(_args: AddPolygonsArgs): Promise<{ polygons: (Polygon & { id: string })[] }> {
+    const mapObj = this.maps[_args.id];
+    if (!mapObj) throw new Error(`Map with id ${_args.id} not found`);
 
-    for (const polygonArgs of args.polygons) {
-      const polygon = new google.maps.Polygon(polygonArgs);
-      polygon.setMap(map.map);
+    const polygons: (Polygon & { id: string })[] = [];
 
-      const id = '' + this.currPolygonId;
-      this.maps[args.id].polygons[id] = polygon;
-      this.setPolygonListeners(args.id, id, polygon);
+    for (const opts of _args.optionsList) {
+      const polygon = new google.maps.Polygon(opts);
+      polygon.setMap(mapObj.map);
 
-      polygonIds.push(id);
-      this.currPolygonId++;
+      const id = '' + this.currPolygonId++;
+      mapObj.polygons[id] = polygon;
+
+      await this.setPolygonListeners(_args.id, id, polygon);
+
+      polygons.push({ ...opts, shapes: opts.points, id });
     }
 
-    return { ids: polygonIds };
+    return { polygons };
   }
 
   async removePolygons(args: RemovePolygonsArgs): Promise<void> {
@@ -332,25 +347,6 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
       map.polygons[id].setMap(null);
       delete map.polygons[id];
     }
-  }
-
-  async addCircles(args: AddCirclesArgs): Promise<{ ids: string[] }> {
-    const circleIds: string[] = [];
-    const map = this.maps[args.id];
-
-    for (const circleArgs of args.circles) {
-      const circle = new google.maps.Circle(circleArgs);
-      circle.setMap(map.map);
-
-      const id = '' + this.currCircleId;
-      this.maps[args.id].circles[id] = circle;
-      this.setCircleListeners(args.id, id, circle);
-
-      circleIds.push(id);
-      this.currCircleId++;
-    }
-
-    return { ids: circleIds };
   }
 
   async removeCircles(args: RemoveCirclesArgs): Promise<void> {
@@ -426,7 +422,7 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
 
     this.maps[_args.id] = {
       //TODO MODIFY STYLES HERE
-      map: new window.google.maps.Map(_args.element, {...config, styles: []}),
+      map: new window.google.maps.Map(_args.element, { ...config, styles: [] }),
       element: _args.element,
       markers: {},
       polygons: {},
@@ -613,192 +609,287 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
     });
   }
 
-  // private buildMarkerOpts(marker: Marker, map: google.maps.Map): google.maps.marker.AdvancedMarkerElement {
-  //   if (!this.AdvancedMarkerElement || !this.PinElement) {
-  //     throw new Error('Marker library not loaded');
-  //   }
+  async getVisibleRegion(_args: { id: string }): Promise<VisibleRegion> {
+    const map = this.maps[_args.id].map;
+    const bounds = map.getBounds();
+    if (!bounds) throw new Error('Map bounds not available');
 
-  //   let content: HTMLElement | undefined = undefined;
+    const ne = bounds.getNorthEast();
+    const sw = bounds.getSouthWest();
 
-  //   if (marker.iconUrl) {
-  //     const img = document.createElement('img');
-  //     img.src = marker.iconUrl;
-  //     if (marker.iconSize) {
-  //       img.style.width = `${marker.iconSize.width}px`;
-  //       img.style.height = `${marker.iconSize.height}px`;
-  //     }
-  //     content = img;
-  //   } else {
-  //     const pinOptions: google.maps.marker.PinElementOptions = {
-  //       scale: marker.opacity ?? 1,
-  //       glyph: marker.title,
-  //       background: marker.tintColor
-  //         ? `rgb(${marker.tintColor.r}, ${marker.tintColor.g}, ${marker.tintColor.b})`
-  //         : undefined,
-  //     };
+    const projection = map.getProjection();
+    if (!projection) throw new Error('Projection not available');
 
-  //     const pin = new this.PinElement(pinOptions);
-  //     content = pin.element;
-  //   }
-
-  //   const advancedMarker = new this.AdvancedMarkerElement({
-  //     position: marker.coordinate,
-  //     map: map,
-  //     content: content,
-  //     title: marker.title,
-  //     gmpDraggable: marker.draggable,
-  //   });
-
-  //   return advancedMarker;
-  // }
-
-  //TODO A IMPLEMENTER PAR LA SUITE !!!
-  async getVisibleRegion(): Promise<VisibleRegion> {
-    throw new Error('Method not implemented.');
+    return {
+      nearLeft: { lat: sw.lat(), lng: sw.lng() },
+      nearRight: { lat: sw.lat(), lng: ne.lng() },
+      farLeft: { lat: ne.lat(), lng: sw.lng() },
+      farRight: { lat: ne.lat(), lng: ne.lng() },
+      southwest: { lat: sw.lat(), lng: sw.lng() },
+      northeast: { lat: ne.lat(), lng: ne.lng() },
+    };
   }
 
   async enableCompass(_args: EnableCompassArgs): Promise<void> {
-    throw new Error('Method not implemented.');
+    this.maps[_args.id].map.setOptions({
+      rotateControl: _args.enabled,
+    });
   }
 
-  async enableToolbar(_args: { id: string; isEnabled: boolean }): Promise<void> {
-    throw new Error('Method not implemented.');
+  async enableToolbar(_args: EnableToolbarArgs): Promise<void> {
+    this.maps[_args.id].map.setOptions({
+      zoomControl: _args.isEnabled,
+      mapTypeControl: _args.isEnabled,
+    });
   }
 
-  async enableMyLocation(_args: { id: string; isEnabled: boolean }): Promise<void> {
-    throw new Error('Method not implemented.');
+  async enableMyLocation(_args: EnableMyLocationArgs): Promise<void> {
+    if (_args.isEnabled && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((pos) => {
+        const latLng = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
+        this.maps[_args.id].map.setCenter(latLng);
+      });
+    }
   }
 
-  async enableAllGestures(_args: { id: string; isEnabled: boolean }): Promise<void> {
-    throw new Error('Method not implemented.');
+  async enableAllGestures(_args: EnableAllGesturesArgs): Promise<void> {
+    this.maps[_args.id].map.setOptions({
+      gestureHandling: _args.isEnabled ? 'auto' : 'none',
+    });
   }
 
-  async enableTiltGesture(_args: { id: string; isEnabled: boolean }): Promise<void> {
-    throw new Error('Method not implemented.');
+  async enableTiltGesture(_args: EnableTiltGestureArgs): Promise<void> {
+    this.maps[_args.id].map.setOptions({
+      tilt: _args.isEnabled ? 45 : 0,
+    });
   }
 
-  async enableTiltRotateGesture(_args: { id: string; isEnabled: boolean }): Promise<void> {
-    throw new Error('Method not implemented.');
+  async enableTiltRotateGesture(_args: EnableTiltRotateGestureArgs): Promise<void> {
+    this.maps[_args.id].map.setOptions({
+      rotateControl: _args.isEnabled,
+      tilt: _args.isEnabled ? 45 : 0,
+    });
   }
 
-  async setMapPreferences(_args: { id: string; padding?: MapPadding; isBuildingsEnabled?: boolean }): Promise<void> {
-    throw new Error('Method not implemented.');
+  async setMapPreferences(_args: SetMapPreferencesArgs): Promise<void> {
+    this.maps[_args.id].map.setOptions({
+      styles: [],
+      mapTypeControl: true,
+      fullscreenControl: true,
+    });
+    const bounds = this.maps[_args.id].map.getBounds();
+    if (_args.padding && bounds != null) {
+      this.maps[_args.id].map.fitBounds(bounds, _args.padding );
+    }
+
+    if (_args.building !== undefined) {
+      this.maps[_args.id].map.setOptions({ isFractionalZoomEnabled: _args.building });
+    }
   }
 
-  async setCameraBearing(_args: { id: string; bearing: number }): Promise<void> {
-    throw new Error('Method not implemented.');
+  async setCameraBearing(_args: CameraBearingArgs): Promise<void> {
+    this.maps[_args.id].map.setOptions({
+      heading: _args.bearing,
+    });
   }
 
   async setOptions(_args: MapOptionsArgs): Promise<void> {
-    throw new Error('Method not implemented.');
+    this.maps[_args.id].map.setOptions(_args.config);
   }
 
   async getCameraZoom(_args: { id: string }): Promise<{ cameraZoom: number }> {
-    throw new Error('Method not implemented.');
+    return { cameraZoom: this.maps[_args.id].map.getZoom() ?? 0 };
   }
 
   async addMarker(_args: AddMarkerArgs): Promise<Marker & { id: string }> {
-    // const advancedMarker = this.buildMarkerOpts(_args.marker, this.maps[_args.id].map);
+    if (!this.AdvancedMarkerElement) throw new Error('AdvancedMarkerElement not loaded');
 
-    // const id = '' + this.currMarkerId;
+    const marker = new this.AdvancedMarkerElement({
+      position: _args.options.position,
+      map: this.maps[_args.id].map,
+      title: _args.options.title,
+      gmpDraggable: _args.options.draggable,
+    });
 
-    // this.maps[_args.id].markers[id] = advancedMarker;
-    // await this.setMarkerListeners(_args.id, id, advancedMarker);
+    const id = '' + this.currMarkerId++;
+    this.maps[_args.id].markers[id] = marker;
+    await this.setMarkerListeners(_args.id, id, marker);
 
-    // this.currMarkerId++;
-
-    // return { id: id };
-    throw new Error('Method not implemented.');
+    return {..._args.options, coordinate: _args.options.position,  id };
   }
 
   async addMarkers(_args: AddMarkersArgs): Promise<{ markers: (Marker & { id: string })[] }> {
-    // const markerIds: string[] = [];
-    // const map = this.maps[_args.id];
-
-    // for (const markerArgs of _args.markers) {
-    //   const advancedMarker = this.buildMarkerOpts(markerArgs, map.map);
-
-    //   const id = '' + this.currMarkerId;
-
-    //   map.markers[id] = advancedMarker;
-    //   await this.setMarkerListeners(_args.id, id, advancedMarker);
-
-    //   markerIds.push(id);
-    //   this.currMarkerId++;
-    // }
-
-    // return { ids: markerIds };
-    throw new Error('Method not implemented.');
+    const results: (Marker & { id: string })[] = [];
+    for (const options of _args.optionsList) {
+      const added = await this.addMarker({ id: _args.id, options });
+      results.push(added);
+    }
+    return { markers: results };
   }
 
   async setMarkerIcon(_args: MarkerIconArgs): Promise<void> {
-    throw new Error('Method not implemented.');
+    const marker = this.maps[_args.id].markers[_args.markerId];
+    if (!marker) return;
+
+    const img = document.createElement('img');
+    img.src = _args.url ?? '';
+    if (_args.size) {
+      img.style.width = `${_args.size.width}px`;
+      img.style.height = `${_args.size.height}px`;
+    }
+    marker.content = img;
   }
 
   async setMarkerIconAnchor(_args: MarkerIconAnchorArgs): Promise<void> {
-    throw new Error('Method not implemented.');
+    // Google Maps AdvancedMarker doesn’t support anchor directly, so this is a no-op
   }
 
   async setMarkerZIndex(_args: MarkerZIndexArgs): Promise<void> {
-    throw new Error('Method not implemented.');
+    const marker = this.maps[_args.id].markers[_args.markerId];
+    if (marker) marker.zIndex = _args.zIndex;
   }
 
   async setMarkerVisibility(_args: MarkerVisibilityArgs): Promise<void> {
-    throw new Error('Method not implemented.');
+    const marker = this.maps[_args.id].markers[_args.markerId];
+    if (marker) marker.map = _args.isVisible ? this.maps[_args.id].map : null;
   }
 
   async getMarkerPosition(_args: MarkerPositionArgs): Promise<{ position: LatLng }> {
-    throw new Error('Method not implemented.');
+    const marker = this.maps[_args.id].markers[_args.markerId];
+    if (!marker) throw new Error('Marker not found');
+    const pos = marker.position as google.maps.LatLngLiteral;
+    return { position: { lat: pos.lat, lng: pos.lng } };
   }
 
-  addPolyline(_args: AddPolylineArgs): Promise<Polyline & { id: string }> {
-    throw new Error('Method not implemented.');
+  async addPolyline(_args: AddPolylineArgs): Promise<Polyline & { id: string }> {
+    const polyline = new google.maps.Polyline(_args.options);
+    polyline.setMap(this.maps[_args.id].map);
+
+    const id = '' + this.currPolylineId++;
+    this.maps[_args.id].polylines[id] = polyline;
+    await this.setPolylineListeners(_args.id, id, polyline);
+
+    return { ..._args.options, id };
   }
 
-  setPolylineStrokeColor(_args: PolylineStrokeColorArgs): Promise<void> {
-    throw new Error('Method not implemented.');
+  async setPolylineStrokeColor(_args: PolylineStrokeColorArgs): Promise<void> {
+    const polyline = this.maps[_args.id].polylines[_args.polylineId];
+    if (polyline) polyline.setOptions({ strokeColor: _args.strokeColor });
   }
 
-  setPolylineStrokeWidth(_args: PolylineStrokeWidthArgs): Promise<void> {
-    throw new Error('Method not implemented.');
+  async setPolylineStrokeWidth(_args: PolylineStrokeWidthArgs): Promise<void> {
+    const polyline = this.maps[_args.id].polylines[_args.polylineId];
+    if (polyline) polyline.setOptions({ strokeWeight: _args.strokeWidth });
   }
 
-  removePolyline(_args: RemovePolylineArgs): Promise<void> {
-    throw new Error('Method not implemented.');
+  async removePolyline(_args: RemovePolylineArgs): Promise<void> {
+    const polyline = this.maps[_args.id].polylines[_args.polylineId];
+    if (polyline) {
+      polyline.setMap(null);
+      delete this.maps[_args.id].polylines[_args.polylineId];
+    }
   }
 
-  async addPolylines(_args: AddPolylinesArgs): Promise<{ polylines: (Polyline & { id: string })[] }> {
-    // const lineIds: string[] = [];
-    // const map = this.maps[args.id];
+  async addCircles(_args: AddCirclesArgs): Promise<{ circles: (Circle & { id: string })[] }> {
+    const results: (Circle & { id: string })[] = [];
+    for (const circle of _args.optionsList) {
+      const added = await this.addCircle({ id: _args.id, options: circle });
+      results.push(added);
+    }
+    return { circles: results };
+  }
 
-    // for (const polylineArgs of args.polylines) {
-    //   const polyline = new google.maps.Polyline(polylineArgs);
-    //   polyline.set('tag', polylineArgs.tag);
-    //   polyline.setMap(map.map);
+  async addCircle(_args: AddCircleArgs): Promise<Circle & { id: string }> {
+    const circle = new google.maps.Circle(_args.options);
+    circle.setMap(this.maps[_args.id].map);
 
-    //   const id = '' + this.currPolylineId;
-    //   this.maps[args.id].polylines[id] = polyline;
-    //   this.setPolylineListeners(args.id, id, polyline);
+    const id = '' + this.currCircleId++;
+    this.maps[_args.id].circles[id] = circle;
 
-    //   lineIds.push(id);
-    //   this.currPolylineId++;
-    // }
+    await this.setCircleListeners(_args.id, id, circle);
 
-    // return {
-    //   ids: lineIds,
-    // };
-    throw new Error('Method not implemented.');
+    return { ..._args.options, id };
+  }
+
+  async setCircleCenter(_args: SetCircleCenterArgs): Promise<void> {
+    const circle = this.maps[_args.id].circles[_args.circleId];
+    if (circle) circle.setCenter(_args.center);
+  }
+
+  async removeCircle(_args: RemoveCircleArgs): Promise<void> {
+    const circle = this.maps[_args.id].circles[_args.circleId];
+    if (circle) {
+      circle.setMap(null);
+      delete this.maps[_args.id].circles[_args.circleId];
+    }
   }
 
   async setCameraTarget(_args: SetCameraTargetArgs): Promise<void> {
-    throw new Error('Method not implemented.');
+    const map = this.maps[_args.id].map;
+    if (Array.isArray(_args.target)) {
+      const bounds = new google.maps.LatLngBounds();
+      _args.target.forEach((t) => bounds.extend(t));
+      map.fitBounds(bounds);
+    } else {
+      map.setCenter(_args.target);
+    }
   }
 
-  async getCameraTarget(_args: { id: string; }): Promise<{ cameraTarget: LatLng; }> {
-    throw new Error('Method not implemented.');
+  async getCameraTarget(_args: { id: string }): Promise<{ cameraTarget: LatLng }> {
+    const center = this.maps[_args.id].map.getCenter();
+    if (!center) throw new Error('Center not available');
+    return { cameraTarget: { lat: center.lat(), lng: center.lng() } };
   }
 
-  async fromPointToLatLng(_args: FromPointToLatLngArgs): Promise<{ latLng: LatLng; }> {
-    throw new Error('Method not implemented.');
+  async fromPointToLatLng(_args: FromPointToLatLngArgs): Promise<{ latLng: LatLng }> {
+    const map = this.maps[_args.id].map;
+    const projection = map.getProjection();
+    if (!projection) throw new Error('Projection not ready');
+
+    const point = new google.maps.Point(_args.points[0], _args.points[1]);
+    const latLng = projection.fromPointToLatLng(point);
+    if (!latLng) throw new Error('Failed to project point');
+
+    return { latLng: { lat: latLng.lat(), lng: latLng.lng() } };
+  }
+
+  async addPolylines(_args: AddPolylinesArgs): Promise<{ polylines: (Polyline & { id: string })[] }> {
+    const mapObj = this.maps[_args.id];
+    if (!mapObj) throw new Error(`Map with id ${_args.id} not found`);
+
+    const polylines: (Polyline & { id: string })[] = [];
+
+    for (const opts of _args.optionsList) {
+      const polyline = new google.maps.Polyline(opts);
+      polyline.setMap(mapObj.map);
+
+      const id = '' + this.currPolylineId++;
+      mapObj.polylines[id] = polyline;
+
+      await this.setPolylineListeners(_args.id, id, polyline);
+
+      polylines.push({ ...opts, id });
+    }
+
+    return { polylines };
+  }
+
+  async addPolygon(_args: AddPolygonArgs): Promise<Polygon & { id: string; }> {
+    const polygon = new google.maps.Polygon(_args.options);
+    polygon.setMap(this.maps[_args.id].map);
+
+    const id = '' + this.currPolygonId++;
+    this.maps[_args.id].polygons[id] = polygon;
+    await this.setPolygonListeners(_args.id, id, polygon);
+
+    return { ..._args.options, shapes:_args.options.points, id };
+  }
+
+  async removePolygon(_args: RemovePolygonArgs): Promise<void> {
+    const polygon = this.maps[_args.id].polygons[_args.polygonId];
+    if (polygon) {
+      polygon.setMap(null);
+      delete this.maps[_args.id].polygons[_args.polygonId];
+    }
   }
 }

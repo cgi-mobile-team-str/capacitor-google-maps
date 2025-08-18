@@ -1,5 +1,5 @@
 import { Capacitor } from '@capacitor/core';
-import { MarkerClass, PolylineClass, } from './definitions';
+import { CapacitorMarker, CapacitorPolyline, CapacitorCircle, CapacitorPolygon, } from './definitions';
 import { LatLngBounds, MapType } from './definitions';
 import { CapacitorGoogleMaps } from './implementation';
 class MapCustomElement extends HTMLElement {
@@ -214,7 +214,7 @@ export class GoogleMap {
             id: this.id,
             options,
         });
-        const markerObj = new MarkerClass(res, this.id);
+        const markerObj = new CapacitorMarker(res, this.id);
         return markerObj;
     }
     /**
@@ -230,7 +230,7 @@ export class GoogleMap {
         });
         const markers = [];
         res.markers.forEach((r) => {
-            markers.push(new MarkerClass(r, this.id));
+            markers.push(new CapacitorMarker(r, this.id));
         });
         return markers;
     }
@@ -258,12 +258,24 @@ export class GoogleMap {
             markerIds: ids,
         });
     }
-    async addPolygons(polygons) {
+    async addPolygons(optionsList) {
         const res = await CapacitorGoogleMaps.addPolygons({
             id: this.id,
-            polygons,
+            optionsList,
         });
-        return res.ids;
+        const polygons = [];
+        res.polygons.forEach((r) => {
+            polygons.push(new CapacitorPolygon(r, this.id));
+        });
+        return polygons;
+    }
+    async addPolygon(options) {
+        const res = await CapacitorGoogleMaps.addPolygon({
+            id: this.id,
+            options,
+        });
+        const polygonObj = new CapacitorPolygon(res, this.id);
+        return polygonObj;
     }
     async addPolylines(optionsList) {
         const res = await CapacitorGoogleMaps.addPolylines({
@@ -272,7 +284,7 @@ export class GoogleMap {
         });
         const polylines = [];
         res.polylines.forEach((r) => {
-            polylines.push(new PolylineClass(r, this.id));
+            polylines.push(new CapacitorPolyline(r, this.id));
         });
         return polylines;
     }
@@ -281,7 +293,7 @@ export class GoogleMap {
             id: this.id,
             options,
         });
-        const polylineObj = new PolylineClass(res, this.id);
+        const polylineObj = new CapacitorPolyline(res, this.id);
         return polylineObj;
     }
     async removePolygons(ids) {
@@ -290,12 +302,24 @@ export class GoogleMap {
             polygonIds: ids,
         });
     }
-    async addCircles(circles) {
+    async addCircles(optionsList) {
         const res = await CapacitorGoogleMaps.addCircles({
             id: this.id,
-            circles,
+            optionsList,
         });
-        return res.ids;
+        const circles = [];
+        res.circles.forEach((r) => {
+            circles.push(new CapacitorCircle(r, this.id));
+        });
+        return circles;
+    }
+    async addCircle(options) {
+        const res = await CapacitorGoogleMaps.addCircle({
+            id: this.id,
+            options,
+        });
+        const circleObj = new CapacitorCircle(res, this.id);
+        return circleObj;
     }
     async removeCircles(ids) {
         return CapacitorGoogleMaps.removeCircles({

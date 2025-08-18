@@ -71,9 +71,10 @@ export interface Point {
  * For iOS and Android only the config options declared on Polygon are available.
  */
 export interface Polygon extends google.maps.PolygonOptions {
+  shapes: LatLng[][];
   strokeColor?: string;
   strokeOpacity?: number;
-  strokeWeight?: number;
+  strokeWidth?: number;
   fillColor?: string;
   fillOpacity?: number;
   geodesic?: boolean;
@@ -87,18 +88,56 @@ export interface Polygon extends google.maps.PolygonOptions {
   tag?: string;
 }
 
+export interface PolygonOption {
+  points: LatLng[][];
+  visible?: boolean;
+  strokeColor?: string;
+  strokeWidth?: number;
+  fillColor?: string;
+  zIndex?: number;
+}
+
+export class CapacitorPolygon implements Polygon {
+  mapId: string;
+  id: string;
+  shapes: LatLng[][];
+  visible?: boolean | undefined | null;
+  strokeColor?: string;
+  strokeWidth?: number;
+  fillColor?: string;
+  zIndex?: number | undefined | null;
+
+  constructor(obj: Polygon & { id: string }, mapId: string) {
+    this.mapId = mapId;
+    this.id = obj.id;
+    this.shapes = obj.shapes;
+    this.visible = obj.visible;
+    this.strokeColor = obj.strokeColor;
+    this.fillColor = obj.fillColor;
+    this.strokeWidth = obj.strokeWidth;
+    this.zIndex = obj.zIndex;
+    Object.assign(this, obj);
+  }
+
+  async remove(): Promise<void> {
+    return CapacitorGoogleMaps.removePolygon({ id: this.mapId, polygonId: this.id });
+  }
+}
+
 /**
  * For web, all the javascript Circle options are available as
  * Polygon extends google.maps.CircleOptions.
  * For iOS and Android only the config options declared on Circle are available.
  */
 export interface Circle extends google.maps.CircleOptions {
+  center: LatLng;
   fillColor?: string;
   fillOpacity?: number;
   strokeColor?: string;
-  strokeWeight?: number;
+  strokeWidth?: number;
   geodesic?: boolean;
   clickable?: boolean;
+  visible?: boolean;
   /**
    * Title, a short description of the overlay. Some overlays, such as markers, will display the title on the map. The title is also the default accessibility text.
    *
@@ -106,6 +145,52 @@ export interface Circle extends google.maps.CircleOptions {
    */
   title?: string;
   tag?: string;
+}
+
+export interface CircleOption {
+  center: LatLng;
+  radius: number;
+  strokeWidth?: number;
+  strokeColor?: string;
+  fillColor?: string;
+  clickable?: boolean;
+  visible?: boolean;
+  zIndex?: number;
+}
+
+export class CapacitorCircle implements Circle {
+  mapId: string;
+  id: string;
+  center: LatLng;
+  radius: number;
+  strokeColor?: string;
+  fillColor?: string;
+  strokeWidth?: number;
+  zIndex?: number | undefined | null;
+  visible?: boolean | undefined;
+  clickable?: boolean;
+
+  constructor(obj: Circle & { id: string }, mapId: string) {
+    this.mapId = mapId;
+    this.id = obj.id;
+    this.center = obj.center;
+    this.visible = obj.visible;
+    this.radius = obj.radius ?? 0;
+    this.strokeColor = obj.strokeColor;
+    this.strokeWidth = obj.strokeWidth;
+    this.zIndex = obj.zIndex;
+    this.clickable = obj.clickable;
+    Object.assign(this, obj);
+  }
+
+  async setCenter(center: LatLng): Promise<void> {
+    this.center = center;
+    return CapacitorGoogleMaps.setCircleCenter({ id: this.mapId, circleId: this.id, center: center });
+  }
+
+  async remove(): Promise<void> {
+    return CapacitorGoogleMaps.removeCircle({ id: this.mapId, circleId: this.id });
+  }
 }
 
 /**
@@ -119,6 +204,7 @@ export interface Polyline extends google.maps.PolylineOptions {
   strokeWidth?: number;
   geodesic?: boolean;
   clickable?: boolean;
+  isVisible?: boolean;
   tag?: string;
   /**
    * Used to specify the color of one or more segments of a polyline. The styleSpans property is an array of StyleSpan objects.
@@ -144,7 +230,8 @@ export interface PolylineOption {
   clickable?: boolean;
   [key: string]: any;
 }
-export class PolylineClass implements Polyline {
+
+export class CapacitorPolyline implements Polyline {
   mapId: string;
   id: string;
   points: LatLng[] | null | undefined;
@@ -472,7 +559,7 @@ export interface MarkerIcon {
   size?: Size;
 }
 
-export class MarkerClass implements Marker {
+export class CapacitorMarker implements Marker {
   mapId: string;
   id: string;
   coordinate: LatLng;

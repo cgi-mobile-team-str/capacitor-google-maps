@@ -14,16 +14,19 @@ import {
   MyLocationButtonClickCallbackData,
   Polygon,
   PolygonClickCallbackData,
-  Circle,
   CircleClickCallbackData,
   PolylineCallbackData,
   VisibleRegion,
   GoogleMapsOptions,
-  MarkerClass,
+  CapacitorMarker,
   MarkerOption,
   PolylineOption,
-  PolylineClass,
+  CapacitorPolyline,
   LatLng,
+  CircleOption,
+  CapacitorCircle,
+  PolygonOption,
+  CapacitorPolygon,
 } from './definitions';
 import { LatLngBounds, MapType } from './definitions';
 import type { CreateMapArgs } from './implementation';
@@ -40,15 +43,17 @@ export interface GoogleMapInterface {
     minClusterSize?: number
   ): Promise<void>;
   disableClustering(): Promise<void>;
-  addMarker(options: MarkerOption): Promise<MarkerClass>;
-  addMarkers(optionsList: MarkerOption[]): Promise<MarkerClass[]>;
+  addMarker(options: MarkerOption): Promise<CapacitorMarker>;
+  addMarkers(optionsList: MarkerOption[]): Promise<CapacitorMarker[]>;
   removeMarker(id: string): Promise<void>;
   removeMarkers(ids: string[]): Promise<void>;
   addPolygons(polygons: Polygon[]): Promise<string[]>;
   removePolygons(ids: string[]): Promise<void>;
-  addCircles(circles: Circle[]): Promise<string[]>;
+  addCircles(optionsList: CircleOption[]): Promise<CapacitorCircle[]>;
+  addCircle(options: CircleOption): Promise<CapacitorCircle>;
   removeCircles(ids: string[]): Promise<void>;
-  addPolylines(optionsList: PolylineOption[]): Promise<PolylineClass>;
+  addPolylines(optionsList: PolylineOption[]): Promise<CapacitorPolyline[]>;
+  addPolyline(options: PolylineOption): Promise<CapacitorPolyline>;
   removePolylines(ids: string[]): Promise<void>;
   destroy(): Promise<void>;
   moveCamera(config: CameraConfig): Promise<void>;
@@ -103,7 +108,6 @@ export interface GoogleMapInterface {
   setCameraBearing(bearing: number): Promise<void>;
   setOptions(config: GoogleMapsOptions): Promise<void>;
   getCameraZoom(): Promise<number>;
-  addPolyline(options: PolylineOption): Promise<PolylineClass>;
   setCameraTarget(target: LatLng | LatLng[]): Promise<void>;
   getCameraTarget(): Promise<LatLng>;
   fromPointToLatLng(points: number[]): Promise<LatLng>;
@@ -361,13 +365,13 @@ export class GoogleMap {
    * @param marker
    * @returns created marker id
    */
-  async addMarker(options: MarkerOption): Promise<MarkerClass> {
+  async addMarker(options: MarkerOption): Promise<CapacitorMarker> {
     const res = await CapacitorGoogleMaps.addMarker({
       id: this.id,
       options,
     });
 
-    const markerObj: MarkerClass = new MarkerClass(res, this.id);
+    const markerObj: CapacitorMarker = new CapacitorMarker(res, this.id);
 
     return markerObj;
   }
@@ -378,15 +382,15 @@ export class GoogleMap {
    * @param markers
    * @returns array of created marker IDs
    */
-  async addMarkers(optionsList: MarkerOption[]): Promise<MarkerClass[]> {
+  async addMarkers(optionsList: MarkerOption[]): Promise<CapacitorMarker[]> {
     const res = await CapacitorGoogleMaps.addMarkers({
       id: this.id,
       optionsList,
     });
 
-    const markers: MarkerClass[] = [];
+    const markers: CapacitorMarker[] = [];
     res.markers.forEach((r) => {
-      markers.push(new MarkerClass(r, this.id));
+      markers.push(new CapacitorMarker(r, this.id));
     });
 
     return markers;
@@ -418,36 +422,51 @@ export class GoogleMap {
     });
   }
 
-  async addPolygons(polygons: Polygon[]): Promise<string[]> {
+  async addPolygons(optionsList: PolygonOption[]): Promise<CapacitorPolygon[]> {
     const res = await CapacitorGoogleMaps.addPolygons({
       id: this.id,
-      polygons,
+      optionsList,
     });
 
-    return res.ids;
+    const polygons: CapacitorPolygon[] = [];
+    res.polygons.forEach((r) => {
+      polygons.push(new CapacitorPolygon(r, this.id));
+    });
+
+    return polygons;
   }
 
-  async addPolylines(optionsList: PolylineOption[]): Promise<PolylineClass[]> {
+  async addPolygon(options: PolygonOption): Promise<CapacitorPolygon> {
+    const res = await CapacitorGoogleMaps.addPolygon({
+      id: this.id,
+      options,
+    });
+
+    const polygonObj: CapacitorPolygon = new CapacitorPolygon(res, this.id);
+    return polygonObj;
+  }
+
+  async addPolylines(optionsList: PolylineOption[]): Promise<CapacitorPolyline[]> {
     const res = await CapacitorGoogleMaps.addPolylines({
       id: this.id,
       optionsList,
     });
 
-    const polylines: PolylineClass[] = [];
+    const polylines: CapacitorPolyline[] = [];
     res.polylines.forEach((r) => {
-      polylines.push(new PolylineClass(r, this.id));
+      polylines.push(new CapacitorPolyline(r, this.id));
     });
 
     return polylines;
   }
 
-  async addPolyline(options: PolylineOption): Promise<PolylineClass> {
+  async addPolyline(options: PolylineOption): Promise<CapacitorPolyline> {
     const res = await CapacitorGoogleMaps.addPolyline({
       id: this.id,
       options,
     });
 
-    const polylineObj: PolylineClass = new PolylineClass(res, this.id);
+    const polylineObj: CapacitorPolyline = new CapacitorPolyline(res, this.id);
     return polylineObj;
   }
 
@@ -458,13 +477,28 @@ export class GoogleMap {
     });
   }
 
-  async addCircles(circles: Circle[]): Promise<string[]> {
+  async addCircles(optionsList: CircleOption[]): Promise<CapacitorCircle[]> {
     const res = await CapacitorGoogleMaps.addCircles({
       id: this.id,
-      circles,
+      optionsList,
     });
 
-    return res.ids;
+    const circles: CapacitorCircle[] = [];
+    res.circles.forEach((r) => {
+      circles.push(new CapacitorCircle(r, this.id));
+    });
+
+    return circles;
+  }
+
+  async addCircle(options: CircleOption): Promise<CapacitorCircle> {
+    const res = await CapacitorGoogleMaps.addCircle({
+      id: this.id,
+      options,
+    });
+
+    const circleObj: CapacitorCircle = new CapacitorCircle(res, this.id);
+    return circleObj;
   }
 
   async removeCircles(ids: string[]): Promise<void> {
@@ -569,7 +603,7 @@ export class GoogleMap {
   }
 
   async fromPointToLatLng(points: number[]): Promise<LatLng> {
-    const { latLng } = await CapacitorGoogleMaps.fromPointToLatLng({ id: this.id , points});
+    const { latLng } = await CapacitorGoogleMaps.fromPointToLatLng({ id: this.id, points });
     return latLng;
   }
   /**

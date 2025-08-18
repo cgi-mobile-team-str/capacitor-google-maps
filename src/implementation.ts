@@ -4,6 +4,7 @@ import { registerPlugin } from '@capacitor/core';
 import type {
   CameraConfig,
   Circle,
+  CircleOption,
   GoogleMapConfig,
   GoogleMapsOptions,
   LatLng,
@@ -13,6 +14,7 @@ import type {
   Marker,
   MarkerOption,
   Polygon,
+  PolygonOption,
   Polyline,
   PolylineOption,
   Size,
@@ -80,7 +82,12 @@ export interface AddMarkerArgs {
 
 export interface AddPolygonsArgs {
   id: string;
-  polygons: Polygon[];
+  optionsList: PolygonOption[];
+}
+
+export interface AddPolygonArgs {
+  id: string;
+  options: PolygonOption;
 }
 
 export interface RemovePolygonsArgs {
@@ -90,7 +97,7 @@ export interface RemovePolygonsArgs {
 
 export interface AddCirclesArgs {
   id: string;
-  circles: Circle[];
+  optionsList: CircleOption[];
 }
 
 export interface RemoveCirclesArgs {
@@ -271,6 +278,27 @@ export interface RemovePolylineArgs {
   polylineId: string;
 }
 
+export interface AddCircleArgs {
+  id: string;
+  options: CircleOption;
+}
+
+export interface SetCircleCenterArgs {
+  id: string;
+  circleId: string;
+  center: LatLng;
+}
+
+export interface RemoveCircleArgs {
+  id: string;
+  circleId: string;
+}
+
+export interface RemovePolygonArgs {
+  id: string;
+  polygonId: string;
+}
+
 export interface SetCameraTargetArgs {
   id: string;
   target: LatLng | LatLng[]; 
@@ -288,12 +316,21 @@ export interface CapacitorGoogleMapsPlugin extends Plugin {
   addMarkers(args: AddMarkersArgs): Promise<{markers :  (Marker & { id: string })[]}>;
   removeMarker(args: RemoveMarkerArgs): Promise<void>;
   removeMarkers(args: RemoveMarkersArgs): Promise<void>;
-  addPolygons(args: AddPolygonsArgs): Promise<{ ids: string[] }>;
+  addPolygons(args: AddPolygonsArgs): Promise<{polygons: (Polygon & {id: string})[]}>;
+  addPolygon(args: AddPolygonArgs): Promise<Polygon & { id: string }>;
   removePolygons(args: RemovePolygonsArgs): Promise<void>;
-  addCircles(args: AddCirclesArgs): Promise<{ ids: string[] }>;
+  removePolygon(args: RemovePolygonArgs): Promise<void>;
+  addCircles(args: AddCirclesArgs): Promise<{circles: (Circle & {id: string})[]}>;
   removeCircles(args: RemoveCirclesArgs): Promise<void>;
+  addCircle(args: AddCircleArgs): Promise<Circle & {id: string}>;
+  setCircleCenter(args: SetCircleCenterArgs): Promise<void>;
+  removeCircle(args: RemoveCircleArgs): Promise<void>;
   addPolylines(args: AddPolylinesArgs): Promise<{polylines: (Polyline & {id: string})[]}>;
   removePolylines(args: RemovePolylinesArgs): Promise<void>;
+  addPolyline(args: AddPolylineArgs): Promise<Polyline & {id: string}>;
+  setPolylineStrokeColor(args: PolylineStrokeColorArgs): Promise<void>;
+  setPolylineStrokeWidth(args: PolylineStrokeWidthArgs): Promise<void>;
+  removePolyline(args: RemovePolylineArgs): Promise<void>;
   enableClustering(args: EnableClusteringArgs): Promise<void>;
   disableClustering(args: { id: string }): Promise<void>;
   destroy(args: DestroyMapArgs): Promise<void>;
@@ -330,10 +367,6 @@ export interface CapacitorGoogleMapsPlugin extends Plugin {
   setMarkerZIndex(args: MarkerZIndexArgs): Promise<void>;
   setMarkerVisibility(args: MarkerVisibilityArgs): Promise<void>;
   getMarkerPosition(args: MarkerPositionArgs): Promise<{ position: LatLng }>;
-  addPolyline(args: AddPolylineArgs): Promise<Polyline & {id: string}>;
-  setPolylineStrokeColor(args: PolylineStrokeColorArgs): Promise<void>;
-  setPolylineStrokeWidth(args: PolylineStrokeWidthArgs): Promise<void>;
-  removePolyline(args: RemovePolylineArgs): Promise<void>;
   setCameraTarget(args: SetCameraTargetArgs): Promise<void>;
   getCameraTarget(args: { id: string }): Promise<{cameraTarget: LatLng}>
   fromPointToLatLng(args: FromPointToLatLngArgs): Promise<{latLng: LatLng}>

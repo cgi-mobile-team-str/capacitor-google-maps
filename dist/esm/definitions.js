@@ -23,7 +23,45 @@ export class LatLngBounds {
         return this;
     }
 }
-export class PolylineClass {
+export class CapacitorPolygon {
+    constructor(obj, mapId) {
+        this.mapId = mapId;
+        this.id = obj.id;
+        this.shapes = obj.shapes;
+        this.visible = obj.visible;
+        this.strokeColor = obj.strokeColor;
+        this.fillColor = obj.fillColor;
+        this.strokeWidth = obj.strokeWidth;
+        this.zIndex = obj.zIndex;
+        Object.assign(this, obj);
+    }
+    async remove() {
+        return CapacitorGoogleMaps.removePolygon({ id: this.mapId, polygonId: this.id });
+    }
+}
+export class CapacitorCircle {
+    constructor(obj, mapId) {
+        var _a;
+        this.mapId = mapId;
+        this.id = obj.id;
+        this.center = obj.center;
+        this.visible = obj.visible;
+        this.radius = (_a = obj.radius) !== null && _a !== void 0 ? _a : 0;
+        this.strokeColor = obj.strokeColor;
+        this.strokeWidth = obj.strokeWidth;
+        this.zIndex = obj.zIndex;
+        this.clickable = obj.clickable;
+        Object.assign(this, obj);
+    }
+    async setCenter(center) {
+        this.center = center;
+        return CapacitorGoogleMaps.setCircleCenter({ id: this.mapId, circleId: this.id, center: center });
+    }
+    async remove() {
+        return CapacitorGoogleMaps.removeCircle({ id: this.mapId, circleId: this.id });
+    }
+}
+export class CapacitorPolyline {
     constructor(obj, mapId) {
         this.mapId = mapId;
         this.id = obj.id;
@@ -77,7 +115,7 @@ export var MapType;
      */
     MapType["None"] = "None";
 })(MapType || (MapType = {}));
-export class MarkerClass {
+export class CapacitorMarker {
     constructor(obj, mapId) {
         this.mapId = mapId;
         this.id = obj.id;

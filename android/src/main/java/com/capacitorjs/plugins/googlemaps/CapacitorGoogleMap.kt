@@ -27,6 +27,9 @@ import kotlinx.coroutines.channels.Channel
 import java.io.InputStream
 import java.net.URL
 import androidx.core.graphics.scale
+import kotlin.Pair
+import kotlin.String
+import kotlin.collections.MutableList
 
 
 class CapacitorGoogleMap(
@@ -293,60 +296,6 @@ class CapacitorGoogleMap(
 
     }
 
-    fun addPolygons(newPolygons: List<CapacitorGoogleMapsPolygon>, callback: (ids: Result<List<String>>) -> Unit) {
-        try {
-            googleMap ?: throw GoogleMapNotAvailable()
-            val shapeIds: MutableList<String> = mutableListOf()
-
-            CoroutineScope(Dispatchers.Main).launch {
-                newPolygons.forEach {
-                    val polygonOptions: Deferred<PolygonOptions> = CoroutineScope(Dispatchers.IO).async {
-                        this@CapacitorGoogleMap.buildPolygon(it)
-                    }
-
-                    val googleMapsPolygon = googleMap?.addPolygon(polygonOptions.await())
-                    googleMapsPolygon?.tag = it.tag
-
-                    it.googleMapsPolygon = googleMapsPolygon
-
-                    polygons[googleMapsPolygon!!.id] = it
-                    shapeIds.add(googleMapsPolygon.id)
-                }
-
-                callback(Result.success(shapeIds))
-            }
-        } catch (e: GoogleMapsError) {
-            callback(Result.failure(e))
-        }
-    }
-
-    fun addCircles(newCircles: List<CapacitorGoogleMapsCircle>,callback: (ids: Result<List<String>>) -> Unit) {
-        try {
-            googleMap ?: throw GoogleMapNotAvailable()
-            val circleIds: MutableList<String> = mutableListOf()
-
-            CoroutineScope(Dispatchers.Main).launch {
-                newCircles.forEach {
-                    var circleOptions: Deferred<CircleOptions> = CoroutineScope(Dispatchers.IO).async {
-                        this@CapacitorGoogleMap.buildCircle(it)
-                    }
-
-                    val googleMapsCircle = googleMap?.addCircle(circleOptions.await())
-                    googleMapsCircle?.tag = it.tag
-
-                    it.googleMapsCircle = googleMapsCircle
-
-                    circles[googleMapsCircle!!.id] = it
-                    circleIds.add(googleMapsCircle.id)
-                }
-
-                callback(Result.success(circleIds))
-            }
-        } catch (e: GoogleMapsError) {
-            callback(Result.failure(e))
-        }
-    }
-
     private fun setClusterManagerRenderer(minClusterSize: Int?) {
         clusterManager?.renderer = CapacitorClusterManagerRenderer(
             delegate.bridge.context,
@@ -412,26 +361,6 @@ class CapacitorGoogleMap(
                                 }
                         val googleMapMarker = googleMap?.addMarker(markerOptions.await())
                         marker.googleMapMarker = googleMapMarker
-                    }
-                }
-
-                callback(null)
-            }
-        } catch (e: GoogleMapsError) {
-            callback(e)
-        }
-    }
-
-    fun removePolygons(ids: List<String>, callback: (error: GoogleMapsError?) -> Unit) {
-        try {
-            googleMap ?: throw GoogleMapNotAvailable()
-
-            CoroutineScope(Dispatchers.Main).launch {
-                ids.forEach {
-                    val polygon = polygons[it]
-                    if (polygon != null) {
-                        polygon.googleMapsPolygon?.remove()
-                        polygons.remove(it)
                     }
                 }
 
@@ -1046,6 +975,191 @@ class CapacitorGoogleMap(
     }
     // END POLYLINE METHODS
 
+    // BEGIN CIRCLE METHODS
+
+    fun addCircles(optionsList: List<CapacitorCircleOptions>, callback: (pairsIdCircle: Result<List<Pair<String, CapacitorGoogleMapsCircle>>>) -> Unit) {
+        try {
+            googleMap ?: throw GoogleMapNotAvailable()
+            val newCircles: MutableList<CapacitorGoogleMapsCircle> = mutableListOf()
+            val idCirclePairs: MutableList<Pair<String, CapacitorGoogleMapsCircle>> = mutableListOf()
+            optionsList.forEach {
+                val circle = CapacitorGoogleMapsCircle(it)
+                newCircles.add(circle)
+            }
+            CoroutineScope(Dispatchers.Main).launch {
+                newCircles.forEach {
+                    var circleOptions: Deferred<CircleOptions> = CoroutineScope(Dispatchers.IO).async {
+                        this@CapacitorGoogleMap.buildCircle(it)
+                    }
+
+                    val googleMapsCircle = googleMap?.addCircle(circleOptions.await())
+                    googleMapsCircle?.tag = it.tag
+
+                    it.googleMapsCircle = googleMapsCircle
+
+                    circles[googleMapsCircle!!.id] = it
+                    if(it.googleMapsCircle != null) {
+                        idCirclePairs.add(Pair(googleMapsCircle.id, it))
+                    }
+                }
+
+                callback(Result.success(idCirclePairs))
+            }
+        } catch (e: GoogleMapsError) {
+            callback(Result.failure(e))
+        }
+    }
+
+    fun addCircle(options: CapacitorCircleOptions, callback: (circle: Result<Pair<String, CapacitorGoogleMapsCircle>>) -> Unit) {
+        try {
+            googleMap ?: throw GoogleMapNotAvailable()
+
+            CoroutineScope(Dispatchers.Main).launch {
+                val circle = CapacitorGoogleMapsCircle(options)
+                val circleOptions: Deferred<CircleOptions> = CoroutineScope(Dispatchers.IO).async {
+                    this@CapacitorGoogleMap.buildCircle(circle)
+                }
+                val googleMapCircle = googleMap?.addCircle(circleOptions.await())
+                googleMapCircle?.tag = circle.tag
+
+                circle.googleMapsCircle = googleMapCircle
+
+                circles[googleMapCircle!!.id] = circle
+
+                callback(Result.success(Pair(googleMapCircle.id, circle)))
+            }
+        } catch (e: GoogleMapsError) {
+            callback(Result.failure(e))
+        }
+    }
+
+    fun removeCircle(circleId: String, callback: (error: GoogleMapsError?) -> Unit) {
+        try {
+            googleMap ?: throw GoogleMapNotAvailable()
+            val circle = circles[circleId]
+            circle ?: throw PolylineNotFound()
+            CoroutineScope(Dispatchers.Main).launch {
+                circle.googleMapsCircle?.remove()
+                circles.remove(circleId)
+                callback(null)
+            }
+        } catch (e: GoogleMapsError) {
+            callback(e)
+        }
+    }
+
+    fun setCircleCenter(circleId: String, center: LatLng, callback: (error: GoogleMapsError?) -> Unit) {
+        try {
+            googleMap ?: throw GoogleMapNotAvailable()
+            val circle = circles[circleId]
+            circle ?: throw PolylineNotFound()
+            CoroutineScope(Dispatchers.Main).launch {
+                circle.center = center
+                circle.googleMapsCircle?.center = center
+                callback(null)
+            }
+        } catch (e: GoogleMapsError) {
+            callback(e)
+        }
+    }
+
+    // END CIRCLE METHODS
+
+    // BEGIN POLYGON METHODS
+
+    fun addPolygons(optionsList: List<CapacitorPolygonOptions>, callback: (pairsIdPolygon: Result<List<Pair<String, CapacitorGoogleMapsPolygon>>>) -> Unit) {
+        try {
+            googleMap ?: throw GoogleMapNotAvailable()
+            val newPolygons: MutableList<CapacitorGoogleMapsPolygon> = mutableListOf()
+            val idPolygonPairs: MutableList<Pair<String, CapacitorGoogleMapsPolygon>> = mutableListOf()
+            optionsList.forEach {
+                val polygon = CapacitorGoogleMapsPolygon(it)
+                newPolygons.add(polygon)
+            }
+            CoroutineScope(Dispatchers.Main).launch {
+                newPolygons.forEach {
+                    val polygonOptions: Deferred<PolygonOptions> = CoroutineScope(Dispatchers.IO).async {
+                        this@CapacitorGoogleMap.buildPolygon(it)
+                    }
+
+                    val googleMapsPolygon = googleMap?.addPolygon(polygonOptions.await())
+                    googleMapsPolygon?.tag = it.tag
+
+                    it.googleMapsPolygon = googleMapsPolygon
+
+                    polygons[googleMapsPolygon!!.id] = it
+                    if(it.googleMapsPolygon != null) {
+                        idPolygonPairs.add(Pair(googleMapsPolygon.id, it))
+                    }
+                }
+
+                callback(Result.success(idPolygonPairs))
+            }
+        } catch (e: GoogleMapsError) {
+            callback(Result.failure(e))
+        }
+    }
+
+    fun addPolygon(options: CapacitorPolygonOptions, callback: (polyline: Result<Pair<String, CapacitorGoogleMapsPolygon>>) -> Unit) {
+        try {
+            googleMap ?: throw GoogleMapNotAvailable()
+
+            CoroutineScope(Dispatchers.Main).launch {
+                val polygon = CapacitorGoogleMapsPolygon(options)
+                val polygonOptions: Deferred<PolygonOptions> = CoroutineScope(Dispatchers.IO).async {
+                    this@CapacitorGoogleMap.buildPolygon(polygon)
+                }
+                val googleMapPolygon = googleMap?.addPolygon(polygonOptions.await())
+                googleMapPolygon?.tag = polygon.tag
+
+                polygon.googleMapsPolygon = googleMapPolygon
+
+                polygons[googleMapPolygon!!.id] = polygon
+
+                callback(Result.success(Pair(googleMapPolygon.id, polygon)))
+            }
+        } catch (e: GoogleMapsError) {
+            callback(Result.failure(e))
+        }
+    }
+
+    fun removePolygon(polygonId: String, callback: (error: GoogleMapsError?) -> Unit) {
+        try {
+            googleMap ?: throw GoogleMapNotAvailable()
+            val polygon = polygons[polygonId]
+            polygon ?: throw PolylineNotFound()
+            CoroutineScope(Dispatchers.Main).launch {
+                polygon.googleMapsPolygon?.remove()
+                polygons.remove(polygonId)
+                callback(null)
+            }
+        } catch (e: GoogleMapsError) {
+            callback(e)
+        }
+    }
+
+    fun removePolygons(ids: List<String>, callback: (error: GoogleMapsError?) -> Unit) {
+        try {
+            googleMap ?: throw GoogleMapNotAvailable()
+
+            CoroutineScope(Dispatchers.Main).launch {
+                ids.forEach {
+                    val polygon = polygons[it]
+                    if (polygon != null) {
+                        polygon.googleMapsPolygon?.remove()
+                        polygons.remove(it)
+                    }
+                }
+
+                callback(null)
+            }
+        } catch (e: GoogleMapsError) {
+            callback(e)
+        }
+    }
+
+    // END POLYGON METHODS
+
     fun fromPointToLatLng(
         points: Array<Double>,
         callback: (latLng: LatLng?, error: GoogleMapsError?) -> Unit
@@ -1181,6 +1295,7 @@ class CapacitorGoogleMap(
         circleOptions.clickable(circle.clickable)
         circleOptions.radius(circle.radius.toDouble())
         circleOptions.center(circle.center)
+        circleOptions.visible(circle.visible != false)
 
         return circleOptions
     }

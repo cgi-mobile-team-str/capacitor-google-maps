@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-namespace */
-import { LatLngBounds, MapType, MarkerClass, PolylineClass, } from './definitions';
+import { LatLngBounds, MapType, CapacitorMarker, CapacitorPolygon, CapacitorCircle, CapacitorPolyline, } from './definitions';
 import { GoogleMap } from './map';
-export { GoogleMap, LatLngBounds, MapType, MarkerClass, PolylineClass, };
+export { GoogleMap, LatLngBounds, MapType, CapacitorMarker, CapacitorPolygon, CapacitorCircle, CapacitorPolyline, };
 //# sourceMappingURL=index.js.map

@@ -307,8 +307,10 @@ export default MyMap;
 * [`addPolygons(...)`](#addpolygons)
 * [`removePolygons(...)`](#removepolygons)
 * [`addCircles(...)`](#addcircles)
+* [`addCircle(...)`](#addcircle)
 * [`removeCircles(...)`](#removecircles)
 * [`addPolylines(...)`](#addpolylines)
+* [`addPolyline(...)`](#addpolyline)
 * [`removePolylines(...)`](#removepolylines)
 * [`destroy()`](#destroy)
 * [`moveCamera(...)`](#movecamera)
@@ -349,7 +351,6 @@ export default MyMap;
 * [`setCameraBearing(...)`](#setcamerabearing)
 * [`setOptions(...)`](#setoptions)
 * [`getCameraZoom()`](#getcamerazoom)
-* [`addPolyline(...)`](#addpolyline)
 * [`setCameraTarget(...)`](#setcameratarget)
 * [`getCameraTarget()`](#getcameratarget)
 * [`fromPointToLatLng(...)`](#frompointtolatlng)
@@ -421,14 +422,14 @@ disableClustering() => Promise<void>
 ### addMarker(...)
 
 ```typescript
-addMarker(options: MarkerOption) => Promise<MarkerClass>
+addMarker(options: MarkerOption) => Promise<CapacitorMarker>
 ```
 
 | Param         | Type                                                  |
 | ------------- | ----------------------------------------------------- |
 | **`options`** | <code><a href="#markeroption">MarkerOption</a></code> |
 
-**Returns:** <code>Promise&lt;MarkerClass&gt;</code>
+**Returns:** <code>Promise&lt;CapacitorMarker&gt;</code>
 
 --------------------
 
@@ -436,14 +437,14 @@ addMarker(options: MarkerOption) => Promise<MarkerClass>
 ### addMarkers(...)
 
 ```typescript
-addMarkers(optionsList: MarkerOption[]) => Promise<MarkerClass[]>
+addMarkers(optionsList: MarkerOption[]) => Promise<CapacitorMarker[]>
 ```
 
 | Param             | Type                        |
 | ----------------- | --------------------------- |
 | **`optionsList`** | <code>MarkerOption[]</code> |
 
-**Returns:** <code>Promise&lt;MarkerClass[]&gt;</code>
+**Returns:** <code>Promise&lt;CapacitorMarker[]&gt;</code>
 
 --------------------
 
@@ -505,14 +506,29 @@ removePolygons(ids: string[]) => Promise<void>
 ### addCircles(...)
 
 ```typescript
-addCircles(circles: Circle[]) => Promise<string[]>
+addCircles(optionsList: CircleOption[]) => Promise<CapacitorCircle[]>
 ```
 
-| Param         | Type                  |
-| ------------- | --------------------- |
-| **`circles`** | <code>Circle[]</code> |
+| Param             | Type                        |
+| ----------------- | --------------------------- |
+| **`optionsList`** | <code>CircleOption[]</code> |
 
-**Returns:** <code>Promise&lt;string[]&gt;</code>
+**Returns:** <code>Promise&lt;CapacitorCircle[]&gt;</code>
+
+--------------------
+
+
+### addCircle(...)
+
+```typescript
+addCircle(options: CircleOption) => Promise<CapacitorCircle>
+```
+
+| Param         | Type                                                  |
+| ------------- | ----------------------------------------------------- |
+| **`options`** | <code><a href="#circleoption">CircleOption</a></code> |
+
+**Returns:** <code>Promise&lt;CapacitorCircle&gt;</code>
 
 --------------------
 
@@ -533,14 +549,29 @@ removeCircles(ids: string[]) => Promise<void>
 ### addPolylines(...)
 
 ```typescript
-addPolylines(optionsList: PolylineOption[]) => Promise<PolylineClass>
+addPolylines(optionsList: PolylineOption[]) => Promise<CapacitorPolyline[]>
 ```
 
 | Param             | Type                          |
 | ----------------- | ----------------------------- |
 | **`optionsList`** | <code>PolylineOption[]</code> |
 
-**Returns:** <code>Promise&lt;PolylineClass&gt;</code>
+**Returns:** <code>Promise&lt;CapacitorPolyline[]&gt;</code>
+
+--------------------
+
+
+### addPolyline(...)
+
+```typescript
+addPolyline(options: PolylineOption) => Promise<CapacitorPolyline>
+```
+
+| Param         | Type                                                      |
+| ------------- | --------------------------------------------------------- |
+| **`options`** | <code><a href="#polylineoption">PolylineOption</a></code> |
+
+**Returns:** <code>Promise&lt;CapacitorPolyline&gt;</code>
 
 --------------------
 
@@ -1061,21 +1092,6 @@ getCameraZoom() => Promise<number>
 --------------------
 
 
-### addPolyline(...)
-
-```typescript
-addPolyline(options: PolylineOption) => Promise<PolylineClass>
-```
-
-| Param         | Type                                                      |
-| ------------- | --------------------------------------------------------- |
-| **`options`** | <code><a href="#polylineoption">PolylineOption</a></code> |
-
-**Returns:** <code>Promise&lt;PolylineClass&gt;</code>
-
---------------------
-
-
 ### setCameraTarget(...)
 
 ```typescript
@@ -1286,22 +1302,18 @@ https://tools.ietf.org/html/rfc7946#section-3.1.6
 | **`coordinates`** | <code>Position[][]</code>                     |                                       |
 
 
-#### Circle
+#### CircleOption
 
-For web, all the javascript <a href="#circle">Circle</a> options are available as
-Polygon extends google.maps.CircleOptions.
-For iOS and Android only the config options declared on <a href="#circle">Circle</a> are available.
-
-| Prop               | Type                 | Description                                                                                                                                                                            |
-| ------------------ | -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **`fillColor`**    | <code>string</code>  | The fill color. All CSS3 colors are supported except for extended named colors.                                                                                                        |
-| **`fillOpacity`**  | <code>number</code>  | The fill opacity between 0.0 and 1.0.                                                                                                                                                  |
-| **`strokeColor`**  | <code>string</code>  | The stroke color. All CSS3 colors are supported except for extended named colors.                                                                                                      |
-| **`strokeWeight`** | <code>number</code>  | The stroke width in pixels.                                                                                                                                                            |
-| **`geodesic`**     | <code>boolean</code> |                                                                                                                                                                                        |
-| **`clickable`**    | <code>boolean</code> | Indicates whether this &lt;code&gt;<a href="#circle">Circle</a>&lt;/code&gt; handles mouse events.                                                                                     |
-| **`title`**        | <code>string</code>  | Title, a short description of the overlay. Some overlays, such as markers, will display the title on the map. The title is also the default accessibility text. Only available on iOS. |
-| **`tag`**          | <code>string</code>  |                                                                                                                                                                                        |
+| Prop              | Type                                      |
+| ----------------- | ----------------------------------------- |
+| **`center`**      | <code><a href="#latlng">LatLng</a></code> |
+| **`radius`**      | <code>number</code>                       |
+| **`strokeWidth`** | <code>number</code>                       |
+| **`strokeColor`** | <code>string</code>                       |
+| **`fillColor`**   | <code>string</code>                       |
+| **`clickable`**   | <code>boolean</code>                      |
+| **`visible`**     | <code>boolean</code>                      |
+| **`zIndex`**      | <code>number</code>                       |
 
 
 #### PolylineOption
