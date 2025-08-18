@@ -241,23 +241,6 @@ public class Map {
         }
     }
 
-    func addPolygons(polygons: [Polygon]) throws -> [Int] {
-        var polygonHashes: [Int] = []
-
-        DispatchQueue.main.sync {
-            polygons.forEach { polygon in
-                let newPolygon = self.buildPolygon(polygon: polygon)
-                newPolygon.map = self.mapViewController.GMapView
-
-                self.polygons[newPolygon.hash.hashValue] = newPolygon
-
-                polygonHashes.append(newPolygon.hash.hashValue)
-            }
-        }
-
-        return polygonHashes
-    }
-
     func enableClustering(_ minClusterSize: Int?) {
         if !self.mapViewController.clusteringEnabled {
             DispatchQueue.main.sync {
@@ -288,17 +271,6 @@ public class Map {
             if !self.markers.isEmpty {
                 for (_, marker) in self.markers {
                     marker.map = self.mapViewController.GMapView
-                }
-            }
-        }
-    }
-
-    func removePolygons(ids: [Int]) throws {
-        DispatchQueue.main.sync {
-            ids.forEach { id in
-                if let polygon = self.polygons[id] {
-                    polygon.map = nil
-                    self.polygons.removeValue(forKey: id)
                 }
             }
         }
@@ -806,6 +778,69 @@ public class Map {
     }
     
     // END CIRCLE METHODS
+    
+    // BEGIN POLYGON METHODS
+    
+    func addPolygons(optionsList: [PolygonOptions]) throws -> [(Int, Polygon)] {
+        var pairsIdPolygon: [(Int, Polygon)] = []
+        var polygons: [Polygon] = []
+        try optionsList.forEach{ options in
+             let polygon =  try Polygon(options: options)
+            polygons.append(polygon)
+         }
+        DispatchQueue.main.sync {
+            polygons.forEach { polygon in
+                let newPolygon = self.buildPolygon(polygon: polygon)
+                newPolygon.map = self.mapViewController.GMapView
+
+                self.polygons[newPolygon.hash.hashValue] = newPolygon
+
+                pairsIdPolygon.append((newPolygon.hash.hashValue, addedPolygon: polygon))
+            }
+        }
+
+        return pairsIdPolygon
+    }
+    
+    func addPolygon(options: PolygonOptions) throws -> (Int, Polygon) {
+        var polygonHash:Int = 0
+        var newPolygon: GMSPolygon = GMSPolygon()
+        let polygon = try Polygon(options: options)
+        
+        DispatchQueue.main.sync {
+            newPolygon = self.buildPolygon(polygon:polygon)
+            newPolygon.map = self.mapViewController.GMapView
+
+            self.polygons[newPolygon.hash.hashValue] = newPolygon
+            polygonHash = newPolygon.hash.hashValue
+        }
+
+        return (polygonHash, polygon)
+    }
+    
+    func removePolygon(polygonId: Int) throws {
+        if let polygon = self.polygons[polygonId] {
+            DispatchQueue.main.async {
+                polygon.map = nil
+                self.polygons.removeValue(forKey: polygonId)
+            }
+        } else {
+            throw GoogleMapErrors.polygonNotFound
+        }
+    }
+    
+    func removePolygons(ids: [Int]) throws {
+        DispatchQueue.main.sync {
+            ids.forEach { id in
+                if let polygon = self.polygons[id] {
+                    polygon.map = nil
+                    self.polygons.removeValue(forKey: id)
+                }
+            }
+        }
+    }
+    
+    // END POLYGON METHODS
 
     func fromPointToLatLng(points: [Double]) throws -> LatLng {
         guard points.count == 2 else {

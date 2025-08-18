@@ -60,4 +60,6 @@ CAP_PLUGIN(CapacitorGoogleMapsPlugin, "CapacitorGoogleMaps",
    CAP_PLUGIN_METHOD(addCircle, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(setCircleCenter, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(removeCircle, CAPPluginReturnPromise);
+   CAP_PLUGIN_METHOD(addPolygon, CAPPluginReturnPromise);
+   CAP_PLUGIN_METHOD(removePolygon, CAPPluginReturnPromise);
 )

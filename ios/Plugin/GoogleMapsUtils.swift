@@ -108,4 +108,22 @@ struct GoogleMapsUtils {
         
         return CLLocationCoordinate2D(latitude: centerLatitude, longitude: centerLongitude)
     }
+    
+    static func processShape(_ shapeArr: JSArray) throws -> [LatLng] {
+        var shape: [LatLng] = []
+
+        try shapeArr.forEach { obj in
+            guard let jsCoord = obj as? JSObject else {
+                throw GoogleMapErrors.invalidArguments("LatLng object is missing the required 'lat' and/or 'lng' property")
+            }
+
+            guard let lat = jsCoord["lat"] as? Double, let lng = jsCoord["lng"] as? Double else {
+                throw GoogleMapErrors.invalidArguments("LatLng object is missing the required 'lat' and/or 'lng' property")
+            }
+
+            shape.append(LatLng(lat: lat, lng: lng))
+        }
+
+        return shape
+    }
 }
