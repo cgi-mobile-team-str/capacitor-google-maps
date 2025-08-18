@@ -313,75 +313,6 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
         }
     }
 
-    @objc func addCircles(_ call: CAPPluginCall) {
-        do {
-            guard let id = call.getString("id") else {
-                throw GoogleMapErrors.invalidMapId
-            }
-
-            guard let circleObjs = call.getArray("circles") as? [JSObject] else {
-                throw GoogleMapErrors.invalidArguments("circles array is missing")
-            }
-
-            if circleObjs.isEmpty {
-                throw GoogleMapErrors.invalidArguments("circles requires at least one circle")
-            }
-
-            guard let map = self.maps[id] else {
-                throw GoogleMapErrors.mapNotFound
-            }
-
-            var circles: [Circle] = []
-
-            try circleObjs.forEach { circleObj in
-                let circle = try Circle(from: circleObj)
-                circles.append(circle)
-            }
-
-            let ids = try map.addCircles(circles: circles)
-
-            call.resolve(["ids": ids.map({ id in
-                return String(id)
-            })])
-        } catch {
-            handleError(call, error: error)
-        }
-    }
-
-    @objc func removeCircles(_ call: CAPPluginCall) {
-        do {
-            guard let id = call.getString("id") else {
-                throw GoogleMapErrors.invalidMapId
-            }
-
-            guard let circleIdsStrings = call.getArray("circleIds") as? [String] else {
-                throw GoogleMapErrors.invalidArguments("circleIds are invalid or missing")
-            }
-
-            if circleIdsStrings.isEmpty {
-                throw GoogleMapErrors.invalidArguments("circleIds requires at least one cicle id")
-            }
-
-            let ids: [Int] = try circleIdsStrings.map { idString in
-                guard let circleId = Int(idString) else {
-                    throw GoogleMapErrors.invalidArguments("circleIds are invalid or missing")
-                }
-
-                return circleId
-            }
-
-            guard let map = self.maps[id] else {
-                throw GoogleMapErrors.mapNotFound
-            }
-
-            try map.removeCircles(ids: ids)
-
-            call.resolve()
-        } catch {
-            handleError(call, error: error)
-        }
-    }
-
     @objc func removePolylines(_ call: CAPPluginCall) {
         do {
             guard let id = call.getString("id") else {
@@ -1239,6 +1170,29 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
         return results
     }
     
+    private func formatCircleForResponse(circleId: Int, mapId: String, circle: Circle) -> PluginCallResultData {
+        let hexStrokeColor =  GoogleMapsUtils.hexStringFromColor(color: circle.strokeColor)
+        let hexFillColor = GoogleMapsUtils.hexStringFromColor(color: circle.fillColor)
+        var center: JSObject = JSObject()
+        
+        center = [
+            "lat": circle.center.lat,
+            "lng": circle.center.lng
+        ]
+        
+        return [
+            "id": String(circleId),
+            "mapId": mapId,
+            "center": center,
+            "radius": circle.radius,
+            "strokeColor": hexStrokeColor,
+            "fillColor": hexFillColor,
+            "strokeWidth": circle.strokeWidth,
+            "visible": circle.visible,
+            "tappable": circle.tappable,
+            "zIndex": circle.zIndex
+        ]
+    }
     
     private func formatMapBoundsForResponse(_ bounds: GMSCoordinateBounds) -> PluginCallResultData {
         return [
@@ -1845,6 +1799,164 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
     }
     
     // END POLYLINE METHODS
+    
+    // BEGIN CIRCLE METHODS
+    
+    @objc func addCircles(_ call: CAPPluginCall) {
+        do {
+            var pairsIdCircle: [(Int, Circle)] = []
+            guard let id = call.getString("id") else {
+                throw GoogleMapErrors.invalidMapId
+            }
+
+            guard let optionsListObjs = call.getArray("optionsList") as? [JSObject] else {
+                throw GoogleMapErrors.invalidArguments("options array is missing")
+            }
+
+            if optionsListObjs.isEmpty {
+                throw GoogleMapErrors.invalidArguments("options requires at least one option")
+            }
+
+            guard let map = self.maps[id] else {
+                throw GoogleMapErrors.mapNotFound
+            }
+
+            var optionsList: [CircleOptions] = []
+
+            try optionsListObjs.forEach { options in
+                let opts = try CircleOptions(fromJSObject: options)
+                optionsList.append(opts)
+            }
+
+            pairsIdCircle = try map.addCircles(optionsList: optionsList)
+
+            call.resolve(["circles": pairsIdCircle.map({ pair in
+                return formatCircleForResponse(circleId: pair.0, mapId: id, circle: pair.1)
+            })])
+        } catch {
+            handleError(call, error: error)
+        }
+    }
+    
+    @objc func addCircle(_ call: CAPPluginCall) {
+        do {
+            guard let id = call.getString("id") else {
+                throw GoogleMapErrors.invalidMapId
+            }
+            
+            guard let optionsObj = call.getObject("options") else {
+                throw GoogleMapErrors.invalidArguments("options object is missing")
+            }
+            
+            let options = try CircleOptions(fromJSObject: optionsObj)
+            
+            guard let map = self.maps[id] else {
+                throw GoogleMapErrors.mapNotFound
+            }
+            
+            let (circleId, addedCircle) = try map.addCircle(options: options)
+            call.resolve(formatCircleForResponse(circleId: circleId, mapId: id, circle: addedCircle))
+            
+        } catch {
+            handleError(call, error: error)
+        }
+    }
+    
+    @objc func setCircleCenter(_ call: CAPPluginCall) {
+        do {
+            guard let id = call.getString("id") else {
+                throw GoogleMapErrors.invalidMapId
+            }
+
+            guard let circleIdString = call.getString("circleId") else {
+                throw GoogleMapErrors.invalidArguments("circleId is invalid or missing")
+            }
+
+            guard let circleId = Int(circleIdString) else {
+                throw GoogleMapErrors.invalidArguments("circleId is invalid or missing")
+            }
+                        
+            guard let centerObj = call.getObject("center") else {
+                throw GoogleMapErrors.invalidArguments("center is invalid or missing")
+            }
+            
+            let center = LatLng(lat: centerObj["lat"] as! Double, lng: centerObj["lng"] as! Double)
+                        
+            guard let map = self.maps[id] else {
+                throw GoogleMapErrors.mapNotFound
+            }
+
+            try map.setCircleCenter(circleId: circleId, center: center)
+
+            call.resolve()
+
+        } catch {
+            handleError(call, error: error)
+        }
+    }
+    
+    @objc func removeCircle(_ call: CAPPluginCall) {
+        do {
+            guard let id = call.getString("id") else {
+                throw GoogleMapErrors.invalidMapId
+            }
+
+            guard let circleIdString = call.getString("circleId") else {
+                throw GoogleMapErrors.invalidArguments("circleId is invalid or missing")
+            }
+
+            guard let circleId = Int(circleIdString) else {
+                throw GoogleMapErrors.invalidArguments("circleId is invalid or missing")
+            }
+            
+            guard let map = self.maps[id] else {
+                throw GoogleMapErrors.mapNotFound
+            }
+
+            try map.removeCircle(circleId: circleId)
+
+            call.resolve()
+
+        } catch {
+            handleError(call, error: error)
+        }
+    }
+    
+    @objc func removeCircles(_ call: CAPPluginCall) {
+        do {
+            guard let id = call.getString("id") else {
+                throw GoogleMapErrors.invalidMapId
+            }
+
+            guard let circleIdsStrings = call.getArray("circleIds") as? [String] else {
+                throw GoogleMapErrors.invalidArguments("circleIds are invalid or missing")
+            }
+
+            if circleIdsStrings.isEmpty {
+                throw GoogleMapErrors.invalidArguments("circleIds requires at least one cicle id")
+            }
+
+            let ids: [Int] = try circleIdsStrings.map { idString in
+                guard let circleId = Int(idString) else {
+                    throw GoogleMapErrors.invalidArguments("circleIds are invalid or missing")
+                }
+
+                return circleId
+            }
+
+            guard let map = self.maps[id] else {
+                throw GoogleMapErrors.mapNotFound
+            }
+
+            try map.removeCircles(ids: ids)
+
+            call.resolve()
+        } catch {
+            handleError(call, error: error)
+        }
+    }
+    
+    // END CIRCLE METHODS
 }
 
 // snippet from https://www.hackingwithswift.com/example-code/uicolor/how-to-convert-a-hex-color-to-a-uicolor

@@ -258,23 +258,6 @@ public class Map {
         return polygonHashes
     }
 
-    func addCircles(circles: [Circle]) throws -> [Int] {
-        var circleHashes: [Int] = []
-
-        DispatchQueue.main.sync {
-            circles.forEach { circle in
-                let newCircle = self.buildCircle(circle: circle)
-                newCircle.map = self.mapViewController.GMapView
-
-                self.circles[newCircle.hash.hashValue] = newCircle
-
-                circleHashes.append(newCircle.hash.hashValue)
-            }
-        }
-
-        return circleHashes
-    }
-
     func enableClustering(_ minClusterSize: Int?) {
         if !self.mapViewController.clusteringEnabled {
             DispatchQueue.main.sync {
@@ -310,50 +293,12 @@ public class Map {
         }
     }
 
-    func removeMarker(id: Int) throws {
-        if let marker = self.markers[id] {
-            DispatchQueue.main.async {
-                if self.mapViewController.clusteringEnabled {
-                    self.mapViewController.removeMarkersFromCluster(markers: [marker])
-                }
-
-                marker.map = nil
-                self.markers.removeValue(forKey: id)
-
-            }
-        } else {
-            throw GoogleMapErrors.markerNotFound
-        }
-    }
-
     func removePolygons(ids: [Int]) throws {
         DispatchQueue.main.sync {
             ids.forEach { id in
                 if let polygon = self.polygons[id] {
                     polygon.map = nil
                     self.polygons.removeValue(forKey: id)
-                }
-            }
-        }
-    }
-
-    func removeCircles(ids: [Int]) throws {
-        DispatchQueue.main.sync {
-            ids.forEach { id in
-                if let circle = self.circles[id] {
-                    circle.map = nil
-                    self.circles.removeValue(forKey: id)
-                }
-            }
-        }
-    }
-
-    func removePolylines(ids: [Int]) throws {
-        DispatchQueue.main.sync {
-            ids.forEach { id in
-                if let line = self.polylines[id] {
-                    line.map = nil
-                    self.polylines.removeValue(forKey: id)
                 }
             }
         }
@@ -679,6 +624,22 @@ public class Map {
         return LatLng(lat: marker.position.latitude, lng: marker.position.longitude)
     }
     
+    func removeMarker(id: Int) throws {
+        if let marker = self.markers[id] {
+            DispatchQueue.main.async {
+                if self.mapViewController.clusteringEnabled {
+                    self.mapViewController.removeMarkersFromCluster(markers: [marker])
+                }
+
+                marker.map = nil
+                self.markers.removeValue(forKey: id)
+
+            }
+        } else {
+            throw GoogleMapErrors.markerNotFound
+        }
+    }
+    
     private func resizeImage(image: UIImage, targetSize: CGSize) -> UIImage {
         let renderer = UIGraphicsImageRenderer(size: targetSize)
         return renderer.image { _ in
@@ -760,7 +721,91 @@ public class Map {
         }
     }
     
+    func removePolylines(ids: [Int]) throws {
+        DispatchQueue.main.sync {
+            ids.forEach { id in
+                if let line = self.polylines[id] {
+                    line.map = nil
+                    self.polylines.removeValue(forKey: id)
+                }
+            }
+        }
+    }
+    
     // END POLYLINE METHODS
+    
+    // BEGIN CIRCLE METHODS
+    
+    func addCircles(optionsList: [CircleOptions]) throws -> [(Int, Circle)] {
+        var pairsIdCircle: [(Int, Circle)] = []
+        var circles: [Circle] = []
+        try optionsList.forEach{ options in
+             let circle =  try Circle(options: options)
+            circles.append(circle)
+         }
+        DispatchQueue.main.sync {
+            circles.forEach { circle in
+                let newCircle = self.buildCircle(circle: circle)
+                newCircle.map = self.mapViewController.GMapView
+
+                self.circles[newCircle.hash.hashValue] = newCircle
+
+                pairsIdCircle.append((newCircle.hash.hashValue, addedCircle: circle))
+            }
+        }
+
+        return pairsIdCircle
+    }
+    
+    func addCircle(options: CircleOptions) throws -> (Int, Circle) {
+        var circleHash:Int = 0
+        var newCircle: GMSCircle = GMSCircle()
+        let circle = try Circle(options: options)
+        
+        DispatchQueue.main.sync {
+            newCircle = self.buildCircle(circle: circle)
+            newCircle.map = self.mapViewController.GMapView
+
+            self.circles[newCircle.hash.hashValue] = newCircle
+            circleHash = newCircle.hash.hashValue
+        }
+
+        return (circleHash, circle)
+    }
+    
+    func setCircleCenter(circleId: Int, center: LatLng) throws {
+        guard let circle = self.circles[circleId] else {
+            throw GoogleMapErrors.circleNotFound
+        }
+        
+        DispatchQueue.main.sync {
+            circle.position = CLLocationCoordinate2D(latitude: center.lat, longitude: center.lng)
+        }
+    }
+    
+    func removeCircles(ids: [Int]) throws {
+        DispatchQueue.main.sync {
+            ids.forEach { id in
+                if let circle = self.circles[id] {
+                    circle.map = nil
+                    self.circles.removeValue(forKey: id)
+                }
+            }
+        }
+    }
+    
+    func removeCircle(circleId: Int) throws {
+        if let circle = self.circles[circleId] {
+            DispatchQueue.main.async {
+                circle.map = nil
+                self.circles.removeValue(forKey: circleId)
+            }
+        } else {
+            throw GoogleMapErrors.circleNotFound
+        }
+    }
+    
+    // END CIRCLE METHODS
 
     func fromPointToLatLng(points: [Double]) throws -> LatLng {
         guard points.count == 2 else {
@@ -838,6 +883,9 @@ public class Map {
         newCircle.radius = CLLocationDistance(circle.radius)
         newCircle.isTappable = circle.tappable ?? false
         newCircle.zIndex = circle.zIndex
+        if(circle.visible != nil){
+            newCircle.map = circle.visible! ? newCircle.map : nil
+        }
         newCircle.userData = circle.tag
 
         return newCircle

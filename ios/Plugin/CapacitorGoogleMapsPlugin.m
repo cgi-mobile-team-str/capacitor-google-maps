@@ -57,4 +57,7 @@ CAP_PLUGIN(CapacitorGoogleMapsPlugin, "CapacitorGoogleMaps",
    CAP_PLUGIN_METHOD(setCameraTarget, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(getCameraTarget, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(fromPointToLatLng, CAPPluginReturnPromise);
+   CAP_PLUGIN_METHOD(addCircle, CAPPluginReturnPromise);
+   CAP_PLUGIN_METHOD(setCircleCenter, CAPPluginReturnPromise);
+   CAP_PLUGIN_METHOD(removeCircle, CAPPluginReturnPromise);
 )
