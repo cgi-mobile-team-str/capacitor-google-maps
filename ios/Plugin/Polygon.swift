@@ -11,7 +11,8 @@ public struct Polygon {
     let title: String?
     let zIndex: Int32
     let tag: String?
-
+    let visible: Bool?
+    
     init(fromJSObject: JSObject) throws {
         var strokeColor = UIColor.blue
         var strokeWidth: CGFloat = 1.0
@@ -45,12 +46,12 @@ public struct Polygon {
         if let obj = shapeJSArray.first, obj as? JSArray != nil {
             try shapeJSArray.forEach({ obj in
                 if let shapeArr = obj as? JSArray {
-                    try processedShapes.append(Polygon.processShape(shapeArr))
+                    try processedShapes.append(GoogleMapsUtils.processShape(shapeArr))
                 }
             })
         } else {
             // is a single shape
-            try processedShapes.append(Polygon.processShape(shapeJSArray))
+            try processedShapes.append(GoogleMapsUtils.processShape(shapeJSArray))
         }
 
         self.shapes = processedShapes
@@ -62,23 +63,27 @@ public struct Polygon {
         self.title = fromJSObject["title"] as? String
         self.geodesic = fromJSObject["geodesic"] as? Bool
         self.zIndex = Int32((fromJSObject["zIndex"] as? Int) ?? 0)
+        self.visible = fromJSObject["visible"] as? Bool ?? true
     }
-
-    private static func processShape(_ shapeArr: JSArray) throws -> [LatLng] {
-        var shape: [LatLng] = []
-
-        try shapeArr.forEach { obj in
-            guard let jsCoord = obj as? JSObject else {
-                throw GoogleMapErrors.invalidArguments("LatLng object is missing the required 'lat' and/or 'lng' property")
-            }
-
-            guard let lat = jsCoord["lat"] as? Double, let lng = jsCoord["lng"] as? Double else {
-                throw GoogleMapErrors.invalidArguments("LatLng object is missing the required 'lat' and/or 'lng' property")
-            }
-
-            shape.append(LatLng(lat: lat, lng: lng))
+    
+    init(options: PolygonOptions) throws {
+        var strokeColor: UIColor = UIColor.blue
+        var fillColor: UIColor = UIColor.blue
+        self.shapes = options.points
+        if let strokeColorOption = options.strokeColor {
+            strokeColor = GoogleMapsUtils.parseToUIColor(strokeColorOption) ?? UIColor.blue
         }
-
-        return shape
+        if let fillColorOption = options.fillColor {
+            fillColor = GoogleMapsUtils.parseToUIColor(fillColorOption) ?? UIColor.blue
+        }
+        self.strokeColor = strokeColor
+        self.fillColor = fillColor
+        self.strokeWidth = CGFloat(options.strokeWidth ?? 0)
+        self.zIndex = Int32(options.zIndex ?? 0)
+        self.tappable = false
+        self.geodesic = false
+        self.tag = ""
+        self.title = ""
+        self.visible = options.visible ?? true
     }
 }

@@ -244,178 +244,6 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
         }
     }
 
-    @objc func addPolygons(_ call: CAPPluginCall) {
-        do {
-            guard let id = call.getString("id") else {
-                throw GoogleMapErrors.invalidMapId
-            }
-
-            guard let shapeObjs = call.getArray("polygons") as? [JSObject] else {
-                throw GoogleMapErrors.invalidArguments("polygons array is missing")
-            }
-
-            if shapeObjs.isEmpty {
-                throw GoogleMapErrors.invalidArguments("polygons requires at least one shape")
-            }
-
-            guard let map = self.maps[id] else {
-                throw GoogleMapErrors.mapNotFound
-            }
-
-            var shapes: [Polygon] = []
-
-            try shapeObjs.forEach { shapeObj in
-                let polygon = try Polygon(fromJSObject: shapeObj)
-                shapes.append(polygon)
-            }
-
-            let ids = try map.addPolygons(polygons: shapes)
-
-            call.resolve(["ids": ids.map({ id in
-                return String(id)
-            })])
-        } catch {
-            handleError(call, error: error)
-        }
-    }
-
-    @objc func removePolygons(_ call: CAPPluginCall) {
-        do {
-            guard let id = call.getString("id") else {
-                throw GoogleMapErrors.invalidMapId
-            }
-
-            guard let polygonIdsStrings = call.getArray("polygonIds") as? [String] else {
-                throw GoogleMapErrors.invalidArguments("polygonIds are invalid or missing")
-            }
-
-            if polygonIdsStrings.isEmpty {
-                throw GoogleMapErrors.invalidArguments("polygonIds requires at least one polygon id")
-            }
-
-            let ids: [Int] = try polygonIdsStrings.map { idString in
-                guard let polygonId = Int(idString) else {
-                    throw GoogleMapErrors.invalidArguments("polygonIds are invalid or missing")
-                }
-
-                return polygonId
-            }
-
-            guard let map = self.maps[id] else {
-                throw GoogleMapErrors.mapNotFound
-            }
-
-            try map.removePolygons(ids: ids)
-
-            call.resolve()
-        } catch {
-            handleError(call, error: error)
-        }
-    }
-
-    @objc func addCircles(_ call: CAPPluginCall) {
-        do {
-            guard let id = call.getString("id") else {
-                throw GoogleMapErrors.invalidMapId
-            }
-
-            guard let circleObjs = call.getArray("circles") as? [JSObject] else {
-                throw GoogleMapErrors.invalidArguments("circles array is missing")
-            }
-
-            if circleObjs.isEmpty {
-                throw GoogleMapErrors.invalidArguments("circles requires at least one circle")
-            }
-
-            guard let map = self.maps[id] else {
-                throw GoogleMapErrors.mapNotFound
-            }
-
-            var circles: [Circle] = []
-
-            try circleObjs.forEach { circleObj in
-                let circle = try Circle(from: circleObj)
-                circles.append(circle)
-            }
-
-            let ids = try map.addCircles(circles: circles)
-
-            call.resolve(["ids": ids.map({ id in
-                return String(id)
-            })])
-        } catch {
-            handleError(call, error: error)
-        }
-    }
-
-    @objc func removeCircles(_ call: CAPPluginCall) {
-        do {
-            guard let id = call.getString("id") else {
-                throw GoogleMapErrors.invalidMapId
-            }
-
-            guard let circleIdsStrings = call.getArray("circleIds") as? [String] else {
-                throw GoogleMapErrors.invalidArguments("circleIds are invalid or missing")
-            }
-
-            if circleIdsStrings.isEmpty {
-                throw GoogleMapErrors.invalidArguments("circleIds requires at least one cicle id")
-            }
-
-            let ids: [Int] = try circleIdsStrings.map { idString in
-                guard let circleId = Int(idString) else {
-                    throw GoogleMapErrors.invalidArguments("circleIds are invalid or missing")
-                }
-
-                return circleId
-            }
-
-            guard let map = self.maps[id] else {
-                throw GoogleMapErrors.mapNotFound
-            }
-
-            try map.removeCircles(ids: ids)
-
-            call.resolve()
-        } catch {
-            handleError(call, error: error)
-        }
-    }
-
-    @objc func removePolylines(_ call: CAPPluginCall) {
-        do {
-            guard let id = call.getString("id") else {
-                throw GoogleMapErrors.invalidMapId
-            }
-
-            guard let polylineIdsStrings = call.getArray("polylineIds") as? [String] else {
-                throw GoogleMapErrors.invalidArguments("polylineIds are invalid or missing")
-            }
-
-            if polylineIdsStrings.isEmpty {
-                throw GoogleMapErrors.invalidArguments("polylineIds requires at least one polyline id")
-            }
-
-            let ids: [Int] = try polylineIdsStrings.map { idString in
-                guard let polylineId = Int(idString) else {
-                    throw GoogleMapErrors.invalidArguments("polylineIds are invalid or missing")
-                }
-
-                return polylineId
-            }
-
-            guard let map = self.maps[id] else {
-                throw GoogleMapErrors.mapNotFound
-            }
-
-            try map.removePolylines(ids: ids)
-
-            call.resolve()
-        } catch {
-            handleError(call, error: error)
-        }
-    }
-
     @objc func animateCamera(_ call: CAPPluginCall) {
         do {
             guard let id = call.getString("id") else {
@@ -483,6 +311,29 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
             handleError(call, error: error)
         }
     }
+    
+    @objc func getCameraTarget(_ call: CAPPluginCall) {
+        do {
+            guard let id = call.getString("id") else {
+                throw GoogleMapErrors.invalidMapId
+            }
+
+            guard let map = self.maps[id] else {
+                throw GoogleMapErrors.mapNotFound
+            }
+
+            let cameraTarget = map.getCameraTarget()
+
+            call.resolve([
+                "cameraTarget":  [
+                    "lat": cameraTarget.lat,
+                    "lng": cameraTarget.lng
+                ]
+            ])
+        } catch {
+            handleError(call, error: error)
+        }
+    }
 
     @objc func getMapType(_ call: CAPPluginCall) {
         do {
@@ -521,6 +372,44 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
             try map.setCameraBearing(bearing: bearing)
 
             call.resolve()
+        } catch {
+            handleError(call, error: error)
+        }
+    }
+    
+    @objc func setCameraTarget(_ call: CAPPluginCall) {
+        do {
+            guard let id = call.getString("id") else {
+                throw GoogleMapErrors.invalidMapId
+            }
+
+            guard let map = self.maps[id] else {
+                throw GoogleMapErrors.mapNotFound
+            }
+
+            let targetObj = call.getObject("target")
+            let targetArray = call.getArray("target")
+
+            if(targetObj == nil && targetArray == nil) {
+                throw GoogleMapErrors.invalidArguments("target is missing")
+            }
+            
+            if(targetObj != nil) {
+                let target: CLLocationCoordinate2D = try GoogleMapsUtils.getCLLocationCoordinate(targetObj!)
+                try map.setCameraTarget(target: target)
+                call.resolve()
+            }
+            
+            if(targetArray != nil) {
+                var targets: [CLLocationCoordinate2D] = []
+               try targetArray!.forEach { target in
+                   let coordinate: CLLocationCoordinate2D = try GoogleMapsUtils.getCLLocationCoordinate(target as! JSObject)
+                    targets.append(coordinate)
+                }
+                try map.setCameraTarget(target: targets)
+                call.resolve()
+            }
+   
         } catch {
             handleError(call, error: error)
         }
@@ -937,13 +826,13 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
                 throw GoogleMapErrors.mapNotFound
             }
 
-            let isBuildingsEnabled = call.getBool("isBuildingsEnabled")
+            let building = call.getBool("building")
             let paddingObj = call.getObject("padding")
             var padding: GoogleMapPadding? = nil
             if(paddingObj != nil) {
                 padding = try GoogleMapPadding.init(fromJSObject: paddingObj!)
             }
-            try map.setMapPreferences(padding: padding, isBuildingsEnabled: isBuildingsEnabled)
+            try map.setMapPreferences(padding: padding, building: building)
             call.resolve()
         } catch {
             handleError(call, error: error)
@@ -961,7 +850,7 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
             }
 
             let bounds = try getGMSCoordinateBounds(boundsObject)
-            let point = try getCLLocationCoordinate(pointObject)
+            let point = try GoogleMapsUtils.getCLLocationCoordinate(pointObject)
 
             call.resolve([
                 "contains": bounds.contains(point)
@@ -1006,7 +895,7 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
             }
 
             let bounds = try getGMSCoordinateBounds(boundsObject)
-            let point = try getCLLocationCoordinate(pointObject)
+            let point = try GoogleMapsUtils.getCLLocationCoordinate(pointObject)
 
             DispatchQueue.main.sync {
                 let newBounds = bounds.includingCoordinate(point)
@@ -1014,6 +903,39 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
                     "bounds": formatMapBoundsForResponse(newBounds)
                 ])
             }
+        } catch {
+            handleError(call, error: error)
+        }
+    }
+    
+    @objc func fromPointToLatLng(_ call: CAPPluginCall) {
+        do {
+            guard let id = call.getString("id") else {
+                throw GoogleMapErrors.invalidMapId
+            }
+
+            guard let map = self.maps[id] else {
+                throw GoogleMapErrors.mapNotFound
+            }
+
+            guard let pointsArr = call.getArray("points") as? [Double] else {
+                throw GoogleMapErrors.invalidArguments("points is missing")
+            }
+            
+            var points: [Double] = []
+            
+            for point in pointsArr {
+                points.append(point)
+            }
+
+            let latLng = try map.fromPointToLatLng(points: points)
+
+            call.resolve([
+                "latLng": [
+                    "lat": latLng.lat,
+                    "lng": latLng.lng
+                ]
+            ])
         } catch {
             handleError(call, error: error)
         }
@@ -1029,21 +951,9 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
         }
 
         return GMSCoordinateBounds(
-            coordinate: try getCLLocationCoordinate(southwest),
-            coordinate: try getCLLocationCoordinate(northeast)
+            coordinate: try GoogleMapsUtils.getCLLocationCoordinate(southwest),
+            coordinate: try GoogleMapsUtils.getCLLocationCoordinate(northeast)
         )
-    }
-
-    private func getCLLocationCoordinate(_ point: JSObject) throws -> CLLocationCoordinate2D {
-        guard let lat = point["lat"] as? Double else {
-            throw GoogleMapErrors.unhandledError("Point lat property not formatted properly.")
-        }
-
-        guard let lng = point["lng"] as? Double else {
-            throw GoogleMapErrors.unhandledError("Point lng property not formatted properly.")
-        }
-
-        return CLLocationCoordinate2D(latitude: lat, longitude: lng)
     }
 
     private func formatMapBoundsForResponse(bounds: GMSCoordinateBounds?, cameraPosition: GMSCameraPosition) -> PluginCallResultData {
@@ -1157,19 +1067,69 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
         return results
     }
     
+    private func formatCircleForResponse(circleId: Int, mapId: String, circle: Circle) -> PluginCallResultData {
+        let hexStrokeColor =  GoogleMapsUtils.hexStringFromColor(color: circle.strokeColor)
+        let hexFillColor = GoogleMapsUtils.hexStringFromColor(color: circle.fillColor)
+        var center: JSObject = JSObject()
+        
+        center = [
+            "lat": circle.center.lat,
+            "lng": circle.center.lng
+        ]
+        
+        return [
+            "id": String(circleId),
+            "mapId": mapId,
+            "center": center,
+            "radius": circle.radius,
+            "strokeColor": hexStrokeColor,
+            "fillColor": hexFillColor,
+            "strokeWidth": circle.strokeWidth,
+            "visible": circle.visible,
+            "tappable": circle.tappable,
+            "zIndex": circle.zIndex
+        ]
+    }
+    
+    private func formatPolygonForResponse(polygonId: Int, mapId: String, polygon: Polygon) -> PluginCallResultData {
+        let hexStrokeColor = GoogleMapsUtils.hexStringFromColor(color: polygon.strokeColor)
+        let hexFillColor = GoogleMapsUtils.hexStringFromColor(color: polygon.fillColor)
+
+        var points: JSArray = []
+
+        for ring in polygon.shapes {
+            var ringArray: JSArray = []
+            for coord in ring {
+                ringArray.append([
+                    "lat": coord.lat,
+                    "lng": coord.lng
+                ])
+            }
+            points.append(ringArray)
+        }
+
+        return [
+            "id": String(polygonId),
+            "mapId": mapId,
+            "points": points,
+            "strokeColor": hexStrokeColor,
+            "fillColor": hexFillColor,
+            "strokeWidth": polygon.strokeWidth,
+            "visible": polygon.visible ?? true,
+            "tappable": polygon.tappable ?? false,
+            "zIndex": polygon.zIndex
+        ]
+    }
     
     private func formatMapBoundsForResponse(_ bounds: GMSCoordinateBounds) -> PluginCallResultData {
-        let centerLatitude = (bounds.southWest.latitude + bounds.northEast.latitude) / 2.0
-        let centerLongitude = (bounds.southWest.longitude + bounds.northEast.longitude) / 2.0
-
         return [
             "southwest": [
                 "lat": bounds.southWest.latitude,
                 "lng": bounds.southWest.longitude
             ],
             "center": [
-                "lat": centerLatitude,
-                "lng": centerLongitude
+                "lat": GoogleMapsUtils.getCenterFromBound(bounds).latitude,
+                "lng": GoogleMapsUtils.getCenterFromBound(bounds).longitude
             ],
             "northeast": [
                 "lat": bounds.northEast.latitude,
@@ -1765,7 +1725,325 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
         }
     }
     
+    @objc func removePolylines(_ call: CAPPluginCall) {
+        do {
+            guard let id = call.getString("id") else {
+                throw GoogleMapErrors.invalidMapId
+            }
+
+            guard let polylineIdsStrings = call.getArray("polylineIds") as? [String] else {
+                throw GoogleMapErrors.invalidArguments("polylineIds are invalid or missing")
+            }
+
+            if polylineIdsStrings.isEmpty {
+                throw GoogleMapErrors.invalidArguments("polylineIds requires at least one polyline id")
+            }
+
+            let ids: [Int] = try polylineIdsStrings.map { idString in
+                guard let polylineId = Int(idString) else {
+                    throw GoogleMapErrors.invalidArguments("polylineIds are invalid or missing")
+                }
+
+                return polylineId
+            }
+
+            guard let map = self.maps[id] else {
+                throw GoogleMapErrors.mapNotFound
+            }
+
+            try map.removePolylines(ids: ids)
+
+            call.resolve()
+        } catch {
+            handleError(call, error: error)
+        }
+    }
+    
     // END POLYLINE METHODS
+    
+    // BEGIN CIRCLE METHODS
+    
+    @objc func addCircles(_ call: CAPPluginCall) {
+        do {
+            var pairsIdCircle: [(Int, Circle)] = []
+            guard let id = call.getString("id") else {
+                throw GoogleMapErrors.invalidMapId
+            }
+
+            guard let optionsListObjs = call.getArray("optionsList") as? [JSObject] else {
+                throw GoogleMapErrors.invalidArguments("options array is missing")
+            }
+
+            if optionsListObjs.isEmpty {
+                throw GoogleMapErrors.invalidArguments("options requires at least one option")
+            }
+
+            guard let map = self.maps[id] else {
+                throw GoogleMapErrors.mapNotFound
+            }
+
+            var optionsList: [CircleOptions] = []
+
+            try optionsListObjs.forEach { options in
+                let opts = try CircleOptions(fromJSObject: options)
+                optionsList.append(opts)
+            }
+
+            pairsIdCircle = try map.addCircles(optionsList: optionsList)
+
+            call.resolve(["circles": pairsIdCircle.map({ pair in
+                return formatCircleForResponse(circleId: pair.0, mapId: id, circle: pair.1)
+            })])
+        } catch {
+            handleError(call, error: error)
+        }
+    }
+    
+    @objc func addCircle(_ call: CAPPluginCall) {
+        do {
+            guard let id = call.getString("id") else {
+                throw GoogleMapErrors.invalidMapId
+            }
+            
+            guard let optionsObj = call.getObject("options") else {
+                throw GoogleMapErrors.invalidArguments("options object is missing")
+            }
+            
+            let options = try CircleOptions(fromJSObject: optionsObj)
+            
+            guard let map = self.maps[id] else {
+                throw GoogleMapErrors.mapNotFound
+            }
+            
+            let (circleId, addedCircle) = try map.addCircle(options: options)
+            call.resolve(formatCircleForResponse(circleId: circleId, mapId: id, circle: addedCircle))
+            
+        } catch {
+            handleError(call, error: error)
+        }
+    }
+    
+    @objc func setCircleCenter(_ call: CAPPluginCall) {
+        do {
+            guard let id = call.getString("id") else {
+                throw GoogleMapErrors.invalidMapId
+            }
+
+            guard let circleIdString = call.getString("circleId") else {
+                throw GoogleMapErrors.invalidArguments("circleId is invalid or missing")
+            }
+
+            guard let circleId = Int(circleIdString) else {
+                throw GoogleMapErrors.invalidArguments("circleId is invalid or missing")
+            }
+                        
+            guard let centerObj = call.getObject("center") else {
+                throw GoogleMapErrors.invalidArguments("center is invalid or missing")
+            }
+            
+            let center = LatLng(lat: centerObj["lat"] as! Double, lng: centerObj["lng"] as! Double)
+                        
+            guard let map = self.maps[id] else {
+                throw GoogleMapErrors.mapNotFound
+            }
+
+            try map.setCircleCenter(circleId: circleId, center: center)
+
+            call.resolve()
+
+        } catch {
+            handleError(call, error: error)
+        }
+    }
+    
+    @objc func removeCircle(_ call: CAPPluginCall) {
+        do {
+            guard let id = call.getString("id") else {
+                throw GoogleMapErrors.invalidMapId
+            }
+
+            guard let circleIdString = call.getString("circleId") else {
+                throw GoogleMapErrors.invalidArguments("circleId is invalid or missing")
+            }
+
+            guard let circleId = Int(circleIdString) else {
+                throw GoogleMapErrors.invalidArguments("circleId is invalid or missing")
+            }
+            
+            guard let map = self.maps[id] else {
+                throw GoogleMapErrors.mapNotFound
+            }
+
+            try map.removeCircle(circleId: circleId)
+
+            call.resolve()
+
+        } catch {
+            handleError(call, error: error)
+        }
+    }
+    
+    @objc func removeCircles(_ call: CAPPluginCall) {
+        do {
+            guard let id = call.getString("id") else {
+                throw GoogleMapErrors.invalidMapId
+            }
+
+            guard let circleIdsStrings = call.getArray("circleIds") as? [String] else {
+                throw GoogleMapErrors.invalidArguments("circleIds are invalid or missing")
+            }
+
+            if circleIdsStrings.isEmpty {
+                throw GoogleMapErrors.invalidArguments("circleIds requires at least one cicle id")
+            }
+
+            let ids: [Int] = try circleIdsStrings.map { idString in
+                guard let circleId = Int(idString) else {
+                    throw GoogleMapErrors.invalidArguments("circleIds are invalid or missing")
+                }
+
+                return circleId
+            }
+
+            guard let map = self.maps[id] else {
+                throw GoogleMapErrors.mapNotFound
+            }
+
+            try map.removeCircles(ids: ids)
+
+            call.resolve()
+        } catch {
+            handleError(call, error: error)
+        }
+    }
+    
+    // END CIRCLE METHODS
+    
+    // BEGIN POLYGON METHODS
+    
+    @objc func addPolygons(_ call: CAPPluginCall) {
+        do {
+            var pairsIdPolygon: [(Int, Polygon)] = []
+            guard let id = call.getString("id") else {
+                throw GoogleMapErrors.invalidMapId
+            }
+
+            guard let optionsListObjs = call.getArray("optionsList") as? [JSObject] else {
+                throw GoogleMapErrors.invalidArguments("options array is missing")
+            }
+
+            if optionsListObjs.isEmpty {
+                throw GoogleMapErrors.invalidArguments("options requires at least one option")
+            }
+
+            guard let map = self.maps[id] else {
+                throw GoogleMapErrors.mapNotFound
+            }
+
+            var optionsList: [PolygonOptions] = []
+
+            try optionsListObjs.forEach { options in
+                let opts = try PolygonOptions(fromJSObject: options)
+                optionsList.append(opts)
+            }
+
+            pairsIdPolygon = try map.addPolygons(optionsList: optionsList)
+
+            call.resolve(["polygons": pairsIdPolygon.map({ pair in
+                return formatPolygonForResponse(polygonId: pair.0, mapId: id, polygon: pair.1)
+            })])
+        } catch {
+            handleError(call, error: error)
+        }
+    }
+    
+    @objc func addPolygon(_ call: CAPPluginCall) {
+        do {
+            guard let id = call.getString("id") else {
+                throw GoogleMapErrors.invalidMapId
+            }
+            
+            guard let optionsObj = call.getObject("options") else {
+                throw GoogleMapErrors.invalidArguments("options object is missing")
+            }
+            
+            let options = try PolygonOptions(fromJSObject: optionsObj)
+            
+            guard let map = self.maps[id] else {
+                throw GoogleMapErrors.mapNotFound
+            }
+            
+            let (polygonId, addedPolygon) = try map.addPolygon(options: options)
+            call.resolve(formatPolygonForResponse(polygonId: polygonId, mapId: id, polygon: addedPolygon))
+            
+        } catch {
+            handleError(call, error: error)
+        }
+    }
+    
+    @objc func removePolygon(_ call: CAPPluginCall) {
+        do {
+            guard let id = call.getString("id") else {
+                throw GoogleMapErrors.invalidMapId
+            }
+
+            guard let polygonIdString = call.getString("polygonId") else {
+                throw GoogleMapErrors.invalidArguments("polygonId is invalid or missing")
+            }
+
+            guard let polygonId = Int(polygonIdString) else {
+                throw GoogleMapErrors.invalidArguments("polygonId is invalid or missing")
+            }
+            
+            guard let map = self.maps[id] else {
+                throw GoogleMapErrors.mapNotFound
+            }
+
+            try map.removePolygon(polygonId: polygonId)
+
+            call.resolve()
+
+        } catch {
+            handleError(call, error: error)
+        }
+    }
+
+    @objc func removePolygons(_ call: CAPPluginCall) {
+        do {
+            guard let id = call.getString("id") else {
+                throw GoogleMapErrors.invalidMapId
+            }
+
+            guard let polygonIdsStrings = call.getArray("polygonIds") as? [String] else {
+                throw GoogleMapErrors.invalidArguments("polygonIds are invalid or missing")
+            }
+
+            if polygonIdsStrings.isEmpty {
+                throw GoogleMapErrors.invalidArguments("polygonIds requires at least one polygon id")
+            }
+
+            let ids: [Int] = try polygonIdsStrings.map { idString in
+                guard let polygonId = Int(idString) else {
+                    throw GoogleMapErrors.invalidArguments("polygonIds are invalid or missing")
+                }
+
+                return polygonId
+            }
+
+            guard let map = self.maps[id] else {
+                throw GoogleMapErrors.mapNotFound
+            }
+
+            try map.removePolygons(ids: ids)
+
+            call.resolve()
+        } catch {
+            handleError(call, error: error)
+        }
+    }
+
+    
+    // END POLYGON METHODS
 }
 
 // snippet from https://www.hackingwithswift.com/example-code/uicolor/how-to-convert-a-hex-color-to-a-uicolor

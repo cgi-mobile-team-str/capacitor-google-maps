@@ -1,22 +1,24 @@
 package com.capacitorjs.plugins.googlemaps
 
 import android.graphics.Color
+import com.capacitorjs.plugins.googlemaps.CapacitorGoogleMapPolyline
 import com.google.android.gms.maps.model.Circle
 import com.google.android.gms.maps.model.LatLng
 import org.json.JSONObject
 
-class CapacitorGoogleMapsCircle(fromJSONObject: JSONObject) {
-    var center: LatLng
-    var radius: Float
+class CapacitorGoogleMapsCircle() {
+    var center: LatLng = LatLng(0.0, 0.0)
+    var radius: Float = 0.0f
     var strokeWidth: Float = 1.0f
     var strokeColor: Int = Color.BLUE
     var fillColor: Int = Color.BLUE
-    var clickable: Boolean
+    var clickable: Boolean = false
     var zIndex: Float = 0.00f
     var tag: String = ""
     var googleMapsCircle: Circle? = null
+    var visible: Boolean? = true
 
-    init {
+    constructor(fromJSONObject: JSONObject): this() {
         if (!fromJSONObject.has("center")) {
             throw InvalidArgumentsError("Circle object is missing the required 'center' property")
         }
@@ -38,26 +40,29 @@ class CapacitorGoogleMapsCircle(fromJSONObject: JSONObject) {
         radius = fromJSONObject.getDouble("radius").toFloat()
 
         val strokeOpacity = fromJSONObject.optDouble("strokeOpacity", 1.0)
-        strokeColor = this.processColor(fromJSONObject.getString("strokeColor"), strokeOpacity)
+        strokeColor = CapacitorGoogleMapsUtils.processColor(fromJSONObject.getString("strokeColor"), strokeOpacity)
 
         val fillOpacity = fromJSONObject.optDouble("fillOpacity", 1.0)
-        fillColor = this.processColor(fromJSONObject.getString("fillColor"), fillOpacity)
+        fillColor = CapacitorGoogleMapsUtils.processColor(fromJSONObject.getString("fillColor"), fillOpacity)
 
         strokeWidth = fromJSONObject.optDouble("strokeWeight", 1.0).toFloat()
         clickable = fromJSONObject.optBoolean("clickable", false)
         zIndex = fromJSONObject.optDouble("zIndex", 1.0).toFloat()
         tag = fromJSONObject.optString("tag", "")
+        visible = fromJSONObject.optBoolean("visible", true)
     }
 
-
-    private fun processColor(hex: String, opacity: Double): Int {
-        val colorInt = Color.parseColor(hex)
-
-        val alpha = (opacity * 255.0).toInt()
-        val red = android.graphics.Color.red(colorInt)
-        val green = android.graphics.Color.green(colorInt)
-        val blue = android.graphics.Color.blue(colorInt)
-
-        return Color.argb(alpha, red, green, blue)
+    constructor(options: CapacitorCircleOptions): this() {
+        center = options.center
+        radius = options.radius
+        if(!options.strokeColor.isNullOrEmpty()) {
+            strokeColor = CapacitorGoogleMapsUtils.processColor(options.strokeColor!!, 1.0)
+        }
+        if(!options.fillColor.isNullOrEmpty()) {
+            fillColor = CapacitorGoogleMapsUtils.processColor(options.fillColor!!, 1.0)
+        }
+        clickable = options.clickable == true
+        zIndex = options.zIndex
+        visible = options.visible
     }
 }

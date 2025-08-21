@@ -54,5 +54,12 @@ CAP_PLUGIN(CapacitorGoogleMapsPlugin, "CapacitorGoogleMaps",
    CAP_PLUGIN_METHOD(setPolylineStrokeColor, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(setPolylineStrokeWidth, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(removePolyline, CAPPluginReturnPromise);
-
+   CAP_PLUGIN_METHOD(setCameraTarget, CAPPluginReturnPromise);
+   CAP_PLUGIN_METHOD(getCameraTarget, CAPPluginReturnPromise);
+   CAP_PLUGIN_METHOD(fromPointToLatLng, CAPPluginReturnPromise);
+   CAP_PLUGIN_METHOD(addCircle, CAPPluginReturnPromise);
+   CAP_PLUGIN_METHOD(setCircleCenter, CAPPluginReturnPromise);
+   CAP_PLUGIN_METHOD(removeCircle, CAPPluginReturnPromise);
+   CAP_PLUGIN_METHOD(addPolygon, CAPPluginReturnPromise);
+   CAP_PLUGIN_METHOD(removePolygon, CAPPluginReturnPromise);
 )

@@ -5,6 +5,7 @@ import com.google.android.gms.maps.model.MapStyleOptions
 import org.json.JSONObject
 
 class  CapacitorMarkerOptions(fromJSONObject: JSONObject) {
+    var id: String? = null
     var icon: CapacitorMarkerIcon? = null
     var title: String? = null
     var snippet: String? = null
@@ -23,6 +24,7 @@ class  CapacitorMarkerOptions(fromJSONObject: JSONObject) {
 
     init {
         val propertyNames = mutableSetOf(
+            "id",
             "icon",
             "title",
             "snippet",
@@ -46,6 +48,7 @@ class  CapacitorMarkerOptions(fromJSONObject: JSONObject) {
             icon =  CapacitorMarkerIcon(iconObj)
         }
         title = fromJSONObject.optString("title")
+        id = fromJSONObject.optString("id")
         snippet = fromJSONObject.optString("snippet")
         if(fromJSONObject.has("position")) {
             val latLngObj = fromJSONObject.getJSONObject("position")

@@ -4,7 +4,7 @@ import org.json.JSONObject
 import kotlin.Exception
 
 enum class GoogleMapErrors {
-    UNHANDLED_ERROR, INVALID_MAP_ID, MAP_NOT_FOUND, MARKER_NOT_FOUND, INVALID_ARGUMENTS, PERMISSIONS_DENIED_LOCATION, GOOGLE_MAP_NOT_AVAILABLE, BOUNDS_NOT_FOUND, POLYLINE_NOT_FOUND
+    UNHANDLED_ERROR, INVALID_MAP_ID, MAP_NOT_FOUND, MARKER_NOT_FOUND, INVALID_ARGUMENTS, PERMISSIONS_DENIED_LOCATION, GOOGLE_MAP_NOT_AVAILABLE, BOUNDS_NOT_FOUND, POLYLINE_NOT_FOUND, CIRCLE_NOT_FOUND
 }
 
 class GoogleMapErrorObject(val code: Int, val message: String, val extra: HashMap<String,Any> = HashMap()) {
@@ -48,6 +48,9 @@ fun getErrorObject(err: GoogleMapsError): GoogleMapErrorObject {
         }
         is PolylineNotFound -> {
             GoogleMapErrorObject(err.getErrorCode(), "Polyline could not be found.")
+        }
+        is CircleNotFound -> {
+            GoogleMapErrorObject(err.getErrorCode(), "Circle could not be found.")
         }
         else -> {
             GoogleMapErrorObject(err.getErrorCode(), "Unhandled Error: ${err.message}.")
@@ -108,6 +111,12 @@ class BoundsNotFoundError(message: String? = ""): GoogleMapsError(message) {
 }
 
 class PolylineNotFound(message: String? = ""): GoogleMapsError(message) {
+    override fun getErrorCode(): Int {
+        return GoogleMapErrors.POLYLINE_NOT_FOUND.ordinal
+    }
+}
+
+class CircleNotFound(message: String? = ""): GoogleMapsError(message) {
     override fun getErrorCode(): Int {
         return GoogleMapErrors.POLYLINE_NOT_FOUND.ordinal
     }

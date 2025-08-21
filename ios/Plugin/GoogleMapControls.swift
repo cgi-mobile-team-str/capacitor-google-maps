@@ -1,7 +1,7 @@
 import Foundation
 import Capacitor
 
-public struct GoogleMapControls{
+public struct GoogleMapControls: Codable {
     let compass: Bool?
     let myLocationButton: Bool?
     let myLocation: Bool?

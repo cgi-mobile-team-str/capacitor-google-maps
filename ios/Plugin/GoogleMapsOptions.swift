@@ -2,13 +2,13 @@ import Foundation
 import Capacitor
 import GoogleMaps
 
-public struct GoogleMapsOptions {
+public struct GoogleMapsOptions: GoogleMapSettings {
     let mapType: GMSMapViewType?
-    let controls: GoogleMapControls?
-    let gestures: GoogleMapGestures?
     let styles: GMSMapStyle?
     let camera: GoogleMapCameraConfig?
-    let preferences: GoogleMapsPreferences?
+    var controls: GoogleMapControls?
+    var gestures: GoogleMapGestures?
+    var preferences: GoogleMapsPreferences?
 
     init(fromJSObject: JSObject) throws {
         if let mapTypeString = fromJSObject["mapType"] as? String {

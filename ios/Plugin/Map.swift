@@ -99,6 +99,25 @@ public class Map {
 
     func render() {
         DispatchQueue.main.async {
+            let zoom = self.config.camera?.zoom ?? 11.0
+            var center = LatLng(lat: 0, lng: 0)
+            let target = self.config.camera?.target
+            
+            if case .point(let targetPoint) = target {
+                center = targetPoint
+            }
+
+            if case .points(let targetArray) = target {
+                var targets: [CLLocationCoordinate2D] = []
+               targetArray.forEach { target in
+                   let coordinate: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: target.lat, longitude: target.lng)
+                    targets.append(coordinate)
+                }
+                let bounds = GoogleMapsUtils.createLatLngBoundsFromLatLngArray(targets)
+                let centerBound = GoogleMapsUtils.getCenterFromBound(bounds)
+                center = LatLng(lat: centerBound.latitude, lng: centerBound.longitude)
+            }
+            
             self.mapViewController.mapViewBounds = [
                 "width": self.config.width,
                 "height": self.config.height,
@@ -107,9 +126,9 @@ public class Map {
             ]
 
             self.mapViewController.cameraPosition = [
-                "latitude": self.config.center.lat,
-                "longitude": self.config.center.lng,
-                "zoom": self.config.zoom
+                "latitude": center.lat,
+                "longitude": center.lng,
+                "zoom": Double(zoom)
             ]
 
             self.targetViewController = self.getTargetContainer(refWidth: self.config.width, refHeight: self.config.height)
@@ -129,6 +148,8 @@ public class Map {
                     CAPLog.print("Invalid Google Maps styles")
                 }
             }
+            
+            setMapSettings(self.config, mapViewController: self.mapViewController)
 
             self.delegate.notifyListeners("onMapReady", data: [
                 "mapId": self.id
@@ -220,40 +241,6 @@ public class Map {
         }
     }
 
-    func addPolygons(polygons: [Polygon]) throws -> [Int] {
-        var polygonHashes: [Int] = []
-
-        DispatchQueue.main.sync {
-            polygons.forEach { polygon in
-                let newPolygon = self.buildPolygon(polygon: polygon)
-                newPolygon.map = self.mapViewController.GMapView
-
-                self.polygons[newPolygon.hash.hashValue] = newPolygon
-
-                polygonHashes.append(newPolygon.hash.hashValue)
-            }
-        }
-
-        return polygonHashes
-    }
-
-    func addCircles(circles: [Circle]) throws -> [Int] {
-        var circleHashes: [Int] = []
-
-        DispatchQueue.main.sync {
-            circles.forEach { circle in
-                let newCircle = self.buildCircle(circle: circle)
-                newCircle.map = self.mapViewController.GMapView
-
-                self.circles[newCircle.hash.hashValue] = newCircle
-
-                circleHashes.append(newCircle.hash.hashValue)
-            }
-        }
-
-        return circleHashes
-    }
-
     func enableClustering(_ minClusterSize: Int?) {
         if !self.mapViewController.clusteringEnabled {
             DispatchQueue.main.sync {
@@ -289,55 +276,6 @@ public class Map {
         }
     }
 
-    func removeMarker(id: Int) throws {
-        if let marker = self.markers[id] {
-            DispatchQueue.main.async {
-                if self.mapViewController.clusteringEnabled {
-                    self.mapViewController.removeMarkersFromCluster(markers: [marker])
-                }
-
-                marker.map = nil
-                self.markers.removeValue(forKey: id)
-
-            }
-        } else {
-            throw GoogleMapErrors.markerNotFound
-        }
-    }
-
-    func removePolygons(ids: [Int]) throws {
-        DispatchQueue.main.sync {
-            ids.forEach { id in
-                if let polygon = self.polygons[id] {
-                    polygon.map = nil
-                    self.polygons.removeValue(forKey: id)
-                }
-            }
-        }
-    }
-
-    func removeCircles(ids: [Int]) throws {
-        DispatchQueue.main.sync {
-            ids.forEach { id in
-                if let circle = self.circles[id] {
-                    circle.map = nil
-                    self.circles.removeValue(forKey: id)
-                }
-            }
-        }
-    }
-
-    func removePolylines(ids: [Int]) throws {
-        DispatchQueue.main.sync {
-            ids.forEach { id in
-                if let line = self.polylines[id] {
-                    line.map = nil
-                    self.polylines.removeValue(forKey: id)
-                }
-            }
-        }
-    }
-
     func animateCamera(config: GoogleMapCameraConfig) throws {
         DispatchQueue.main.sync {
           CATransaction.begin()
@@ -360,6 +298,10 @@ public class Map {
     func getCameraZoom() -> Float {
         return self.mapViewController.GMapView.camera.zoom
     }
+    
+    func getCameraTarget() -> LatLng {
+        return LatLng(lat:self.mapViewController.GMapView.camera.target.latitude, lng:self.mapViewController.GMapView.camera.target.longitude )
+    }
 
     func getMapType() -> GMSMapViewType {
         return self.mapViewController.GMapView.mapType
@@ -380,6 +322,31 @@ public class Map {
         }
     }
     
+    func setCameraTarget(target: Any) throws {
+        let currentCamera = self.mapViewController.GMapView.camera
+        
+        DispatchQueue.main.sync {
+            if let singleTarget = target as? CLLocationCoordinate2D {
+                let cameraTarget = singleTarget
+                let updatedPosition = GMSCameraPosition.camera(
+                    withTarget: cameraTarget,
+                    zoom: currentCamera.zoom
+                )
+                self.mapViewController.GMapView.animate(to: updatedPosition)
+            }
+            if let targetArray = target as? [CLLocationCoordinate2D] {
+                let bounds = GoogleMapsUtils.createLatLngBoundsFromLatLngArray(targetArray)
+                let center: CLLocationCoordinate2D = GoogleMapsUtils.getCenterFromBound(bounds)
+                let coordinate: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude:  center.latitude, longitude: center.longitude)
+                let updatedPosition = GMSCameraPosition.camera(
+                    withTarget: coordinate,
+                    zoom: currentCamera.zoom
+                )
+                self.mapViewController.GMapView.animate(to: updatedPosition)
+            }
+        }
+    }
+    
     func setMapType(mapType: GMSMapViewType) throws {
         DispatchQueue.main.sync {
             self.mapViewController.GMapView.mapType = mapType
@@ -393,36 +360,6 @@ public class Map {
                 self.mapViewController.GMapView.mapType = mapType
             }
             
-            if let controls = config.controls {
-                if let compass = controls.compass {
-                    self.mapViewController.GMapView.settings.compassButton = compass
-                }
-                if let myLocationButton = controls.myLocationButton {
-                    self.mapViewController.GMapView.settings.myLocationButton = myLocationButton
-                }
-                if let myLocation = controls.myLocation {
-                    self.mapViewController.GMapView.isMyLocationEnabled = myLocation
-                }
-                if let indoorPicker = controls.indoorPicker {
-                    self.mapViewController.GMapView.settings.indoorPicker = indoorPicker
-                }
-            }
-            
-            if let gestures = config.gestures {
-                if let scroll = gestures.scroll {
-                    self.mapViewController.GMapView.settings.scrollGestures = scroll
-                }
-                if let zoom = gestures.zoom {
-                    self.mapViewController.GMapView.settings.zoomGestures = zoom
-                }
-                if let rotate = gestures.rotate {
-                    self.mapViewController.GMapView.settings.rotateGestures = rotate
-                }
-                if let tilt = gestures.tilt {
-                    self.mapViewController.GMapView.settings.tiltGestures = tilt
-                }
-            }
-            
             if let styles = config.styles {
                 self.mapViewController.GMapView.mapStyle = styles
             }
@@ -432,28 +369,7 @@ public class Map {
                 self.mapViewController.GMapView.animate(to: newCamera )
             }
             
-            if let preferences = config.preferences {
-                if let building = preferences.building {
-                    self.mapViewController.GMapView.isBuildingsEnabled = building
-                }
-                if let zoom = preferences.zoom {
-                    if let minZoom = zoom.minZoom, let maxZoom = zoom.maxZoom {
-                        self.mapViewController.GMapView.setMinZoom(minZoom, maxZoom: maxZoom)
-                    }
-                }
-                if let padding = preferences.padding {
-                    let mapInsets = UIEdgeInsets(top: CGFloat(padding.top), left: CGFloat(padding.left), bottom: CGFloat(padding.bottom), right: CGFloat(padding.right))
-                    self.mapViewController.GMapView.padding = mapInsets
-                }
-                if let gestureBounds = preferences.gestureBounds {
-                    var locationCoordinates: [CLLocationCoordinate2D] = []
-                    for gestureBound in gestureBounds {
-                        locationCoordinates.append(CLLocationCoordinate2D.init(latitude: gestureBound.lat, longitude: gestureBound.lng))
-                    }
-                    let latlngBounds = createLatLngBoundsFromLatLngArray(locationCoordinates)
-                    self.mapViewController.GMapView.cameraTargetBounds = latlngBounds
-                }
-            }
+            setMapSettings(config, mapViewController: self.mapViewController)
         }
     }
 
@@ -483,7 +399,7 @@ public class Map {
 
     func setPadding(padding: GoogleMapPadding) throws {
         DispatchQueue.main.sync {
-            let mapInsets = UIEdgeInsets(top: CGFloat(padding.top), left: CGFloat(padding.left), bottom: CGFloat(padding.bottom), right: CGFloat(padding.right))
+            let mapInsets = UIEdgeInsets(top: CGFloat(padding.top ?? 0), left: CGFloat(padding.left ?? 0), bottom: CGFloat(padding.bottom ?? 0), right: CGFloat(padding.right ?? 0))
             self.mapViewController.GMapView.padding = mapInsets
         }
     }
@@ -544,11 +460,11 @@ public class Map {
         }
     }
     
-    func setMapPreferences(padding: GoogleMapPadding?, isBuildingsEnabled: Bool?) throws {
+    func setMapPreferences(padding: GoogleMapPadding?, building: Bool?) throws {
         DispatchQueue.main.sync {
                 let mapInsets = UIEdgeInsets(top: CGFloat(padding?.top ?? 0), left: CGFloat(padding?.left  ?? 0), bottom: CGFloat(padding?.bottom  ?? 0), right: CGFloat(padding?.right  ?? 0))
                 self.mapViewController.GMapView.padding = mapInsets
-                self.mapViewController.GMapView.isBuildingsEnabled = isBuildingsEnabled ?? false
+                self.mapViewController.GMapView.isBuildingsEnabled = building ?? false
             
         }
     }
@@ -680,6 +596,22 @@ public class Map {
         return LatLng(lat: marker.position.latitude, lng: marker.position.longitude)
     }
     
+    func removeMarker(id: Int) throws {
+        if let marker = self.markers[id] {
+            DispatchQueue.main.async {
+                if self.mapViewController.clusteringEnabled {
+                    self.mapViewController.removeMarkersFromCluster(markers: [marker])
+                }
+
+                marker.map = nil
+                self.markers.removeValue(forKey: id)
+
+            }
+        } else {
+            throw GoogleMapErrors.markerNotFound
+        }
+    }
+    
     private func resizeImage(image: UIImage, targetSize: CGSize) -> UIImage {
         let renderer = UIGraphicsImageRenderer(size: targetSize)
         return renderer.image { _ in
@@ -761,39 +693,199 @@ public class Map {
         }
     }
     
+    func removePolylines(ids: [Int]) throws {
+        DispatchQueue.main.sync {
+            ids.forEach { id in
+                if let line = self.polylines[id] {
+                    line.map = nil
+                    self.polylines.removeValue(forKey: id)
+                }
+            }
+        }
+    }
+    
     // END POLYLINE METHODS
+    
+    // BEGIN CIRCLE METHODS
+    
+    func addCircles(optionsList: [CircleOptions]) throws -> [(Int, Circle)] {
+        var pairsIdCircle: [(Int, Circle)] = []
+        var circles: [Circle] = []
+        try optionsList.forEach{ options in
+             let circle =  try Circle(options: options)
+            circles.append(circle)
+         }
+        DispatchQueue.main.sync {
+            circles.forEach { circle in
+                let newCircle = self.buildCircle(circle: circle)
+                newCircle.map = self.mapViewController.GMapView
 
-    private func setupCameraPosition(config: GoogleMapCameraConfig ) -> GMSCameraPosition {
+                self.circles[newCircle.hash.hashValue] = newCircle
+
+                pairsIdCircle.append((newCircle.hash.hashValue, addedCircle: circle))
+            }
+        }
+
+        return pairsIdCircle
+    }
+    
+    func addCircle(options: CircleOptions) throws -> (Int, Circle) {
+        var circleHash:Int = 0
+        var newCircle: GMSCircle = GMSCircle()
+        let circle = try Circle(options: options)
+        
+        DispatchQueue.main.sync {
+            newCircle = self.buildCircle(circle: circle)
+            newCircle.map = self.mapViewController.GMapView
+
+            self.circles[newCircle.hash.hashValue] = newCircle
+            circleHash = newCircle.hash.hashValue
+        }
+
+        return (circleHash, circle)
+    }
+    
+    func setCircleCenter(circleId: Int, center: LatLng) throws {
+        guard let circle = self.circles[circleId] else {
+            throw GoogleMapErrors.circleNotFound
+        }
+        
+        DispatchQueue.main.sync {
+            circle.position = CLLocationCoordinate2D(latitude: center.lat, longitude: center.lng)
+        }
+    }
+    
+    func removeCircles(ids: [Int]) throws {
+        DispatchQueue.main.sync {
+            ids.forEach { id in
+                if let circle = self.circles[id] {
+                    circle.map = nil
+                    self.circles.removeValue(forKey: id)
+                }
+            }
+        }
+    }
+    
+    func removeCircle(circleId: Int) throws {
+        if let circle = self.circles[circleId] {
+            DispatchQueue.main.async {
+                circle.map = nil
+                self.circles.removeValue(forKey: circleId)
+            }
+        } else {
+            throw GoogleMapErrors.circleNotFound
+        }
+    }
+    
+    // END CIRCLE METHODS
+    
+    // BEGIN POLYGON METHODS
+    
+    func addPolygons(optionsList: [PolygonOptions]) throws -> [(Int, Polygon)] {
+        var pairsIdPolygon: [(Int, Polygon)] = []
+        var polygons: [Polygon] = []
+        try optionsList.forEach{ options in
+             let polygon =  try Polygon(options: options)
+            polygons.append(polygon)
+         }
+        DispatchQueue.main.sync {
+            polygons.forEach { polygon in
+                let newPolygon = self.buildPolygon(polygon: polygon)
+                newPolygon.map = self.mapViewController.GMapView
+
+                self.polygons[newPolygon.hash.hashValue] = newPolygon
+
+                pairsIdPolygon.append((newPolygon.hash.hashValue, addedPolygon: polygon))
+            }
+        }
+
+        return pairsIdPolygon
+    }
+    
+    func addPolygon(options: PolygonOptions) throws -> (Int, Polygon) {
+        var polygonHash:Int = 0
+        var newPolygon: GMSPolygon = GMSPolygon()
+        let polygon = try Polygon(options: options)
+        
+        DispatchQueue.main.sync {
+            newPolygon = self.buildPolygon(polygon:polygon)
+            newPolygon.map = self.mapViewController.GMapView
+
+            self.polygons[newPolygon.hash.hashValue] = newPolygon
+            polygonHash = newPolygon.hash.hashValue
+        }
+
+        return (polygonHash, polygon)
+    }
+    
+    func removePolygon(polygonId: Int) throws {
+        if let polygon = self.polygons[polygonId] {
+            DispatchQueue.main.async {
+                polygon.map = nil
+                self.polygons.removeValue(forKey: polygonId)
+            }
+        } else {
+            throw GoogleMapErrors.polygonNotFound
+        }
+    }
+    
+    func removePolygons(ids: [Int]) throws {
+        DispatchQueue.main.sync {
+            ids.forEach { id in
+                if let polygon = self.polygons[id] {
+                    polygon.map = nil
+                    self.polygons.removeValue(forKey: id)
+                }
+            }
+        }
+    }
+    
+    // END POLYGON METHODS
+
+    func fromPointToLatLng(points: [Double]) throws -> LatLng {
+        guard points.count == 2 else {
+            throw GoogleMapErrors.invalidArguments("Expected exactly 2 elements: [x, y]")
+        }
+        
+        let pointX = CGFloat(points[0])
+        let pointY = CGFloat(points[1])
+        
+        let cgPoint = CGPoint(x: pointX, y: pointY)
+        let cllocation = self.mapViewController.GMapView.projection.coordinate(for: cgPoint)
+        return LatLng(lat: cllocation.latitude, lng: cllocation.longitude)
+    }
+    
+    private func setupCameraPosition(config: GoogleMapCameraConfig) -> GMSCameraPosition {
         let currentCamera = self.mapViewController.GMapView.camera
         var lat: Double = currentCamera.target.latitude
         var lng: Double = currentCamera.target.longitude
-        if(config.coordinate != nil) {
-             lat = config.coordinate?.lat ?? currentCamera.target.latitude
-             lng = config.coordinate?.lng ?? currentCamera.target.longitude
+        if case .point(let targetPoint) = config.target {
+            lat = targetPoint.lat
+            lng = targetPoint.lng
         }
-        if(config.coordinates != nil && config.coordinates?.isEmpty != true) {
+
+        if case .points(let targetArray) = config.target {
             var locationCoordinates: [CLLocationCoordinate2D] = []
-            for coordinate in config.coordinates ?? []{
+            for coordinate in targetArray{
                 locationCoordinates.append(CLLocationCoordinate2D.init(latitude: coordinate.lat, longitude: coordinate.lng))
             }
-            let latlngBounds = createLatLngBoundsFromLatLngArray(locationCoordinates)
-            lat = (latlngBounds.northEast.latitude + latlngBounds.southWest.latitude) / 2
-            lng = (latlngBounds.northEast.longitude + latlngBounds.southWest.longitude) / 2
+            let latlngBounds = GoogleMapsUtils.createLatLngBoundsFromLatLngArray(locationCoordinates)
+            let center = GoogleMapsUtils.getCenterFromBound(latlngBounds)
+            lat = center.latitude
+            lng = center.longitude
         }
+        
+        if case .none = config.target {
+            lat = currentCamera.target.latitude
+            lng = currentCamera.target.longitude
+        }
+        
         let zoom = config.zoom ?? currentCamera.zoom
         let bearing = config.bearing ?? Double(currentCamera.bearing)
         let angle = config.angle ?? currentCamera.viewingAngle
         
         let newCamera = GMSCameraPosition(latitude: lat, longitude: lng, zoom: zoom, bearing: bearing, viewingAngle: angle)
         return newCamera
-    }
-    
-    private func createLatLngBoundsFromLatLngArray(_ coordinates: [CLLocationCoordinate2D]) -> GMSCoordinateBounds {
-        var latLngBounds: GMSCoordinateBounds = GMSCoordinateBounds()
-        for coordinate in coordinates {
-            latLngBounds = latLngBounds.includingCoordinate(coordinate)
-        }
-        return latLngBounds
     }
     
     private func getFrameOverflowBounds(frame: CGRect, mapBounds: CGRect) -> [CGRect] {
@@ -826,6 +918,9 @@ public class Map {
         newCircle.radius = CLLocationDistance(circle.radius)
         newCircle.isTappable = circle.tappable ?? false
         newCircle.zIndex = circle.zIndex
+        if(circle.visible != nil){
+            newCircle.map = circle.visible! ? newCircle.map : nil
+        }
         newCircle.userData = circle.tag
 
         return newCircle
@@ -960,6 +1055,61 @@ public class Map {
             }
         }
         return newMarker
+    }
+}
+
+private func setMapSettings(_ config: GoogleMapSettings, mapViewController : GMViewController) {
+    if let controls = config.controls {
+        if let compass = controls.compass {
+            mapViewController.GMapView.settings.compassButton = compass
+        }
+        if let myLocationButton = controls.myLocationButton {
+            mapViewController.GMapView.settings.myLocationButton = myLocationButton
+        }
+        if let myLocation = controls.myLocation {
+            mapViewController.GMapView.isMyLocationEnabled = myLocation
+        }
+        if let indoorPicker = controls.indoorPicker {
+            mapViewController.GMapView.settings.indoorPicker = indoorPicker
+        }
+    }
+    
+    if let gestures = config.gestures {
+        if let scroll = gestures.scroll {
+            mapViewController.GMapView.settings.scrollGestures = scroll
+        }
+        if let zoom = gestures.zoom {
+            mapViewController.GMapView.settings.zoomGestures = zoom
+        }
+        if let rotate = gestures.rotate {
+            mapViewController.GMapView.settings.rotateGestures = rotate
+        }
+        if let tilt = gestures.tilt {
+            mapViewController.GMapView.settings.tiltGestures = tilt
+        }
+    }
+    
+    if let preferences = config.preferences {
+        if let building = preferences.building {
+            mapViewController.GMapView.isBuildingsEnabled = building
+        }
+        if let zoom = preferences.zoom {
+            if let minZoom = zoom.minZoom, let maxZoom = zoom.maxZoom {
+                mapViewController.GMapView.setMinZoom(minZoom, maxZoom: maxZoom)
+            }
+        }
+        if let padding = preferences.padding {
+            let mapInsets = UIEdgeInsets(top: CGFloat(padding.top ?? 0), left: CGFloat(padding.left ?? 0), bottom: CGFloat(padding.bottom ?? 0), right: CGFloat(padding.right ?? 0))
+            mapViewController.GMapView.padding = mapInsets
+        }
+        if let gestureBounds = preferences.gestureBounds {
+            var locationCoordinates: [CLLocationCoordinate2D] = []
+            for gestureBound in gestureBounds {
+                locationCoordinates.append(CLLocationCoordinate2D.init(latitude: gestureBound.lat, longitude: gestureBound.lng))
+            }
+            let latlngBounds = GoogleMapsUtils.createLatLngBoundsFromLatLngArray(locationCoordinates)
+            mapViewController.GMapView.cameraTargetBounds = latlngBounds
+        }
     }
 }
 

@@ -11,6 +11,7 @@ public struct Circle {
     let title: String?
     let zIndex: Int32
     let tag: String?
+    let visible: Bool?
 
     init(from jsObject: JSObject) throws {
         var strokeColor = UIColor.blue
@@ -58,5 +59,27 @@ public struct Circle {
         self.tappable = jsObject["clickable"] as? Bool
         self.title = jsObject["title"] as? String
         self.zIndex = Int32((jsObject["zIndex"] as? Int) ?? 0)
+        self.visible = jsObject["visible"] as? Bool ?? true
+    }
+    
+    init(options: CircleOptions) throws {
+        var finalStrokeColor: UIColor = UIColor.blue
+        var finalFillColor: UIColor = UIColor.blue
+        self.center = options.center
+        self.radius = options.radius
+        self.visible = options.visible
+        self.zIndex = Int32(options.zIndex ?? 0)
+        if let strokeColor = options.strokeColor {
+            finalStrokeColor = GoogleMapsUtils.parseToUIColor(strokeColor) ?? UIColor.blue
+        }
+        if let fillColor = options.fillColor {
+            finalFillColor = GoogleMapsUtils.parseToUIColor(fillColor) ?? UIColor.blue
+        }
+        self.strokeColor = finalStrokeColor
+        self.fillColor = finalFillColor
+        self.strokeWidth = CGFloat(options.strokeWidth ?? 0)
+        self.tappable = options.clickable
+        self.title = ""
+        self.tag = ""
     }
 }

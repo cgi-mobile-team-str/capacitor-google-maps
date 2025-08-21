@@ -1,9 +1,34 @@
 import Foundation
 import Capacitor
 
-public struct GoogleMapCameraConfig {
-    let coordinate: LatLng?
-    let coordinates: [LatLng]?
+enum TargetType: Codable {
+    case point(LatLng)
+    case points([LatLng])
+    case none
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        if let point = try? container.decode(LatLng.self) {
+            self = .point(point)
+        } else if let points = try? container.decode([LatLng].self) {
+            self = .points(points)
+        } else {
+            self = .none
+        }
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        switch self {
+        case .point(let p): try container.encode(p)
+        case .points(let arr): try container.encode(arr)
+        case .none: try container.encodeNil()
+        }
+    }
+}
+
+public struct GoogleMapCameraConfig: Codable {
+    var target: TargetType
     let zoom: Float?
     let bearing: Double?
     let angle: Double?
@@ -15,29 +40,32 @@ public struct GoogleMapCameraConfig {
         angle = fromJSObject["angle"] as? Double
         duration = fromJSObject["duration"] as? Double
 
-        if let latLngObj = fromJSObject["coordinate"] as? JSObject {
-            guard let lat = latLngObj["lat"] as? Double, let lng = latLngObj["lng"] as? Double else {
-                throw GoogleMapErrors.invalidArguments("LatLng object is missing the required 'lat' and/or 'lng' property")
+        let rawTarget = fromJSObject["target"]
+
+        if let targetObj = rawTarget as? JSObject {
+            guard let lat = targetObj["lat"] as? Double,
+                  let lng = targetObj["lng"] as? Double else {
+                throw GoogleMapErrors.invalidArguments(
+                    "targetObj object is missing the required 'lat' and/or 'lng' property"
+                )
             }
+            self.target = .point(LatLng(lat: lat, lng: lng))
 
-            self.coordinate = LatLng(lat: lat, lng: lng)
+        } else if let targetArr = rawTarget as? [JSObject] {
+            var parsedCoordinates: [LatLng] = []
+            for obj in targetArr {
+                guard let lat = obj["lat"] as? Double,
+                      let lng = obj["lng"] as? Double else {
+                    throw GoogleMapErrors.invalidArguments(
+                        "Each target in 'coordinates' must have 'lat' and 'lng'"
+                    )
+                }
+                parsedCoordinates.append(LatLng(lat: lat, lng: lng))
+            }
+            self.target = .points(parsedCoordinates)
+
         } else {
-            self.coordinate = nil
+            self.target = .none
         }
-        
-        if let coordinatesArray = fromJSObject["coordinates"] as? [JSObject] {
-             var parsedCoordinates: [LatLng] = []
-             for obj in coordinatesArray {
-                 guard let lat = obj["lat"] as? Double,
-                       let lng = obj["lng"] as? Double else {
-                     throw GoogleMapErrors.invalidArguments("Each coordinate in 'coordinates' must have 'lat' and 'lng'")
-                 }
-                 parsedCoordinates.append(LatLng(lat: lat, lng: lng))
-             }
-             self.coordinates = parsedCoordinates
-         } else {
-             self.coordinates = nil
-         }
-
     }
 }

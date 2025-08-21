@@ -8,6 +8,8 @@ public enum GoogleMapErrors: Error {
     case invalidAPIKey
     case permissionsDeniedLocation
     case polylineNotFound
+    case circleNotFound
+    case polygonNotFound
     case unhandledError(_ description: String)
 }
 
@@ -42,6 +44,10 @@ public func getErrorObject(_ error: Error) -> GoogleMapErrorObject {
         return GoogleMapErrorObject(6, "Missing or invalid Google Maps SDK API key.")
     case GoogleMapErrors.polylineNotFound:
         return GoogleMapErrorObject(7, "Polyline not found for provided id.")
+    case GoogleMapErrors.circleNotFound:
+        return GoogleMapErrorObject(8, "Circle not found for provided id.")
+    case GoogleMapErrors.polygonNotFound:
+        return GoogleMapErrorObject(9, "Polygon not found for provided id.")
     case GoogleMapErrors.unhandledError(let msg):
         return GoogleMapErrorObject(0, "Unhandled Error: \(msg)")
     default:
