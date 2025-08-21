@@ -129,6 +129,10 @@ var capacitorCapacitorGoogleMaps = (function (exports, core, rxjs, markercluster
             this.strokeWidth = width;
             return CapacitorGoogleMaps.setPolylineStrokeWidth({ id: this.mapId, polylineId: this.id, strokeWidth: width });
         }
+        async setZIndex(zIndex) {
+            this.zIndex = zIndex;
+            return CapacitorGoogleMaps.setPolylineZIndex({ id: this.mapId, polylineId: this.id, zIndex: zIndex });
+        }
         async isRemoved() {
             return (await CapacitorGoogleMaps.isPolylineRemoved({ id: this.mapId, polylineId: this.id })).isRemoved;
         }
@@ -1885,6 +1889,11 @@ var capacitorCapacitorGoogleMaps = (function (exports, core, rxjs, markercluster
             const polyline = this.maps[_args.id].polylines[_args.polylineId];
             if (polyline)
                 polyline.setOptions({ strokeWeight: _args.strokeWidth });
+        }
+        async setPolylineZIndex(_args) {
+            const polyline = this.maps[_args.id].polylines[_args.polylineId];
+            if (polyline)
+                polyline.setOptions({ zIndex: _args.zIndex });
         }
         async removePolyline(_args) {
             const polyline = this.maps[_args.id].polylines[_args.polylineId];

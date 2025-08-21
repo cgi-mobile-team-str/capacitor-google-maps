@@ -53,6 +53,7 @@ import type {
   EnableTiltRotateGestureArgs,
   AddPolygonArgs,
   RemovePolygonArgs,
+  PolylineZIndexArgs,
 } from './implementation';
 
 export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogleMapsPlugin {
@@ -782,6 +783,11 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
     if (polyline) polyline.setOptions({ strokeWeight: _args.strokeWidth });
   }
 
+  async setPolylineZIndex(_args: PolylineZIndexArgs): Promise<void> {
+    const polyline = this.maps[_args.id].polylines[_args.polylineId];
+    if (polyline) polyline.setOptions({ zIndex: _args.zIndex });
+  }
+
   async removePolyline(_args: RemovePolylineArgs): Promise<void> {
     const polyline = this.maps[_args.id].polylines[_args.polylineId];
     if (polyline) {
@@ -894,10 +900,10 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
   }
 
   async isMarkerRemoved(_args: { id: string; markerId: string; }): Promise<{ isRemoved: boolean; }> {
-    return {isRemoved: this.maps[_args.id].markers[_args.markerId] == null}
+    return {isRemoved: this.maps[_args.id].markers[_args.markerId] == null};
   }
 
   async isPolylineRemoved(_args: { id: string; polylineId: string; }): Promise<{ isRemoved: boolean; }> {
-    return {isRemoved: this.maps[_args.id].polylines[_args.polylineId] == null}
+    return {isRemoved: this.maps[_args.id].polylines[_args.polylineId] == null};
   }
 }

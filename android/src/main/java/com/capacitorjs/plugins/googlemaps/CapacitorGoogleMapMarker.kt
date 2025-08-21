@@ -81,8 +81,8 @@ class CapacitorGoogleMapMarker(): ClusterItem {
         isFlat = options.flat
         iconUrl = options.icon?.url
         iconSize = options.icon?.size
-        val x = options.anchor?.get(0)
-        val y = options.anchor?.get(1)
+        val x = options.anchor?.get(0) ?: options.icon?.anchor?.get(0)
+        val y = options.anchor?.get(1) ?: options.icon?.anchor?.get(1)
         if( x != null && y != null) {
             val inputAnchorPoint = CapacitorGoogleMapsPoint(x , y)
             iconAnchor = CapacitorGoogleMapsUtils.buildIconAnchorPoint(inputAnchorPoint, iconSize)

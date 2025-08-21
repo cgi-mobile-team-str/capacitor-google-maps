@@ -114,6 +114,10 @@ export class CapacitorPolyline {
         this.strokeWidth = width;
         return CapacitorGoogleMaps.setPolylineStrokeWidth({ id: this.mapId, polylineId: this.id, strokeWidth: width });
     }
+    async setZIndex(zIndex) {
+        this.zIndex = zIndex;
+        return CapacitorGoogleMaps.setPolylineZIndex({ id: this.mapId, polylineId: this.id, zIndex: zIndex });
+    }
     async isRemoved() {
         return (await CapacitorGoogleMaps.isPolylineRemoved({ id: this.mapId, polylineId: this.id })).isRemoved;
     }

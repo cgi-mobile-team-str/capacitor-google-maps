@@ -316,6 +316,11 @@ export class CapacitorPolyline implements Polyline {
     return CapacitorGoogleMaps.setPolylineStrokeWidth({ id: this.mapId, polylineId: this.id, strokeWidth: width });
   }
 
+  async setZIndex(zIndex: number): Promise<void> {
+    this.zIndex = zIndex;
+    return CapacitorGoogleMaps.setPolylineZIndex({ id: this.mapId, polylineId: this.id, zIndex: zIndex });
+  }
+
   async isRemoved(): Promise<boolean> {
     return (await CapacitorGoogleMaps.isPolylineRemoved({ id: this.mapId, polylineId: this.id })).isRemoved;
   }

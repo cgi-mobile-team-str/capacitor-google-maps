@@ -1496,6 +1496,35 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
     }
 
     @PluginMethod
+    fun setPolylineZIndex(call: PluginCall) {
+        try {
+            val id = call.getString("id")
+            id ?: throw InvalidMapIdError()
+
+            val polylineId = call.getString("polylineId", null)
+            polylineId ?: throw InvalidArgumentsError("polylineId is missing or invalid")
+
+            val zIndex = call.getFloat("zIndex", null)
+            zIndex ?: throw InvalidArgumentsError("zIndex is missing or invalid")
+
+            val map = maps[id]
+            map ?: throw MapNotFoundError()
+
+            map.setPolylineZIndex(polylineId, zIndex) { err ->
+                if (err != null) {
+                    throw err
+                }
+                call.resolve()
+            }
+
+        } catch (e: GoogleMapsError) {
+            handleError(call, e)
+        } catch (e: Exception) {
+            handleError(call, e)
+        }
+    }
+
+    @PluginMethod
     fun removePolyline(call: PluginCall) {
         try {
             val id = call.getString("id")

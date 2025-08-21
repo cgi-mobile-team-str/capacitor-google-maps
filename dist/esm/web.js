@@ -613,6 +613,11 @@ export class CapacitorGoogleMapsWeb extends WebPlugin {
         if (polyline)
             polyline.setOptions({ strokeWeight: _args.strokeWidth });
     }
+    async setPolylineZIndex(_args) {
+        const polyline = this.maps[_args.id].polylines[_args.polylineId];
+        if (polyline)
+            polyline.setOptions({ zIndex: _args.zIndex });
+    }
     async removePolyline(_args) {
         const polyline = this.maps[_args.id].polylines[_args.polylineId];
         if (polyline) {

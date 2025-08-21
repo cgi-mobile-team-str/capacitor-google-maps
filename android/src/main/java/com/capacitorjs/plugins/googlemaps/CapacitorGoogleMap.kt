@@ -1004,6 +1004,21 @@ class CapacitorGoogleMap(
         }
     }
 
+    fun setPolylineZIndex(polylineId: String, zIndex: Float, callback: (error: GoogleMapsError?) -> Unit) {
+        try {
+            googleMap ?: throw GoogleMapNotAvailable()
+            val polyline = polylines[polylineId]
+            polyline ?: throw PolylineNotFound()
+            CoroutineScope(Dispatchers.Main).launch {
+                polyline.zIndex = zIndex
+                polyline.googleMapsPolyline?.zIndex = zIndex
+                callback(null)
+            }
+        } catch (e: GoogleMapsError) {
+            callback(e)
+        }
+    }
+
     fun removePolyline(polylineId: String, callback: (error: GoogleMapsError?) -> Unit) {
         try {
             googleMap ?: throw GoogleMapNotAvailable()
@@ -1417,12 +1432,9 @@ class CapacitorGoogleMap(
         markerOptions.draggable(marker.draggable)
         markerOptions.zIndex(marker.zIndex)
         markerOptions.visible(marker.isVisible)
-        val iconAnchorPoint = marker.iconAnchor
-        if (iconAnchorPoint != null) {
-            val iconAnchor = CapacitorGoogleMapsUtils.buildIconAnchorPoint(iconAnchorPoint, marker.iconSize)
-            if(iconAnchor != null) {
-                markerOptions.anchor(iconAnchor.x, iconAnchor.y)
-            }
+        val iconAnchor = marker.iconAnchor
+        if(iconAnchor != null) {
+            markerOptions.anchor(iconAnchor.x, iconAnchor.y)
         }
 
         if (!marker.iconUrl.isNullOrEmpty()) {

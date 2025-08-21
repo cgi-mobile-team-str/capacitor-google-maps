@@ -194,6 +194,7 @@ export declare class CapacitorPolyline implements Polyline {
     set(key: string, value: any): void;
     setStrokeColor(color: string): Promise<void>;
     setStrokeWidth(width: number): Promise<void>;
+    setZIndex(zIndex: number): Promise<void>;
     isRemoved(): Promise<boolean>;
     remove(): Promise<void>;
 }

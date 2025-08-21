@@ -213,6 +213,11 @@ export interface PolylineStrokeWidthArgs {
     polylineId: string;
     strokeWidth: number;
 }
+export interface PolylineZIndexArgs {
+    id: string;
+    polylineId: string;
+    zIndex: number;
+}
 export interface RemovePolylineArgs {
     id: string;
     polylineId: string;
@@ -292,6 +297,7 @@ export interface CapacitorGoogleMapsPlugin extends Plugin {
     }>;
     setPolylineStrokeColor(args: PolylineStrokeColorArgs): Promise<void>;
     setPolylineStrokeWidth(args: PolylineStrokeWidthArgs): Promise<void>;
+    setPolylineZIndex(args: PolylineZIndexArgs): Promise<void>;
     removePolyline(args: RemovePolylineArgs): Promise<void>;
     enableClustering(args: EnableClusteringArgs): Promise<void>;
     disableClustering(args: {

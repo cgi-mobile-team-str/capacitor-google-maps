@@ -1,7 +1,7 @@
 import { WebPlugin } from '@capacitor/core';
 import { Circle, ILatLng, Marker, Polygon, Polyline, VisibleRegion } from './definitions';
 import { LatLngBounds } from './definitions';
-import { AddMarkerArgs, CameraArgs, AddMarkersArgs, CapacitorGoogleMapsPlugin, CreateMapArgs, CurrentLocArgs, DestroyMapArgs, MapTypeArgs, PaddingArgs, RemoveMarkerArgs, TrafficLayerArgs, RemoveMarkersArgs, MapBoundsContainsArgs, EnableClusteringArgs, FitBoundsArgs, MapBoundsExtendArgs, AddPolygonsArgs, RemovePolygonsArgs, AddCirclesArgs, RemoveCirclesArgs, AddPolylinesArgs, RemovePolylinesArgs, EnableCompassArgs, MapOptionsArgs, MarkerIconArgs, MarkerIconAnchorArgs, MarkerZIndexArgs, MarkerPositionArgs, MarkerVisibilityArgs, AddPolylineArgs, PolylineStrokeColorArgs, PolylineStrokeWidthArgs, RemovePolylineArgs, SetCameraTargetArgs, FromPointToLatLngArgs, AddCircleArgs, RemoveCircleArgs, SetCircleCenterArgs, EnableToolbarArgs, EnableMyLocationArgs, EnableAllGesturesArgs, EnableTiltGestureArgs, CameraBearingArgs, SetMapPreferencesArgs, EnableTiltRotateGestureArgs, AddPolygonArgs, RemovePolygonArgs } from './implementation';
+import { AddMarkerArgs, CameraArgs, AddMarkersArgs, CapacitorGoogleMapsPlugin, CreateMapArgs, CurrentLocArgs, DestroyMapArgs, MapTypeArgs, PaddingArgs, RemoveMarkerArgs, TrafficLayerArgs, RemoveMarkersArgs, MapBoundsContainsArgs, EnableClusteringArgs, FitBoundsArgs, MapBoundsExtendArgs, AddPolygonsArgs, RemovePolygonsArgs, AddCirclesArgs, RemoveCirclesArgs, AddPolylinesArgs, RemovePolylinesArgs, EnableCompassArgs, MapOptionsArgs, MarkerIconArgs, MarkerIconAnchorArgs, MarkerZIndexArgs, MarkerPositionArgs, MarkerVisibilityArgs, AddPolylineArgs, PolylineStrokeColorArgs, PolylineStrokeWidthArgs, RemovePolylineArgs, SetCameraTargetArgs, FromPointToLatLngArgs, AddCircleArgs, RemoveCircleArgs, SetCircleCenterArgs, EnableToolbarArgs, EnableMyLocationArgs, EnableAllGesturesArgs, EnableTiltGestureArgs, CameraBearingArgs, SetMapPreferencesArgs, EnableTiltRotateGestureArgs, AddPolygonArgs, RemovePolygonArgs, PolylineZIndexArgs } from './implementation';
 export declare class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogleMapsPlugin {
     private gMapsRef;
     private AdvancedMarkerElement;
@@ -107,6 +107,7 @@ export declare class CapacitorGoogleMapsWeb extends WebPlugin implements Capacit
     }>;
     setPolylineStrokeColor(_args: PolylineStrokeColorArgs): Promise<void>;
     setPolylineStrokeWidth(_args: PolylineStrokeWidthArgs): Promise<void>;
+    setPolylineZIndex(_args: PolylineZIndexArgs): Promise<void>;
     removePolyline(_args: RemovePolylineArgs): Promise<void>;
     addCircles(_args: AddCirclesArgs): Promise<{
         circles: (Circle & {
