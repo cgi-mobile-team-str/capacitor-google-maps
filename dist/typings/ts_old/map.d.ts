@@ -1,6 +1,7 @@
-import { CameraConfig, MapPadding, MapListenerCallback, MapReadyCallbackData, CameraIdleCallbackData, CameraMoveStartedCallbackData, ClusterClickCallbackData, MapClickCallbackData, MarkerClickCallbackData, MyLocationButtonClickCallbackData, Polygon, PolygonClickCallbackData, CircleClickCallbackData, PolylineCallbackData, VisibleRegion, GoogleMapsOptions, CapacitorMarker, MarkerOption, PolylineOption, CapacitorPolyline, LatLng, CircleOption, CapacitorCircle, PolygonOption, CapacitorPolygon } from './definitions';
-import { LatLngBounds, MapType } from './definitions';
+import { CameraPosition, MapPadding, MapListenerCallback, MapReadyCallbackData, CameraIdleCallbackData, CameraMoveStartedCallbackData, ClusterClickCallbackData, MapClickCallbackData, MarkerClickCallbackData, MyLocationButtonClickCallbackData, Polygon, PolygonClickCallbackData, CircleClickCallbackData, PolylineCallbackData, VisibleRegion, GoogleMapsOptions, CapacitorMarker, MarkerOptions, PolylineOptions, CapacitorPolyline, ILatLng, CircleOptions, CapacitorCircle, PolygonOptions, CapacitorPolygon, PoiClickCallbackData, CameraMoveCallbackData, GoogleMapsEvent } from './definitions';
+import { LatLngBounds, GoogleMapsMapTypeId } from './definitions';
 import { CreateMapArgs } from './implementation';
+import { Observable } from 'rxjs';
 export interface GoogleMapInterface {
     create(options: CreateMapArgs, callback?: MapListenerCallback<MapReadyCallbackData>): Promise<GoogleMap>;
     enableTouch(): Promise<void>;
@@ -11,26 +12,26 @@ export interface GoogleMapInterface {
      */
     minClusterSize?: number): Promise<void>;
     disableClustering(): Promise<void>;
-    addMarker(options: MarkerOption): Promise<CapacitorMarker>;
-    addMarkers(optionsList: MarkerOption[]): Promise<CapacitorMarker[]>;
+    addMarker(options: MarkerOptions): Promise<CapacitorMarker>;
+    addMarkers(optionsList: MarkerOptions[]): Promise<CapacitorMarker[]>;
     removeMarker(id: string): Promise<void>;
     removeMarkers(ids: string[]): Promise<void>;
     addPolygons(polygons: Polygon[]): Promise<string[]>;
     removePolygons(ids: string[]): Promise<void>;
-    addCircles(optionsList: CircleOption[]): Promise<CapacitorCircle[]>;
-    addCircle(options: CircleOption): Promise<CapacitorCircle>;
+    addCircles(optionsList: CircleOptions[]): Promise<CapacitorCircle[]>;
+    addCircle(options: CircleOptions): Promise<CapacitorCircle>;
     removeCircles(ids: string[]): Promise<void>;
-    addPolylines(optionsList: PolylineOption[]): Promise<CapacitorPolyline[]>;
-    addPolyline(options: PolylineOption): Promise<CapacitorPolyline>;
+    addPolylines(optionsList: PolylineOptions[]): Promise<CapacitorPolyline[]>;
+    addPolyline(options: PolylineOptions): Promise<CapacitorPolyline>;
     removePolylines(ids: string[]): Promise<void>;
     destroy(): Promise<void>;
-    moveCamera(config: CameraConfig): Promise<void>;
-    animateCamera(config: CameraConfig): Promise<void>;
+    moveCamera(config: CameraPosition): Promise<void>;
+    animateCamera(config: CameraPosition): Promise<void>;
     /**
      * Get current map type
      */
-    getMapType(): Promise<MapType>;
-    setMapType(mapType: MapType): Promise<void>;
+    getMapType(): Promise<GoogleMapsMapTypeId>;
+    setMapType(mapType: GoogleMapsMapTypeId): Promise<void>;
     enableIndoorMaps(enabled: boolean): Promise<void>;
     enableTrafficLayer(enabled: boolean): Promise<void>;
     enableAccessibilityElements(enabled: boolean): Promise<void>;
@@ -51,12 +52,15 @@ export interface GoogleMapInterface {
     setOnBoundsChangedListener(callback?: MapListenerCallback<CameraIdleCallbackData>): Promise<void>;
     setOnCameraIdleListener(callback?: MapListenerCallback<CameraIdleCallbackData>): Promise<void>;
     setOnCameraMoveStartedListener(callback?: MapListenerCallback<CameraMoveStartedCallbackData>): Promise<void>;
+    setOnCameraMoveListener(callback?: MapListenerCallback<CameraMoveCallbackData>): Promise<void>;
     setOnClusterClickListener(callback?: MapListenerCallback<ClusterClickCallbackData>): Promise<void>;
     setOnClusterInfoWindowClickListener(callback?: MapListenerCallback<ClusterClickCallbackData>): Promise<void>;
     setOnInfoWindowClickListener(callback?: MapListenerCallback<MarkerClickCallbackData>): Promise<void>;
     setOnMapClickListener(callback?: MapListenerCallback<MapClickCallbackData>): Promise<void>;
+    setOnMapReadyListener(callback?: MapListenerCallback<MapReadyCallbackData>): Promise<void>;
     setOnMarkerClickListener(callback?: MapListenerCallback<MarkerClickCallbackData>): Promise<void>;
     setOnPolygonClickListener(callback?: MapListenerCallback<PolygonClickCallbackData>): Promise<void>;
+    setOnPoiClickListener(callback?: MapListenerCallback<PoiClickCallbackData>): Promise<void>;
     setOnCircleClickListener(callback?: MapListenerCallback<CircleClickCallbackData>): Promise<void>;
     setOnPolylineClickListener(callback?: MapListenerCallback<PolylineCallbackData>): Promise<void>;
     setOnMarkerDragStartListener(callback?: MapListenerCallback<MarkerClickCallbackData>): Promise<void>;
@@ -75,9 +79,10 @@ export interface GoogleMapInterface {
     setCameraBearing(bearing: number): Promise<void>;
     setOptions(config: GoogleMapsOptions): Promise<void>;
     getCameraZoom(): Promise<number>;
-    setCameraTarget(target: LatLng | LatLng[]): Promise<void>;
-    getCameraTarget(): Promise<LatLng>;
-    fromPointToLatLng(points: number[]): Promise<LatLng>;
+    setCameraTarget(target: ILatLng | ILatLng[]): Promise<void>;
+    getCameraTarget(): Promise<ILatLng>;
+    fromPointToLatLng(points: number[]): Promise<ILatLng>;
+    on(event: GoogleMapsEvent): Observable<any>;
 }
 export declare class GoogleMap {
     private id;
@@ -86,13 +91,16 @@ export declare class GoogleMap {
     private onBoundsChangedListener?;
     private onCameraIdleListener?;
     private onCameraMoveStartedListener?;
+    private onCameraMoveListener?;
     private onClusterClickListener?;
     private onClusterInfoWindowClickListener?;
     private onInfoWindowClickListener?;
     private onMapClickListener?;
+    private onMapReadyListener?;
     private onPolylineClickListener?;
     private onMarkerClickListener?;
     private onPolygonClickListener?;
+    private onPoiClickListener?;
     private onCircleClickListener?;
     private onMarkerDragStartListener?;
     private onMarkerDragListener?;
@@ -141,14 +149,14 @@ export declare class GoogleMap {
      * @param marker
      * @returns created marker id
      */
-    addMarker(options: MarkerOption): Promise<CapacitorMarker>;
+    addMarker(options: MarkerOptions): Promise<CapacitorMarker>;
     /**
      * Adds multiple markers to the map
      *
      * @param markers
      * @returns array of created marker IDs
      */
-    addMarkers(optionsList: MarkerOption[]): Promise<CapacitorMarker[]>;
+    addMarkers(optionsList: MarkerOptions[]): Promise<CapacitorMarker[]>;
     /**
      * Remove marker from the map
      *
@@ -163,13 +171,13 @@ export declare class GoogleMap {
      * @returns
      */
     removeMarkers(ids: string[]): Promise<void>;
-    addPolygons(optionsList: PolygonOption[]): Promise<CapacitorPolygon[]>;
-    addPolygon(options: PolygonOption): Promise<CapacitorPolygon>;
-    addPolylines(optionsList: PolylineOption[]): Promise<CapacitorPolyline[]>;
-    addPolyline(options: PolylineOption): Promise<CapacitorPolyline>;
+    addPolygons(optionsList: PolygonOptions[]): Promise<CapacitorPolygon[]>;
+    addPolygon(options: PolygonOptions): Promise<CapacitorPolygon>;
+    addPolylines(optionsList: PolylineOptions[]): Promise<CapacitorPolyline[]>;
+    addPolyline(options: PolylineOptions): Promise<CapacitorPolyline>;
     removePolygons(ids: string[]): Promise<void>;
-    addCircles(optionsList: CircleOption[]): Promise<CapacitorCircle[]>;
-    addCircle(options: CircleOption): Promise<CapacitorCircle>;
+    addCircles(optionsList: CircleOptions[]): Promise<CapacitorCircle[]>;
+    addCircle(options: CircleOptions): Promise<CapacitorCircle>;
     removeCircles(ids: string[]): Promise<void>;
     removePolylines(ids: string[]): Promise<void>;
     /**
@@ -182,14 +190,14 @@ export declare class GoogleMap {
      * @param config
      * @returns
      */
-    animateCamera(config: CameraConfig): Promise<void>;
+    animateCamera(config: CameraPosition): Promise<void>;
     /**
      * Update the map camera configuration without animation
      *
      * @param config
      * @returns
      */
-    moveCamera(config: CameraConfig): Promise<void>;
+    moveCamera(config: CameraPosition): Promise<void>;
     /**
      * Update the map camera bearing
      *
@@ -197,19 +205,19 @@ export declare class GoogleMap {
      * @returns
      */
     setCameraBearing(bearing: number): Promise<void>;
-    setCameraTarget(target: LatLng | LatLng[]): Promise<void>;
+    setCameraTarget(target: ILatLng | ILatLng[]): Promise<void>;
     setOptions(config: GoogleMapsOptions): Promise<void>;
-    getMapType(): Promise<MapType>;
+    getMapType(): Promise<GoogleMapsMapTypeId>;
     getCameraZoom(): Promise<number>;
-    getCameraTarget(): Promise<LatLng>;
-    fromPointToLatLng(points: number[]): Promise<LatLng>;
+    getCameraTarget(): Promise<ILatLng>;
+    fromPointToLatLng(points: number[]): Promise<ILatLng>;
     /**
      * Sets the type of map tiles that should be displayed.
      *
      * @param mapType
      * @returns
      */
-    setMapType(mapType: MapType): Promise<void>;
+    setMapType(mapType: GoogleMapsMapTypeId): Promise<void>;
     /**
      * Sets whether indoor maps are shown, where available.
      *
@@ -298,6 +306,13 @@ export declare class GoogleMap {
      */
     setOnCameraMoveStartedListener(callback?: MapListenerCallback<CameraMoveStartedCallbackData>): Promise<void>;
     /**
+     * Set the event listener on the map for 'onCameraMove' events.
+     *
+     * @param callback
+     * @returns
+     */
+    setOnCameraMoveListener(callback?: MapListenerCallback<CameraMoveCallbackData>): Promise<void>;
+    /**
      * Set the event listener on the map for 'onClusterClick' events.
      *
      * @param callback
@@ -326,12 +341,26 @@ export declare class GoogleMap {
      */
     setOnMapClickListener(callback?: MapListenerCallback<MapClickCallbackData>): Promise<void>;
     /**
+     * Set the event listener on the map for 'onMapReady' events.
+     *
+     * @param callback
+     * @returns
+     */
+    setOnMapReadyListener(callback?: MapListenerCallback<MapReadyCallbackData>): Promise<void>;
+    /**
      * Set the event listener on the map for 'onPolygonClick' events.
      *
      * @param callback
      * @returns
      */
     setOnPolygonClickListener(callback?: MapListenerCallback<PolygonClickCallbackData>): Promise<void>;
+    /**
+     * Set the event listener on the map for 'onPoiClick' events.
+     *
+     * @param callback
+     * @returns
+     */
+    setOnPoiClickListener(callback?: MapListenerCallback<PoiClickCallbackData>): Promise<void>;
     /**
      * Set the event listener on the map for 'onCircleClick' events.
      *
@@ -395,5 +424,7 @@ export declare class GoogleMap {
      * @returns
      */
     removeAllMapListeners(): Promise<void>;
+    on(event: GoogleMapsEvent): Observable<any>;
+    private onPromise;
     private generateCallback;
 }

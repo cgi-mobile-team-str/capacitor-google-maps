@@ -202,12 +202,12 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
                     throw err
                 }
                 val data = JSObject()
-                data.put("nearLeft", latLngToJSObject(region?.nearLeft))
-                data.put("nearRight", latLngToJSObject(region?.nearRight))
-                data.put("farLeft", latLngToJSObject(region?.farLeft))
-                data.put("farRight", latLngToJSObject(region?.farRight))
-                data.put("southwest", latLngToJSObject(region?.latLngBounds?.southwest))
-                data.put("northeast", latLngToJSObject(region?.latLngBounds?.northeast))
+                data.put("nearLeft", CapacitorGoogleMapsUtils.latLngToJSObject(region?.nearLeft))
+                data.put("nearRight", CapacitorGoogleMapsUtils.latLngToJSObject(region?.nearRight))
+                data.put("farLeft", CapacitorGoogleMapsUtils.latLngToJSObject(region?.farLeft))
+                data.put("farRight", CapacitorGoogleMapsUtils.latLngToJSObject(region?.farRight))
+                data.put("southwest", CapacitorGoogleMapsUtils.latLngToJSObject(region?.latLngBounds?.southwest))
+                data.put("northeast", CapacitorGoogleMapsUtils.latLngToJSObject(region?.latLngBounds?.northeast))
                 call.resolve(data)
             }
         }
@@ -775,7 +775,7 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
                     throw err
                 }
                 val data = JSObject()
-                val targetObj = latLngToJSObject(cameraTarget)
+                val targetObj = CapacitorGoogleMapsUtils.latLngToJSObject(cameraTarget)
                 data.put("cameraTarget", targetObj)
                 call.resolve(data)
             }
@@ -1325,7 +1325,34 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
                     throw err
                 }
                 val data = JSObject()
-                data.put("position", latLngToJSObject(position))
+                data.put("position", CapacitorGoogleMapsUtils.latLngToJSObject(position))
+                call.resolve(data)
+            }
+        } catch (e: GoogleMapsError) {
+            handleError(call, e)
+        } catch (e: Exception) {
+            handleError(call, e)
+        }
+    }
+
+    @PluginMethod
+    fun isMarkerRemoved(call: PluginCall) {
+        try {
+            val id = call.getString("id")
+            id ?: throw InvalidMapIdError()
+
+            val markerId = call.getString("markerId")
+            markerId ?: throw InvalidArgumentsError("markerId is invalid or missing")
+
+            val map = maps[id]
+            map ?: throw MapNotFoundError()
+
+            map.isMarkerRemoved(markerId) { isRemoved, err ->
+                if (err != null) {
+                    throw err
+                }
+                val data = JSObject()
+                data.put("isRemoved", isRemoved)
                 call.resolve(data)
             }
         } catch (e: GoogleMapsError) {
@@ -1485,6 +1512,33 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
                     throw err
                 }
                 call.resolve()
+            }
+        } catch (e: GoogleMapsError) {
+            handleError(call, e)
+        } catch (e: Exception) {
+            handleError(call, e)
+        }
+    }
+
+    @PluginMethod
+    fun isPolylineRemoved(call: PluginCall) {
+        try {
+            val id = call.getString("id")
+            id ?: throw InvalidMapIdError()
+
+            val polylineId = call.getString("polylineId")
+            polylineId ?: throw InvalidArgumentsError("polylineId is invalid or missing")
+
+            val map = maps[id]
+            map ?: throw MapNotFoundError()
+
+            map.isPolylineRemoved (polylineId) { isRemoved, err ->
+                if (err != null) {
+                    throw err
+                }
+                val data = JSObject()
+                data.put("isRemoved", isRemoved)
+                call.resolve(data)
             }
         } catch (e: GoogleMapsError) {
             handleError(call, e)
@@ -1822,7 +1876,7 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
                     throw err
                 }
                 val data = JSObject()
-                data.put("latLng", latLngToJSObject(latLng))
+                data.put("latLng", CapacitorGoogleMapsUtils.latLngToJSObject(latLng))
                 call.resolve(data)
                 call.resolve()
             }
@@ -1924,13 +1978,6 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
         return RectF(x.toFloat(), y.toFloat(), (x + width).toFloat(), (y + height).toFloat())
     }
 
-    private fun latLngToJSObject(latLng: LatLng?): JSObject {
-        val obj = JSObject()
-        obj.put("lat", latLng?.latitude)
-        obj.put("lng", latLng?.longitude)
-        return obj
-    }
-
     private fun createMarkerJSObject(pairIdMarker: Pair<String, CapacitorGoogleMapMarker>, id: String): JSObject {
         val res = JSObject()
         val sizeObj = JSObject()
@@ -1943,7 +1990,7 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
 
         res.put("id", pairIdMarker.first)
         res.put("mapId", id)
-        res.put("coordinate",  latLngToJSObject(pairIdMarker.second.coordinate))
+        res.put("coordinate",  CapacitorGoogleMapsUtils.latLngToJSObject(pairIdMarker.second.coordinate))
         res.put("opacity", pairIdMarker.second.opacity)
         res.put("title", pairIdMarker.second.title)
         res.put("snippet", pairIdMarker.second.snippet)
@@ -1968,7 +2015,7 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
 
         if(!pairIdPolyline.second.path.isNullOrEmpty()) {
             for (i in 0 until pairIdPolyline.second.path.size) {
-                pointsJsonArray.put(latLngToJSObject(pairIdPolyline.second.path.get(i)))
+                pointsJsonArray.put(CapacitorGoogleMapsUtils.latLngToJSObject(pairIdPolyline.second.path.get(i)))
             }
         }
         res.put("id", pairIdPolyline.first)
@@ -1992,7 +2039,7 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
         var centerJSObject = JSObject()
         val res = JSObject()
 
-        centerJSObject = latLngToJSObject(pairIdCircle.second.center)
+        centerJSObject = CapacitorGoogleMapsUtils.latLngToJSObject(pairIdCircle.second.center)
         res.put("id", pairIdCircle.first)
         res.put("mapId", id)
         res.put("center", centerJSObject)
@@ -2016,7 +2063,7 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
                 val pointsJsonArray = JSONArray()
                 for (j in 0 until pairIdPolygon.second.shapes[i].size) {
                     pointsJsonArray.put(
-                        latLngToJSObject(pairIdPolygon.second.shapes[i][j])
+                        CapacitorGoogleMapsUtils.latLngToJSObject(pairIdPolygon.second.shapes[i][j])
                     )
                 }
                 shapesJsonArray.put(pointsJsonArray)

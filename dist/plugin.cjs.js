@@ -3,6 +3,7 @@
 Object.defineProperty(exports, '__esModule', { value: true });
 
 var core = require('@capacitor/core');
+var rxjs = require('rxjs');
 var markerclusterer = require('@googlemaps/markerclusterer');
 
 function _interopNamespace(e) {
@@ -37,10 +38,30 @@ CapacitorGoogleMaps.addListener('isMapInFocus', (data) => {
 });
 
 class LatLngBounds {
-    constructor(bounds) {
-        this.southwest = bounds.southwest;
-        this.center = bounds.center;
-        this.northeast = bounds.northeast;
+    constructor(arg) {
+        if (Array.isArray(arg)) {
+            let minLat = Number.POSITIVE_INFINITY;
+            let minLng = Number.POSITIVE_INFINITY;
+            let maxLat = Number.NEGATIVE_INFINITY;
+            let maxLng = Number.NEGATIVE_INFINITY;
+            for (const p of arg) {
+                minLat = Math.min(minLat, p.lat);
+                minLng = Math.min(minLng, p.lng);
+                maxLat = Math.max(maxLat, p.lat);
+                maxLng = Math.max(maxLng, p.lng);
+            }
+            this.southwest = { lat: minLat, lng: minLng };
+            this.northeast = { lat: maxLat, lng: maxLng };
+            this.center = {
+                lat: (minLat + maxLat) / 2,
+                lng: (minLng + maxLng) / 2,
+            };
+        }
+        else {
+            this.southwest = arg.southwest;
+            this.center = arg.center;
+            this.northeast = arg.northeast;
+        }
     }
     async contains(point) {
         const result = await CapacitorGoogleMaps.mapBoundsContains({
@@ -58,6 +79,12 @@ class LatLngBounds {
         this.center = result['bounds']['center'];
         this.northeast = result['bounds']['northeast'];
         return this;
+    }
+}
+class LatLng {
+    constructor(lat, lng) {
+        this.lat = lat;
+        this.lng = lng;
     }
 }
 class CapacitorPolygon {
@@ -125,33 +152,46 @@ class CapacitorPolyline {
         this.strokeWidth = width;
         return CapacitorGoogleMaps.setPolylineStrokeWidth({ id: this.mapId, polylineId: this.id, strokeWidth: width });
     }
+    async isRemoved() {
+        return (await CapacitorGoogleMaps.isPolylineRemoved({ id: this.mapId, polylineId: this.id })).isRemoved;
+    }
     async remove() {
         return CapacitorGoogleMaps.removePolyline({ id: this.mapId, polylineId: this.id });
     }
 }
-exports.MapType = void 0;
-(function (MapType) {
+exports.GoogleMapsMapTypeId = void 0;
+(function (GoogleMapsMapTypeId) {
     /**
      * Basic map.
      */
-    MapType["Normal"] = "Normal";
+    GoogleMapsMapTypeId["Normal"] = "Normal";
     /**
      * Satellite imagery with roads and labels.
      */
-    MapType["Hybrid"] = "Hybrid";
+    GoogleMapsMapTypeId["Hybrid"] = "Hybrid";
     /**
      * Satellite imagery with no labels.
      */
-    MapType["Satellite"] = "Satellite";
+    GoogleMapsMapTypeId["Satellite"] = "Satellite";
     /**
      * Topographic data.
      */
-    MapType["Terrain"] = "Terrain";
+    GoogleMapsMapTypeId["Terrain"] = "Terrain";
     /**
      * No base map tiles.
      */
-    MapType["None"] = "None";
-})(exports.MapType || (exports.MapType = {}));
+    GoogleMapsMapTypeId["None"] = "None";
+})(exports.GoogleMapsMapTypeId || (exports.GoogleMapsMapTypeId = {}));
+exports.GoogleMapsEvent = void 0;
+(function (GoogleMapsEvent) {
+    GoogleMapsEvent["MAP_READY"] = "onMapReady";
+    GoogleMapsEvent["MAP_CLICK"] = "onMapClick";
+    GoogleMapsEvent["POI_CLICK"] = "onPoiClick";
+    GoogleMapsEvent["CAMERA_MOVE_END"] = "onCameraIdle";
+    GoogleMapsEvent["MARKER_CLICK"] = "onMarkerClick";
+    GoogleMapsEvent["MAP_DRAG"] = "onCameraMove";
+    GoogleMapsEvent["MAP_DRAG_START"] = "onCameraMoveStarted";
+})(exports.GoogleMapsEvent || (exports.GoogleMapsEvent = {}));
 class CapacitorMarker {
     constructor(obj, mapId) {
         this.mapId = mapId;
@@ -205,6 +245,12 @@ class CapacitorMarker {
     }
     async getPosition() {
         return (await CapacitorGoogleMaps.getMarkerPosition({ id: this.mapId, markerId: this.id })).position;
+    }
+    async isRemoved() {
+        return (await CapacitorGoogleMaps.isMarkerRemoved({ id: this.mapId, markerId: this.id })).isRemoved;
+    }
+    async remove() {
+        return CapacitorGoogleMaps.removeMarker({ id: this.mapId, markerId: this.id });
     }
 }
 
@@ -605,7 +651,7 @@ class GoogleMap {
     }
     async getMapType() {
         const { type } = await CapacitorGoogleMaps.getMapType({ id: this.id });
-        return exports.MapType[type];
+        return exports.GoogleMapsMapTypeId[type];
     }
     async getCameraZoom() {
         const { cameraZoom } = await CapacitorGoogleMaps.getCameraZoom({ id: this.id });
@@ -867,6 +913,23 @@ class GoogleMap {
         }
     }
     /**
+     * Set the event listener on the map for 'onCameraMove' events.
+     *
+     * @param callback
+     * @returns
+     */
+    async setOnCameraMoveListener(callback) {
+        if (this.onCameraMoveListener) {
+            this.onCameraMoveListener.remove();
+        }
+        if (callback) {
+            this.onCameraMoveListener = await CapacitorGoogleMaps.addListener('onCameraMove', this.generateCallback(callback));
+        }
+        else {
+            this.onCameraMoveListener = undefined;
+        }
+    }
+    /**
      * Set the event listener on the map for 'onClusterClick' events.
      *
      * @param callback
@@ -935,6 +998,23 @@ class GoogleMap {
         }
     }
     /**
+     * Set the event listener on the map for 'onMapReady' events.
+     *
+     * @param callback
+     * @returns
+     */
+    async setOnMapReadyListener(callback) {
+        if (this.onMapReadyListener) {
+            this.onMapReadyListener.remove();
+        }
+        if (callback) {
+            this.onMapReadyListener = await CapacitorGoogleMaps.addListener('onMapReady', this.generateCallback(callback));
+        }
+        else {
+            this.onMapReadyListener = undefined;
+        }
+    }
+    /**
      * Set the event listener on the map for 'onPolygonClick' events.
      *
      * @param callback
@@ -949,6 +1029,23 @@ class GoogleMap {
         }
         else {
             this.onPolygonClickListener = undefined;
+        }
+    }
+    /**
+     * Set the event listener on the map for 'onPoiClick' events.
+     *
+     * @param callback
+     * @returns
+     */
+    async setOnPoiClickListener(callback) {
+        if (this.onPoiClickListener) {
+            this.onPoiClickListener.remove();
+        }
+        if (callback) {
+            this.onPoiClickListener = await CapacitorGoogleMaps.addListener('onPoiClick', this.generateCallback(callback));
+        }
+        else {
+            this.onPoiClickListener = undefined;
         }
     }
     /**
@@ -1133,6 +1230,10 @@ class GoogleMap {
             this.onPolygonClickListener.remove();
             this.onPolygonClickListener = undefined;
         }
+        if (this.onPoiClickListener) {
+            this.onPoiClickListener.remove();
+            this.onPoiClickListener = undefined;
+        }
         if (this.onCircleClickListener) {
             this.onCircleClickListener.remove();
             this.onCircleClickListener = undefined;
@@ -1156,6 +1257,34 @@ class GoogleMap {
         if (this.onMyLocationClickListener) {
             this.onMyLocationClickListener.remove();
             this.onMyLocationClickListener = undefined;
+        }
+    }
+    on(event) {
+        return rxjs.fromEventPattern((handler) => this.onPromise(event, handler));
+    }
+    async onPromise(event, callback) {
+        switch (event) {
+            case exports.GoogleMapsEvent.MAP_READY:
+                this.setOnMapReadyListener(callback);
+                break;
+            case exports.GoogleMapsEvent.MAP_CLICK:
+                this.setOnMapClickListener(callback);
+                break;
+            case exports.GoogleMapsEvent.POI_CLICK:
+                this.setOnPoiClickListener(callback);
+                break;
+            case exports.GoogleMapsEvent.CAMERA_MOVE_END:
+                this.setOnCameraIdleListener(callback);
+                break;
+            case exports.GoogleMapsEvent.MARKER_CLICK:
+                this.setOnMarkerClickListener(callback);
+                break;
+            case exports.GoogleMapsEvent.MAP_DRAG:
+                this.setOnCameraMoveListener(callback);
+                break;
+            case exports.GoogleMapsEvent.MAP_DRAG_START:
+                this.setOnCameraMoveStartedListener(callback);
+                break;
         }
     }
     generateCallback(callback) {
@@ -1277,7 +1406,7 @@ class CapacitorGoogleMapsWeb extends core.WebPlugin {
         let type = this.maps[_args.id].map.getMapTypeId();
         if (type !== undefined) {
             if (type === 'roadmap') {
-                type = exports.MapType.Normal;
+                type = exports.GoogleMapsMapTypeId.Normal;
             }
             return { type: `${type.charAt(0).toUpperCase()}${type.slice(1)}` };
         }
@@ -1285,7 +1414,7 @@ class CapacitorGoogleMapsWeb extends core.WebPlugin {
     }
     async setMapType(_args) {
         let mapType = _args.mapType.toLowerCase();
-        if (_args.mapType === exports.MapType.Normal) {
+        if (_args.mapType === exports.GoogleMapsMapTypeId.Normal) {
             mapType = 'roadmap';
         }
         this.maps[_args.id].map.setMapTypeId(mapType);
@@ -1873,6 +2002,12 @@ class CapacitorGoogleMapsWeb extends core.WebPlugin {
             delete this.maps[_args.id].polygons[_args.polygonId];
         }
     }
+    async isMarkerRemoved(_args) {
+        return { isRemoved: this.maps[_args.id].markers[_args.markerId] == null };
+    }
+    async isPolylineRemoved(_args) {
+        return { isRemoved: this.maps[_args.id].polylines[_args.polylineId] == null };
+    }
 }
 
 var web = /*#__PURE__*/Object.freeze({
@@ -1885,5 +2020,6 @@ exports.CapacitorMarker = CapacitorMarker;
 exports.CapacitorPolygon = CapacitorPolygon;
 exports.CapacitorPolyline = CapacitorPolyline;
 exports.GoogleMap = GoogleMap;
+exports.LatLng = LatLng;
 exports.LatLngBounds = LatLngBounds;
 //# sourceMappingURL=plugin.cjs.js.map

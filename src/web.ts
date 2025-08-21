@@ -3,8 +3,8 @@ import { WebPlugin } from '@capacitor/core';
 import type { Cluster, onClusterClickHandler } from '@googlemaps/markerclusterer';
 import { MarkerClusterer, SuperClusterAlgorithm } from '@googlemaps/markerclusterer';
 
-import type { Circle, LatLng, Marker, Polygon, Polyline, VisibleRegion } from './definitions';
-import { MapType, LatLngBounds } from './definitions';
+import type { Circle, ILatLng, Marker, Polygon, Polyline, VisibleRegion } from './definitions';
+import { GoogleMapsMapTypeId, LatLngBounds } from './definitions';
 import type {
   AddMarkerArgs,
   CameraArgs,
@@ -199,7 +199,7 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
     let type = this.maps[_args.id].map.getMapTypeId();
     if (type !== undefined) {
       if (type === 'roadmap') {
-        type = MapType.Normal;
+        type = GoogleMapsMapTypeId.Normal;
       }
       return { type: `${type.charAt(0).toUpperCase()}${type.slice(1)}` };
     }
@@ -208,7 +208,7 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
 
   async setMapType(_args: MapTypeArgs): Promise<void> {
     let mapType = _args.mapType.toLowerCase();
-    if (_args.mapType === MapType.Normal) {
+    if (_args.mapType === GoogleMapsMapTypeId.Normal) {
       mapType = 'roadmap';
     }
     this.maps[_args.id].map.setMapTypeId(mapType);
@@ -754,7 +754,7 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
     if (marker) marker.map = _args.isVisible ? this.maps[_args.id].map : null;
   }
 
-  async getMarkerPosition(_args: MarkerPositionArgs): Promise<{ position: LatLng }> {
+  async getMarkerPosition(_args: MarkerPositionArgs): Promise<{ position: ILatLng }> {
     const marker = this.maps[_args.id].markers[_args.markerId];
     if (!marker) throw new Error('Marker not found');
     const pos = marker.position as google.maps.LatLngLiteral;
@@ -835,13 +835,13 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
     }
   }
 
-  async getCameraTarget(_args: { id: string }): Promise<{ cameraTarget: LatLng }> {
+  async getCameraTarget(_args: { id: string }): Promise<{ cameraTarget: ILatLng }> {
     const center = this.maps[_args.id].map.getCenter();
     if (!center) throw new Error('Center not available');
     return { cameraTarget: { lat: center.lat(), lng: center.lng() } };
   }
 
-  async fromPointToLatLng(_args: FromPointToLatLngArgs): Promise<{ latLng: LatLng }> {
+  async fromPointToLatLng(_args: FromPointToLatLngArgs): Promise<{ latLng: ILatLng }> {
     const map = this.maps[_args.id].map;
     const projection = map.getProjection();
     if (!projection) throw new Error('Projection not ready');
@@ -891,5 +891,13 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
       polygon.setMap(null);
       delete this.maps[_args.id].polygons[_args.polygonId];
     }
+  }
+
+  async isMarkerRemoved(_args: { id: string; markerId: string; }): Promise<{ isRemoved: boolean; }> {
+    return {isRemoved: this.maps[_args.id].markers[_args.markerId] == null}
+  }
+
+  async isPolylineRemoved(_args: { id: string; polylineId: string; }): Promise<{ isRemoved: boolean; }> {
+    return {isRemoved: this.maps[_args.id].polylines[_args.polylineId] == null}
   }
 }

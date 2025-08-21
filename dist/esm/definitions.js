@@ -1,9 +1,29 @@
 import { CapacitorGoogleMaps } from './implementation';
 export class LatLngBounds {
-    constructor(bounds) {
-        this.southwest = bounds.southwest;
-        this.center = bounds.center;
-        this.northeast = bounds.northeast;
+    constructor(arg) {
+        if (Array.isArray(arg)) {
+            let minLat = Number.POSITIVE_INFINITY;
+            let minLng = Number.POSITIVE_INFINITY;
+            let maxLat = Number.NEGATIVE_INFINITY;
+            let maxLng = Number.NEGATIVE_INFINITY;
+            for (const p of arg) {
+                minLat = Math.min(minLat, p.lat);
+                minLng = Math.min(minLng, p.lng);
+                maxLat = Math.max(maxLat, p.lat);
+                maxLng = Math.max(maxLng, p.lng);
+            }
+            this.southwest = { lat: minLat, lng: minLng };
+            this.northeast = { lat: maxLat, lng: maxLng };
+            this.center = {
+                lat: (minLat + maxLat) / 2,
+                lng: (minLng + maxLng) / 2,
+            };
+        }
+        else {
+            this.southwest = arg.southwest;
+            this.center = arg.center;
+            this.northeast = arg.northeast;
+        }
     }
     async contains(point) {
         const result = await CapacitorGoogleMaps.mapBoundsContains({
@@ -21,6 +41,12 @@ export class LatLngBounds {
         this.center = result['bounds']['center'];
         this.northeast = result['bounds']['northeast'];
         return this;
+    }
+}
+export class LatLng {
+    constructor(lat, lng) {
+        this.lat = lat;
+        this.lng = lng;
     }
 }
 export class CapacitorPolygon {
@@ -88,33 +114,46 @@ export class CapacitorPolyline {
         this.strokeWidth = width;
         return CapacitorGoogleMaps.setPolylineStrokeWidth({ id: this.mapId, polylineId: this.id, strokeWidth: width });
     }
+    async isRemoved() {
+        return (await CapacitorGoogleMaps.isPolylineRemoved({ id: this.mapId, polylineId: this.id })).isRemoved;
+    }
     async remove() {
         return CapacitorGoogleMaps.removePolyline({ id: this.mapId, polylineId: this.id });
     }
 }
-export var MapType;
-(function (MapType) {
+export var GoogleMapsMapTypeId;
+(function (GoogleMapsMapTypeId) {
     /**
      * Basic map.
      */
-    MapType["Normal"] = "Normal";
+    GoogleMapsMapTypeId["Normal"] = "Normal";
     /**
      * Satellite imagery with roads and labels.
      */
-    MapType["Hybrid"] = "Hybrid";
+    GoogleMapsMapTypeId["Hybrid"] = "Hybrid";
     /**
      * Satellite imagery with no labels.
      */
-    MapType["Satellite"] = "Satellite";
+    GoogleMapsMapTypeId["Satellite"] = "Satellite";
     /**
      * Topographic data.
      */
-    MapType["Terrain"] = "Terrain";
+    GoogleMapsMapTypeId["Terrain"] = "Terrain";
     /**
      * No base map tiles.
      */
-    MapType["None"] = "None";
-})(MapType || (MapType = {}));
+    GoogleMapsMapTypeId["None"] = "None";
+})(GoogleMapsMapTypeId || (GoogleMapsMapTypeId = {}));
+export var GoogleMapsEvent;
+(function (GoogleMapsEvent) {
+    GoogleMapsEvent["MAP_READY"] = "onMapReady";
+    GoogleMapsEvent["MAP_CLICK"] = "onMapClick";
+    GoogleMapsEvent["POI_CLICK"] = "onPoiClick";
+    GoogleMapsEvent["CAMERA_MOVE_END"] = "onCameraIdle";
+    GoogleMapsEvent["MARKER_CLICK"] = "onMarkerClick";
+    GoogleMapsEvent["MAP_DRAG"] = "onCameraMove";
+    GoogleMapsEvent["MAP_DRAG_START"] = "onCameraMoveStarted";
+})(GoogleMapsEvent || (GoogleMapsEvent = {}));
 export class CapacitorMarker {
     constructor(obj, mapId) {
         this.mapId = mapId;
@@ -168,6 +207,12 @@ export class CapacitorMarker {
     }
     async getPosition() {
         return (await CapacitorGoogleMaps.getMarkerPosition({ id: this.mapId, markerId: this.id })).position;
+    }
+    async isRemoved() {
+        return (await CapacitorGoogleMaps.isMarkerRemoved({ id: this.mapId, markerId: this.id })).isRemoved;
+    }
+    async remove() {
+        return CapacitorGoogleMaps.removeMarker({ id: this.mapId, markerId: this.id });
     }
 }
 //# sourceMappingURL=definitions.js.map

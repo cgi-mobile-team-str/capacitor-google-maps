@@ -2,21 +2,21 @@ import type { Plugin } from '@capacitor/core';
 import { registerPlugin } from '@capacitor/core';
 
 import type {
-  CameraConfig,
+  CameraPosition,
   Circle,
-  CircleOption,
+  CircleOptions,
   GoogleMapConfig,
   GoogleMapsOptions,
-  LatLng,
+  ILatLng,
   LatLngBounds,
   MapPadding,
-  MapType,
+  GoogleMapsMapTypeId,
   Marker,
-  MarkerOption,
+  MarkerOptions,
   Polygon,
-  PolygonOption,
+  PolygonOptions,
   Polyline,
-  PolylineOption,
+  PolylineOptions,
   Size,
   VisibleRegion,
 } from './definitions';
@@ -77,17 +77,17 @@ export interface RemoveMarkersArgs {
 
 export interface AddMarkerArgs {
   id: string;
-  options: MarkerOption;
+  options: MarkerOptions;
 }
 
 export interface AddPolygonsArgs {
   id: string;
-  optionsList: PolygonOption[];
+  optionsList: PolygonOptions[];
 }
 
 export interface AddPolygonArgs {
   id: string;
-  options: PolygonOption;
+  options: PolygonOptions;
 }
 
 export interface RemovePolygonsArgs {
@@ -97,7 +97,7 @@ export interface RemovePolygonsArgs {
 
 export interface AddCirclesArgs {
   id: string;
-  optionsList: CircleOption[];
+  optionsList: CircleOptions[];
 }
 
 export interface RemoveCirclesArgs {
@@ -106,7 +106,7 @@ export interface RemoveCirclesArgs {
 }
 export interface AddPolylinesArgs {
   id: string;
-  optionsList: PolylineOption[];
+  optionsList: PolylineOptions[];
 }
 
 export interface RemovePolylinesArgs {
@@ -116,12 +116,12 @@ export interface RemovePolylinesArgs {
 
 export interface CameraArgs {
   id: string;
-  config: CameraConfig;
+  config: CameraPosition;
 }
 
 export interface MapTypeArgs {
   id: string;
-  mapType: MapType;
+  mapType: GoogleMapsMapTypeId;
 }
 
 export interface IndoorMapArgs {
@@ -150,7 +150,7 @@ export interface CurrentLocArgs {
 }
 export interface AddMarkersArgs {
   id: string;
-  optionsList: MarkerOption[];
+  optionsList: MarkerOptions[];
 }
 
 export interface MapBoundsArgs {
@@ -200,7 +200,7 @@ export interface MarkerPositionArgs {
 
 export interface MapBoundsContainsArgs {
   bounds: LatLngBounds;
-  point: LatLng;
+  point: ILatLng;
 }
 
 export type MapBoundsExtendArgs = MapBoundsContainsArgs;
@@ -258,7 +258,7 @@ export interface CameraBearingArgs {
 
 export interface AddPolylineArgs {
   id: string;
-  options: PolylineOption;
+  options: PolylineOptions;
 }
 
 export interface PolylineStrokeColorArgs {
@@ -280,13 +280,13 @@ export interface RemovePolylineArgs {
 
 export interface AddCircleArgs {
   id: string;
-  options: CircleOption;
+  options: CircleOptions;
 }
 
 export interface SetCircleCenterArgs {
   id: string;
   circleId: string;
-  center: LatLng;
+  center: ILatLng;
 }
 
 export interface RemoveCircleArgs {
@@ -301,7 +301,7 @@ export interface RemovePolygonArgs {
 
 export interface SetCameraTargetArgs {
   id: string;
-  target: LatLng | LatLng[]; 
+  target: ILatLng | ILatLng[]; 
 }
 
 export interface FromPointToLatLngArgs {
@@ -366,10 +366,12 @@ export interface CapacitorGoogleMapsPlugin extends Plugin {
   setMarkerIconAnchor(args: MarkerIconAnchorArgs): Promise<void>;
   setMarkerZIndex(args: MarkerZIndexArgs): Promise<void>;
   setMarkerVisibility(args: MarkerVisibilityArgs): Promise<void>;
-  getMarkerPosition(args: MarkerPositionArgs): Promise<{ position: LatLng }>;
+  getMarkerPosition(args: MarkerPositionArgs): Promise<{ position: ILatLng }>;
   setCameraTarget(args: SetCameraTargetArgs): Promise<void>;
-  getCameraTarget(args: { id: string }): Promise<{cameraTarget: LatLng}>
-  fromPointToLatLng(args: FromPointToLatLngArgs): Promise<{latLng: LatLng}>
+  getCameraTarget(args: { id: string }): Promise<{cameraTarget: ILatLng}>
+  fromPointToLatLng(args: FromPointToLatLngArgs): Promise<{latLng: ILatLng}>
+  isMarkerRemoved(args: { id: string, markerId: string }): Promise<{isRemoved: boolean}>
+  isPolylineRemoved(args: { id: string, polylineId: string }): Promise<{isRemoved: boolean}>
 }
 
 const CapacitorGoogleMaps = registerPlugin<CapacitorGoogleMapsPlugin>('CapacitorGoogleMaps', {

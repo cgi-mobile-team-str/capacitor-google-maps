@@ -1,5 +1,5 @@
 import type { Plugin } from '@capacitor/core';
-import type { CameraConfig, Circle, CircleOption, GoogleMapConfig, GoogleMapsOptions, LatLng, LatLngBounds, MapPadding, MapType, Marker, MarkerOption, Polygon, PolygonOption, Polyline, PolylineOption, Size, VisibleRegion } from './definitions';
+import type { CameraPosition, Circle, CircleOptions, GoogleMapConfig, GoogleMapsOptions, ILatLng, LatLngBounds, MapPadding, GoogleMapsMapTypeId, Marker, MarkerOptions, Polygon, PolygonOptions, Polyline, PolylineOptions, Size, VisibleRegion } from './definitions';
 /**
  * An interface containing the options used when creating a map.
  */
@@ -51,15 +51,15 @@ export interface RemoveMarkersArgs {
 }
 export interface AddMarkerArgs {
     id: string;
-    options: MarkerOption;
+    options: MarkerOptions;
 }
 export interface AddPolygonsArgs {
     id: string;
-    optionsList: PolygonOption[];
+    optionsList: PolygonOptions[];
 }
 export interface AddPolygonArgs {
     id: string;
-    options: PolygonOption;
+    options: PolygonOptions;
 }
 export interface RemovePolygonsArgs {
     id: string;
@@ -67,7 +67,7 @@ export interface RemovePolygonsArgs {
 }
 export interface AddCirclesArgs {
     id: string;
-    optionsList: CircleOption[];
+    optionsList: CircleOptions[];
 }
 export interface RemoveCirclesArgs {
     id: string;
@@ -75,7 +75,7 @@ export interface RemoveCirclesArgs {
 }
 export interface AddPolylinesArgs {
     id: string;
-    optionsList: PolylineOption[];
+    optionsList: PolylineOptions[];
 }
 export interface RemovePolylinesArgs {
     id: string;
@@ -83,11 +83,11 @@ export interface RemovePolylinesArgs {
 }
 export interface CameraArgs {
     id: string;
-    config: CameraConfig;
+    config: CameraPosition;
 }
 export interface MapTypeArgs {
     id: string;
-    mapType: MapType;
+    mapType: GoogleMapsMapTypeId;
 }
 export interface IndoorMapArgs {
     id: string;
@@ -111,7 +111,7 @@ export interface CurrentLocArgs {
 }
 export interface AddMarkersArgs {
     id: string;
-    optionsList: MarkerOption[];
+    optionsList: MarkerOptions[];
 }
 export interface MapBoundsArgs {
     id: string;
@@ -154,7 +154,7 @@ export interface MarkerPositionArgs {
 }
 export interface MapBoundsContainsArgs {
     bounds: LatLngBounds;
-    point: LatLng;
+    point: ILatLng;
 }
 export type MapBoundsExtendArgs = MapBoundsContainsArgs;
 export interface EnableClusteringArgs {
@@ -201,7 +201,7 @@ export interface CameraBearingArgs {
 }
 export interface AddPolylineArgs {
     id: string;
-    options: PolylineOption;
+    options: PolylineOptions;
 }
 export interface PolylineStrokeColorArgs {
     id: string;
@@ -219,12 +219,12 @@ export interface RemovePolylineArgs {
 }
 export interface AddCircleArgs {
     id: string;
-    options: CircleOption;
+    options: CircleOptions;
 }
 export interface SetCircleCenterArgs {
     id: string;
     circleId: string;
-    center: LatLng;
+    center: ILatLng;
 }
 export interface RemoveCircleArgs {
     id: string;
@@ -236,7 +236,7 @@ export interface RemovePolygonArgs {
 }
 export interface SetCameraTargetArgs {
     id: string;
-    target: LatLng | LatLng[];
+    target: ILatLng | ILatLng[];
 }
 export interface FromPointToLatLngArgs {
     id: string;
@@ -350,16 +350,28 @@ export interface CapacitorGoogleMapsPlugin extends Plugin {
     setMarkerZIndex(args: MarkerZIndexArgs): Promise<void>;
     setMarkerVisibility(args: MarkerVisibilityArgs): Promise<void>;
     getMarkerPosition(args: MarkerPositionArgs): Promise<{
-        position: LatLng;
+        position: ILatLng;
     }>;
     setCameraTarget(args: SetCameraTargetArgs): Promise<void>;
     getCameraTarget(args: {
         id: string;
     }): Promise<{
-        cameraTarget: LatLng;
+        cameraTarget: ILatLng;
     }>;
     fromPointToLatLng(args: FromPointToLatLngArgs): Promise<{
-        latLng: LatLng;
+        latLng: ILatLng;
+    }>;
+    isMarkerRemoved(args: {
+        id: string;
+        markerId: string;
+    }): Promise<{
+        isRemoved: boolean;
+    }>;
+    isPolylineRemoved(args: {
+        id: string;
+        polylineId: string;
+    }): Promise<{
+        isRemoved: boolean;
     }>;
 }
 declare const CapacitorGoogleMaps: CapacitorGoogleMapsPlugin;

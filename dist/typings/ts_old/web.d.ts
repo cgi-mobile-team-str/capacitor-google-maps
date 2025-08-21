@@ -1,5 +1,5 @@
 import { WebPlugin } from '@capacitor/core';
-import { Circle, LatLng, Marker, Polygon, Polyline, VisibleRegion } from './definitions';
+import { Circle, ILatLng, Marker, Polygon, Polyline, VisibleRegion } from './definitions';
 import { LatLngBounds } from './definitions';
 import { AddMarkerArgs, CameraArgs, AddMarkersArgs, CapacitorGoogleMapsPlugin, CreateMapArgs, CurrentLocArgs, DestroyMapArgs, MapTypeArgs, PaddingArgs, RemoveMarkerArgs, TrafficLayerArgs, RemoveMarkersArgs, MapBoundsContainsArgs, EnableClusteringArgs, FitBoundsArgs, MapBoundsExtendArgs, AddPolygonsArgs, RemovePolygonsArgs, AddCirclesArgs, RemoveCirclesArgs, AddPolylinesArgs, RemovePolylinesArgs, EnableCompassArgs, MapOptionsArgs, MarkerIconArgs, MarkerIconAnchorArgs, MarkerZIndexArgs, MarkerPositionArgs, MarkerVisibilityArgs, AddPolylineArgs, PolylineStrokeColorArgs, PolylineStrokeWidthArgs, RemovePolylineArgs, SetCameraTargetArgs, FromPointToLatLngArgs, AddCircleArgs, RemoveCircleArgs, SetCircleCenterArgs, EnableToolbarArgs, EnableMyLocationArgs, EnableAllGesturesArgs, EnableTiltGestureArgs, CameraBearingArgs, SetMapPreferencesArgs, EnableTiltRotateGestureArgs, AddPolygonArgs, RemovePolygonArgs } from './implementation';
 export declare class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogleMapsPlugin {
@@ -100,7 +100,7 @@ export declare class CapacitorGoogleMapsWeb extends WebPlugin implements Capacit
     setMarkerZIndex(_args: MarkerZIndexArgs): Promise<void>;
     setMarkerVisibility(_args: MarkerVisibilityArgs): Promise<void>;
     getMarkerPosition(_args: MarkerPositionArgs): Promise<{
-        position: LatLng;
+        position: ILatLng;
     }>;
     addPolyline(_args: AddPolylineArgs): Promise<Polyline & {
         id: string;
@@ -122,10 +122,10 @@ export declare class CapacitorGoogleMapsWeb extends WebPlugin implements Capacit
     getCameraTarget(_args: {
         id: string;
     }): Promise<{
-        cameraTarget: LatLng;
+        cameraTarget: ILatLng;
     }>;
     fromPointToLatLng(_args: FromPointToLatLngArgs): Promise<{
-        latLng: LatLng;
+        latLng: ILatLng;
     }>;
     addPolylines(_args: AddPolylinesArgs): Promise<{
         polylines: (Polyline & {
@@ -136,4 +136,16 @@ export declare class CapacitorGoogleMapsWeb extends WebPlugin implements Capacit
         id: string;
     }>;
     removePolygon(_args: RemovePolygonArgs): Promise<void>;
+    isMarkerRemoved(_args: {
+        id: string;
+        markerId: string;
+    }): Promise<{
+        isRemoved: boolean;
+    }>;
+    isPolylineRemoved(_args: {
+        id: string;
+        polylineId: string;
+    }): Promise<{
+        isRemoved: boolean;
+    }>;
 }

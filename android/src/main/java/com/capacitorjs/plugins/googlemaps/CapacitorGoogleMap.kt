@@ -49,7 +49,8 @@ class CapacitorGoogleMap(
         OnInfoWindowClickListener,
         OnCircleClickListener,
         OnPolylineClickListener,
-        OnPolygonClickListener {
+        OnPolygonClickListener,
+        OnPoiClickListener {
     private var mapView: MapView
     private var googleMap: GoogleMap? = null
     private val markers = HashMap<String, CapacitorGoogleMapMarker>()
@@ -737,14 +738,13 @@ class CapacitorGoogleMap(
 
             CoroutineScope(Dispatchers.Main).launch {
                 val marker = CapacitorGoogleMapMarker(options)
-
                 val markerOptions: Deferred<MarkerOptions> =
                     CoroutineScope(Dispatchers.IO).async {
                         this@CapacitorGoogleMap.buildMarker(marker)
                     }
                 val googleMapMarker = googleMap?.addMarker(markerOptions.await())
-
-                marker.googleMapMarker = googleMapMarker
+                val idToUse = if (marker.id.isNullOrEmpty() != true)  marker.id else googleMapMarker!!.id
+                googleMapMarker?.snippet = idToUse
                 marker.googleMapMarker = googleMapMarker
 
                 if (clusterManager != null) {
@@ -753,9 +753,9 @@ class CapacitorGoogleMap(
                     clusterManager?.cluster()
                 }
 
-                markers[googleMapMarker!!.id] = marker
+                markers[idToUse!!] = marker
 
-                markerId = googleMapMarker.id
+                markerId = idToUse
 
                 callback(Result.success(Pair(markerId, marker)))
             }
@@ -778,6 +778,37 @@ class CapacitorGoogleMap(
             CoroutineScope(Dispatchers.Main).launch {
                 val finalUrl = url ?: marker.iconUrl
                 marker.setIcon(finalUrl, size)
+                try {
+                    val bitmap: Bitmap = when {
+                        finalUrl!!.startsWith("https:") -> {
+                            val stream = URL(finalUrl).openConnection().getInputStream()
+                            BitmapFactory.decodeStream(stream)
+                        }
+                        finalUrl!!.startsWith("data:image") -> {
+                            val base64Data = finalUrl!!.substringAfter(",")
+                            val decodedBytes = Base64.decode(base64Data, Base64.DEFAULT)
+                            BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
+                        }
+                        else -> {
+                            val stream = context.assets.open("public/${finalUrl}")
+                            BitmapFactory.decodeStream(stream)
+                        }
+                    }
+                    markerIcons[finalUrl!!] = bitmap
+                    marker.googleMapMarker?.setIcon(getResizedIcon(bitmap, marker))
+                } catch (e: Exception) {
+                    var detailedMessage = "${e.javaClass} - ${e.localizedMessage}"
+                    if (finalUrl!!.endsWith(".svg")) {
+                        detailedMessage = "SVG not supported"
+                    }
+
+                    Log.w(
+                        "CapacitorGoogleMaps",
+                        "Could not load image '${finalUrl}': ${detailedMessage}. Using default marker icon."
+                    )
+                }
+                /*val finalUrl = url ?: marker.iconUrl
+                marker.setIcon(finalUrl, size)
                 if (finalUrl != null && finalUrl != "") {
                     val inputStream = context.assets.open("public/$finalUrl")
                     val originalBitmap = BitmapFactory.decodeStream(inputStream)
@@ -788,7 +819,7 @@ class CapacitorGoogleMap(
                         BitmapDescriptorFactory.fromBitmap(originalBitmap)
                     }
                     marker.googleMapMarker?.setIcon(descriptor)
-                }
+                }*/
                 callback(null)
             }
         } catch (e: GoogleMapsError) {
@@ -806,11 +837,13 @@ class CapacitorGoogleMap(
             googleMap ?: throw GoogleMapNotAvailable()
             val marker = markers[markerId]
             marker ?: throw MarkerNotFoundError()
-            var anchorX = (x / marker.iconSize!!.width)
-            var anchorY = (y / marker.iconSize!!.height)
+            val anchorPoint = CapacitorGoogleMapsPoint(x, y)
             CoroutineScope(Dispatchers.Main).launch {
-                marker.iconAnchor = CapacitorGoogleMapsPoint(anchorX ,anchorY)
-                marker.googleMapMarker?.setAnchor(anchorX,anchorY)
+                val iconAnchor = CapacitorGoogleMapsUtils.buildIconAnchorPoint(anchorPoint, marker.iconSize)
+                if(iconAnchor != null) {
+                    marker.iconAnchor = iconAnchor
+                    marker.googleMapMarker?.setAnchor(iconAnchor.x,iconAnchor.y)
+                }
                 callback(null)
             }
         } catch (e: GoogleMapsError) {
@@ -864,6 +897,18 @@ class CapacitorGoogleMap(
             marker ?: throw MarkerNotFoundError()
             CoroutineScope(Dispatchers.Main).launch {
                 callback(marker.googleMapMarker?.position, null)
+            }
+        } catch (e: GoogleMapsError) {
+            callback(null, e)
+        }
+    }
+
+    fun isMarkerRemoved(markerId: String, callback: (isRemoved: Boolean?, error: GoogleMapsError?) -> Unit) {
+        try {
+            googleMap ?: throw GoogleMapNotAvailable()
+            CoroutineScope(Dispatchers.Main).launch {
+                val isRemoved =  markers[markerId] == null
+                callback(isRemoved, null)
             }
         } catch (e: GoogleMapsError) {
             callback(null, e)
@@ -965,7 +1010,9 @@ class CapacitorGoogleMap(
             val polyline = polylines[polylineId]
             polyline ?: throw PolylineNotFound()
             CoroutineScope(Dispatchers.Main).launch {
+                Log.d("value : ", polyline.googleMapsPolyline.toString())
                 polyline.googleMapsPolyline?.remove()
+                Log.d("value : ", polyline.googleMapsPolyline.toString())
                 polylines.remove(polylineId)
                 callback(null)
             }
@@ -973,6 +1020,19 @@ class CapacitorGoogleMap(
             callback(e)
         }
     }
+
+    fun isPolylineRemoved(polylineId: String, callback: (isRemoved: Boolean?, error: GoogleMapsError?) -> Unit) {
+        try {
+            googleMap ?: throw GoogleMapNotAvailable()
+            CoroutineScope(Dispatchers.Main).launch {
+                val isRemoved =  polylines[polylineId] == null
+                callback(isRemoved, null)
+            }
+        } catch (e: GoogleMapsError) {
+            callback(null, e)
+        }
+    }
+
     // END POLYLINE METHODS
 
     // BEGIN CIRCLE METHODS
@@ -1357,8 +1417,12 @@ class CapacitorGoogleMap(
         markerOptions.draggable(marker.draggable)
         markerOptions.zIndex(marker.zIndex)
         markerOptions.visible(marker.isVisible)
-        if (marker.iconAnchor != null) {
-            markerOptions.anchor(marker.iconAnchor!!.x, marker.iconAnchor!!.y)
+        val iconAnchorPoint = marker.iconAnchor
+        if (iconAnchorPoint != null) {
+            val iconAnchor = CapacitorGoogleMapsUtils.buildIconAnchorPoint(iconAnchorPoint, marker.iconSize)
+            if(iconAnchor != null) {
+                markerOptions.anchor(iconAnchor.x, iconAnchor.y)
+            }
         }
 
         if (!marker.iconUrl.isNullOrEmpty()) {
@@ -1539,6 +1603,7 @@ class CapacitorGoogleMap(
             this@CapacitorGoogleMap.googleMap?.setOnCameraMoveListener(this@CapacitorGoogleMap)
             this@CapacitorGoogleMap.googleMap?.setOnMarkerClickListener(this@CapacitorGoogleMap)
             this@CapacitorGoogleMap.googleMap?.setOnPolygonClickListener(this@CapacitorGoogleMap)
+            this@CapacitorGoogleMap.googleMap?.setOnPoiClickListener(this@CapacitorGoogleMap)
             this@CapacitorGoogleMap.googleMap?.setOnCircleClickListener(this@CapacitorGoogleMap)
             this@CapacitorGoogleMap.googleMap?.setOnMarkerDragListener(this@CapacitorGoogleMap)
             this@CapacitorGoogleMap.googleMap?.setOnMapClickListener(this@CapacitorGoogleMap)
@@ -1690,6 +1755,10 @@ class CapacitorGoogleMap(
         data.put("longitude", this@CapacitorGoogleMap.googleMap?.cameraPosition?.target?.longitude)
         data.put("tilt", this@CapacitorGoogleMap.googleMap?.cameraPosition?.tilt)
         data.put("zoom", this@CapacitorGoogleMap.googleMap?.cameraPosition?.zoom)
+        data.put("nearLeft",  CapacitorGoogleMapsUtils.latLngToJSObject(this@CapacitorGoogleMap.googleMap?.projection?.visibleRegion?.nearLeft))
+        data.put("farRight",  CapacitorGoogleMapsUtils.latLngToJSObject(this@CapacitorGoogleMap.googleMap?.projection?.visibleRegion?.farRight))
+        data.put("farLeft",  CapacitorGoogleMapsUtils.latLngToJSObject(this@CapacitorGoogleMap.googleMap?.projection?.visibleRegion?.farLeft))
+        data.put("nearRight",  CapacitorGoogleMapsUtils.latLngToJSObject(this@CapacitorGoogleMap.googleMap?.projection?.visibleRegion?.nearRight))
         delegate.notify("onCameraIdle", data)
         delegate.notify("onBoundsChanged", data)
     }
@@ -1713,11 +1782,14 @@ class CapacitorGoogleMap(
     }
 
     override fun onCameraMove() {
+        val data = JSObject()
+        data.put("mapId", this@CapacitorGoogleMap.id)
         debounceJob?.cancel()
         debounceJob = CoroutineScope(Dispatchers.Main).launch {
             delay(100)
             clusterManager?.cluster()
         }
+        delegate.notify("onCameraMove", data)
     }
 
     override fun onPolygonClick(polygon: Polygon) {
@@ -1726,6 +1798,15 @@ class CapacitorGoogleMap(
         data.put("polygonId", polygon.id)
         data.put("tag", polygon.tag)
         delegate.notify("onPolygonClick", data)
+    }
+
+    override fun onPoiClick(poi: PointOfInterest) {
+        val data = JSObject()
+        data.put("mapId", this@CapacitorGoogleMap.id)
+        data.put("poiId", poi.placeId)
+        data.put("latitude", poi.latLng.latitude)
+        data.put("longitude", poi.latLng.longitude)
+        delegate.notify("onPoiClick", data)
     }
 
     override fun onCircleClick(circle: Circle) {

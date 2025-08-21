@@ -9,6 +9,7 @@ import org.json.JSONObject
 
 
 class CapacitorGoogleMapMarker(): ClusterItem {
+    var id: String? = ""
     var coordinate: LatLng = LatLng(0.0, 0.0)
     var opacity: Float = 1.0f
     private var title: String = ""
@@ -42,6 +43,7 @@ class CapacitorGoogleMapMarker(): ClusterItem {
         isFlat = fromJSONObject.optBoolean("isFlat", false)
         isVisible = fromJSONObject.optBoolean("isVisible", true)
         iconUrl = fromJSONObject.optString("iconUrl")
+        id = fromJSONObject.optString("id")
         if (fromJSONObject.has("iconSize")) {
             val iconSizeObject = fromJSONObject.getJSONObject("iconSize")
             iconSize = Size(iconSizeObject.optInt("width", 0), iconSizeObject.optInt("height", 0))
@@ -49,7 +51,7 @@ class CapacitorGoogleMapMarker(): ClusterItem {
 
         if (fromJSONObject.has("iconAnchor")) {
             val inputAnchorPoint = CapacitorGoogleMapsPoint(fromJSONObject.getJSONObject("iconAnchor"))
-            iconAnchor = this.buildIconAnchorPoint(inputAnchorPoint)
+            iconAnchor = CapacitorGoogleMapsUtils.buildIconAnchorPoint(inputAnchorPoint, iconSize)
         }
 
         if (fromJSONObject.has("tintColor")) {
@@ -70,6 +72,7 @@ class CapacitorGoogleMapMarker(): ClusterItem {
     }
 
     constructor(options: CapacitorMarkerOptions) : this() {
+        id = options.id
         coordinate = options.position
         opacity = options.alpha ?: 1.0f
         title = options.title ?: ""
@@ -82,7 +85,7 @@ class CapacitorGoogleMapMarker(): ClusterItem {
         val y = options.anchor?.get(1)
         if( x != null && y != null) {
             val inputAnchorPoint = CapacitorGoogleMapsPoint(x , y)
-            iconAnchor = this.buildIconAnchorPoint(inputAnchorPoint)
+            iconAnchor = CapacitorGoogleMapsUtils.buildIconAnchorPoint(inputAnchorPoint, iconSize)
         }
         draggable = options.draggable
         isVisible = options.visible
@@ -112,14 +115,5 @@ class CapacitorGoogleMapMarker(): ClusterItem {
         if(size != null) {
             this.iconSize = size
         }
-    }
-
-     private fun buildIconAnchorPoint(iconAnchor: CapacitorGoogleMapsPoint): CapacitorGoogleMapsPoint? {
-        iconSize ?: return null
-
-        val u: Float = iconAnchor.x / iconSize!!.width
-        val v: Float = iconAnchor.y / iconSize!!.height
-
-        return CapacitorGoogleMapsPoint(u, v)
     }
 }

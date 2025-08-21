@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { WebPlugin } from '@capacitor/core';
 import { MarkerClusterer, SuperClusterAlgorithm } from '@googlemaps/markerclusterer';
-import { MapType, LatLngBounds } from './definitions';
+import { GoogleMapsMapTypeId, LatLngBounds } from './definitions';
 export class CapacitorGoogleMapsWeb extends WebPlugin {
     constructor() {
         super(...arguments);
@@ -110,7 +110,7 @@ export class CapacitorGoogleMapsWeb extends WebPlugin {
         let type = this.maps[_args.id].map.getMapTypeId();
         if (type !== undefined) {
             if (type === 'roadmap') {
-                type = MapType.Normal;
+                type = GoogleMapsMapTypeId.Normal;
             }
             return { type: `${type.charAt(0).toUpperCase()}${type.slice(1)}` };
         }
@@ -118,7 +118,7 @@ export class CapacitorGoogleMapsWeb extends WebPlugin {
     }
     async setMapType(_args) {
         let mapType = _args.mapType.toLowerCase();
-        if (_args.mapType === MapType.Normal) {
+        if (_args.mapType === GoogleMapsMapTypeId.Normal) {
             mapType = 'roadmap';
         }
         this.maps[_args.id].map.setMapTypeId(mapType);
@@ -705,6 +705,12 @@ export class CapacitorGoogleMapsWeb extends WebPlugin {
             polygon.setMap(null);
             delete this.maps[_args.id].polygons[_args.polygonId];
         }
+    }
+    async isMarkerRemoved(_args) {
+        return { isRemoved: this.maps[_args.id].markers[_args.markerId] == null };
+    }
+    async isPolylineRemoved(_args) {
+        return { isRemoved: this.maps[_args.id].polylines[_args.polylineId] == null };
     }
 }
 //# sourceMappingURL=web.js.map

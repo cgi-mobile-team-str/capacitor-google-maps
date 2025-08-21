@@ -1,6 +1,8 @@
 package com.capacitorjs.plugins.googlemaps
 
 import android.graphics.Color
+import android.util.Size
+import com.getcapacitor.JSObject
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import org.json.JSONArray
@@ -68,5 +70,22 @@ object CapacitorGoogleMapsUtils {
         }
 
         return shape
+    }
+
+    fun latLngToJSObject(latLng: LatLng?): JSObject {
+        val obj = JSObject()
+        obj.put("lat", latLng?.latitude)
+        obj.put("lng", latLng?.longitude)
+        return obj
+    }
+
+
+     fun buildIconAnchorPoint(iconAnchor: CapacitorGoogleMapsPoint, iconSize: Size?): CapacitorGoogleMapsPoint? {
+        iconSize ?: return null
+
+        val u: Float = iconAnchor.x / iconSize!!.width
+        val v: Float = iconAnchor.y / iconSize!!.height
+
+        return CapacitorGoogleMapsPoint(u, v)
     }
 }

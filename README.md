@@ -327,12 +327,15 @@ export default MyMap;
 * [`setOnBoundsChangedListener(...)`](#setonboundschangedlistener)
 * [`setOnCameraIdleListener(...)`](#setoncameraidlelistener)
 * [`setOnCameraMoveStartedListener(...)`](#setoncameramovestartedlistener)
+* [`setOnCameraMoveListener(...)`](#setoncameramovelistener)
 * [`setOnClusterClickListener(...)`](#setonclusterclicklistener)
 * [`setOnClusterInfoWindowClickListener(...)`](#setonclusterinfowindowclicklistener)
 * [`setOnInfoWindowClickListener(...)`](#setoninfowindowclicklistener)
 * [`setOnMapClickListener(...)`](#setonmapclicklistener)
+* [`setOnMapReadyListener(...)`](#setonmapreadylistener)
 * [`setOnMarkerClickListener(...)`](#setonmarkerclicklistener)
 * [`setOnPolygonClickListener(...)`](#setonpolygonclicklistener)
+* [`setOnPoiClickListener(...)`](#setonpoiclicklistener)
 * [`setOnCircleClickListener(...)`](#setoncircleclicklistener)
 * [`setOnPolylineClickListener(...)`](#setonpolylineclicklistener)
 * [`setOnMarkerDragStartListener(...)`](#setonmarkerdragstartlistener)
@@ -354,6 +357,7 @@ export default MyMap;
 * [`setCameraTarget(...)`](#setcameratarget)
 * [`getCameraTarget()`](#getcameratarget)
 * [`fromPointToLatLng(...)`](#frompointtolatlng)
+* [`on(...)`](#on)
 * [Interfaces](#interfaces)
 * [Type Aliases](#type-aliases)
 * [Enums](#enums)
@@ -422,12 +426,12 @@ disableClustering() => Promise<void>
 ### addMarker(...)
 
 ```typescript
-addMarker(options: MarkerOption) => Promise<CapacitorMarker>
+addMarker(options: MarkerOptions) => Promise<CapacitorMarker>
 ```
 
-| Param         | Type                                                  |
-| ------------- | ----------------------------------------------------- |
-| **`options`** | <code><a href="#markeroption">MarkerOption</a></code> |
+| Param         | Type                                                    |
+| ------------- | ------------------------------------------------------- |
+| **`options`** | <code><a href="#markeroptions">MarkerOptions</a></code> |
 
 **Returns:** <code>Promise&lt;CapacitorMarker&gt;</code>
 
@@ -437,12 +441,12 @@ addMarker(options: MarkerOption) => Promise<CapacitorMarker>
 ### addMarkers(...)
 
 ```typescript
-addMarkers(optionsList: MarkerOption[]) => Promise<CapacitorMarker[]>
+addMarkers(optionsList: MarkerOptions[]) => Promise<CapacitorMarker[]>
 ```
 
-| Param             | Type                        |
-| ----------------- | --------------------------- |
-| **`optionsList`** | <code>MarkerOption[]</code> |
+| Param             | Type                         |
+| ----------------- | ---------------------------- |
+| **`optionsList`** | <code>MarkerOptions[]</code> |
 
 **Returns:** <code>Promise&lt;CapacitorMarker[]&gt;</code>
 
@@ -506,12 +510,12 @@ removePolygons(ids: string[]) => Promise<void>
 ### addCircles(...)
 
 ```typescript
-addCircles(optionsList: CircleOption[]) => Promise<CapacitorCircle[]>
+addCircles(optionsList: CircleOptions[]) => Promise<CapacitorCircle[]>
 ```
 
-| Param             | Type                        |
-| ----------------- | --------------------------- |
-| **`optionsList`** | <code>CircleOption[]</code> |
+| Param             | Type                         |
+| ----------------- | ---------------------------- |
+| **`optionsList`** | <code>CircleOptions[]</code> |
 
 **Returns:** <code>Promise&lt;CapacitorCircle[]&gt;</code>
 
@@ -521,12 +525,12 @@ addCircles(optionsList: CircleOption[]) => Promise<CapacitorCircle[]>
 ### addCircle(...)
 
 ```typescript
-addCircle(options: CircleOption) => Promise<CapacitorCircle>
+addCircle(options: CircleOptions) => Promise<CapacitorCircle>
 ```
 
-| Param         | Type                                                  |
-| ------------- | ----------------------------------------------------- |
-| **`options`** | <code><a href="#circleoption">CircleOption</a></code> |
+| Param         | Type                                                    |
+| ------------- | ------------------------------------------------------- |
+| **`options`** | <code><a href="#circleoptions">CircleOptions</a></code> |
 
 **Returns:** <code>Promise&lt;CapacitorCircle&gt;</code>
 
@@ -549,12 +553,12 @@ removeCircles(ids: string[]) => Promise<void>
 ### addPolylines(...)
 
 ```typescript
-addPolylines(optionsList: PolylineOption[]) => Promise<CapacitorPolyline[]>
+addPolylines(optionsList: PolylineOptions[]) => Promise<CapacitorPolyline[]>
 ```
 
-| Param             | Type                          |
-| ----------------- | ----------------------------- |
-| **`optionsList`** | <code>PolylineOption[]</code> |
+| Param             | Type                           |
+| ----------------- | ------------------------------ |
+| **`optionsList`** | <code>PolylineOptions[]</code> |
 
 **Returns:** <code>Promise&lt;CapacitorPolyline[]&gt;</code>
 
@@ -564,12 +568,12 @@ addPolylines(optionsList: PolylineOption[]) => Promise<CapacitorPolyline[]>
 ### addPolyline(...)
 
 ```typescript
-addPolyline(options: PolylineOption) => Promise<CapacitorPolyline>
+addPolyline(options: PolylineOptions) => Promise<CapacitorPolyline>
 ```
 
-| Param         | Type                                                      |
-| ------------- | --------------------------------------------------------- |
-| **`options`** | <code><a href="#polylineoption">PolylineOption</a></code> |
+| Param         | Type                                                        |
+| ------------- | ----------------------------------------------------------- |
+| **`options`** | <code><a href="#polylineoptions">PolylineOptions</a></code> |
 
 **Returns:** <code>Promise&lt;CapacitorPolyline&gt;</code>
 
@@ -601,12 +605,12 @@ destroy() => Promise<void>
 ### moveCamera(...)
 
 ```typescript
-moveCamera(config: CameraConfig) => Promise<void>
+moveCamera(config: CameraPosition) => Promise<void>
 ```
 
-| Param        | Type                                                  |
-| ------------ | ----------------------------------------------------- |
-| **`config`** | <code><a href="#cameraconfig">CameraConfig</a></code> |
+| Param        | Type                                                      |
+| ------------ | --------------------------------------------------------- |
+| **`config`** | <code><a href="#cameraposition">CameraPosition</a></code> |
 
 --------------------
 
@@ -614,12 +618,12 @@ moveCamera(config: CameraConfig) => Promise<void>
 ### animateCamera(...)
 
 ```typescript
-animateCamera(config: CameraConfig) => Promise<void>
+animateCamera(config: CameraPosition) => Promise<void>
 ```
 
-| Param        | Type                                                  |
-| ------------ | ----------------------------------------------------- |
-| **`config`** | <code><a href="#cameraconfig">CameraConfig</a></code> |
+| Param        | Type                                                      |
+| ------------ | --------------------------------------------------------- |
+| **`config`** | <code><a href="#cameraposition">CameraPosition</a></code> |
 
 --------------------
 
@@ -627,12 +631,12 @@ animateCamera(config: CameraConfig) => Promise<void>
 ### getMapType()
 
 ```typescript
-getMapType() => Promise<MapType>
+getMapType() => Promise<GoogleMapsMapTypeId>
 ```
 
 Get current map type
 
-**Returns:** <code>Promise&lt;<a href="#maptype">MapType</a>&gt;</code>
+**Returns:** <code>Promise&lt;<a href="#googlemapsmaptypeid">GoogleMapsMapTypeId</a>&gt;</code>
 
 --------------------
 
@@ -640,12 +644,12 @@ Get current map type
 ### setMapType(...)
 
 ```typescript
-setMapType(mapType: MapType) => Promise<void>
+setMapType(mapType: GoogleMapsMapTypeId) => Promise<void>
 ```
 
-| Param         | Type                                        |
-| ------------- | ------------------------------------------- |
-| **`mapType`** | <code><a href="#maptype">MapType</a></code> |
+| Param         | Type                                                                |
+| ------------- | ------------------------------------------------------------------- |
+| **`mapType`** | <code><a href="#googlemapsmaptypeid">GoogleMapsMapTypeId</a></code> |
 
 --------------------
 
@@ -783,6 +787,19 @@ setOnCameraMoveStartedListener(callback?: MapListenerCallback<CameraMoveStartedC
 --------------------
 
 
+### setOnCameraMoveListener(...)
+
+```typescript
+setOnCameraMoveListener(callback?: MapListenerCallback<CameraMoveCallbackData> | undefined) => Promise<void>
+```
+
+| Param          | Type                                                                                                                                    |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| **`callback`** | <code><a href="#maplistenercallback">MapListenerCallback</a>&lt;<a href="#cameramovecallbackdata">CameraMoveCallbackData</a>&gt;</code> |
+
+--------------------
+
+
 ### setOnClusterClickListener(...)
 
 ```typescript
@@ -835,6 +852,19 @@ setOnMapClickListener(callback?: MapListenerCallback<MapClickCallbackData> | und
 --------------------
 
 
+### setOnMapReadyListener(...)
+
+```typescript
+setOnMapReadyListener(callback?: MapListenerCallback<MapReadyCallbackData> | undefined) => Promise<void>
+```
+
+| Param          | Type                                                                                                                                |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| **`callback`** | <code><a href="#maplistenercallback">MapListenerCallback</a>&lt;<a href="#mapreadycallbackdata">MapReadyCallbackData</a>&gt;</code> |
+
+--------------------
+
+
 ### setOnMarkerClickListener(...)
 
 ```typescript
@@ -857,6 +887,19 @@ setOnPolygonClickListener(callback?: MapListenerCallback<PolygonClickCallbackDat
 | Param          | Type                                                                                                                                        |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
 | **`callback`** | <code><a href="#maplistenercallback">MapListenerCallback</a>&lt;<a href="#polygonclickcallbackdata">PolygonClickCallbackData</a>&gt;</code> |
+
+--------------------
+
+
+### setOnPoiClickListener(...)
+
+```typescript
+setOnPoiClickListener(callback?: MapListenerCallback<PoiClickCallbackData> | undefined) => Promise<void>
+```
+
+| Param          | Type                                                                                                                                |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| **`callback`** | <code><a href="#maplistenercallback">MapListenerCallback</a>&lt;<a href="#poiclickcallbackdata">PoiClickCallbackData</a>&gt;</code> |
 
 --------------------
 
@@ -1095,12 +1138,12 @@ getCameraZoom() => Promise<number>
 ### setCameraTarget(...)
 
 ```typescript
-setCameraTarget(target: LatLng | LatLng[]) => Promise<void>
+setCameraTarget(target: ILatLng | ILatLng[]) => Promise<void>
 ```
 
-| Param        | Type                                                  |
-| ------------ | ----------------------------------------------------- |
-| **`target`** | <code><a href="#latlng">LatLng</a> \| LatLng[]</code> |
+| Param        | Type                                                     |
+| ------------ | -------------------------------------------------------- |
+| **`target`** | <code><a href="#ilatlng">ILatLng</a> \| ILatLng[]</code> |
 
 --------------------
 
@@ -1108,10 +1151,10 @@ setCameraTarget(target: LatLng | LatLng[]) => Promise<void>
 ### getCameraTarget()
 
 ```typescript
-getCameraTarget() => Promise<LatLng>
+getCameraTarget() => Promise<ILatLng>
 ```
 
-**Returns:** <code>Promise&lt;<a href="#latlng">LatLng</a>&gt;</code>
+**Returns:** <code>Promise&lt;<a href="#ilatlng">ILatLng</a>&gt;</code>
 
 --------------------
 
@@ -1119,14 +1162,29 @@ getCameraTarget() => Promise<LatLng>
 ### fromPointToLatLng(...)
 
 ```typescript
-fromPointToLatLng(points: number[]) => Promise<LatLng>
+fromPointToLatLng(points: number[]) => Promise<ILatLng>
 ```
 
 | Param        | Type                  |
 | ------------ | --------------------- |
 | **`points`** | <code>number[]</code> |
 
-**Returns:** <code>Promise&lt;<a href="#latlng">LatLng</a>&gt;</code>
+**Returns:** <code>Promise&lt;<a href="#ilatlng">ILatLng</a>&gt;</code>
+
+--------------------
+
+
+### on(...)
+
+```typescript
+on(event: GoogleMapsEvent) => Observable<any>
+```
+
+| Param       | Type                                                        |
+| ----------- | ----------------------------------------------------------- |
+| **`event`** | <code><a href="#googlemapsevent">GoogleMapsEvent</a></code> |
+
+**Returns:** <code>Observable&lt;any&gt;</code>
 
 --------------------
 
@@ -1169,7 +1227,7 @@ For iOS and Android only the config options declared on <a href="#googlemapconfi
 | **`iOSMapId`**         | <code>string</code>                                                   | A map id associated with a specific map style or feature. [Use Map IDs](https://developers.google.com/maps/documentation/get-map-id) Only for iOS.        |                    | 5.4.0 |
 | **`controls`**         | <code><a href="#googlemapcontrols">GoogleMapControls</a></code>       |                                                                                                                                                           |                    |       |
 | **`gestures`**         | <code><a href="#googlemapgestures">GoogleMapGestures</a></code>       |                                                                                                                                                           |                    |       |
-| **`camera`**           | <code><a href="#cameraconfig">CameraConfig</a></code>                 |                                                                                                                                                           |                    |       |
+| **`camera`**           | <code><a href="#cameraposition">CameraPosition</a></code>             |                                                                                                                                                           |                    |       |
 | **`preferences`**      | <code><a href="#googlemappreferences">GoogleMapPreferences</a></code> |                                                                                                                                                           |                    |       |
 
 
@@ -1195,20 +1253,20 @@ For iOS and Android only the config options declared on <a href="#googlemapconfi
 | **`rotate`** | <code>boolean</code> |
 
 
-#### CameraConfig
+#### CameraPosition
 
 Configuration properties for a Google Map Camera
 
-| Prop           | Type                                                  | Description                                                                                                                 | Default        |
-| -------------- | ----------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- | -------------- |
-| **`target`**   | <code><a href="#latlng">LatLng</a> \| LatLng[]</code> | Location on the Earth towards which the camera points or multiple locations towards which the camera points in the center . |                |
-| **`zoom`**     | <code>number</code>                                   | Sets the zoom of the map.                                                                                                   |                |
-| **`bearing`**  | <code>number</code>                                   | Bearing of the camera, in degrees clockwise from true north.                                                                | <code>0</code> |
-| **`tilt`**     | <code>number</code>                                   | The angle, in degrees, of the camera from the nadir (directly facing the Earth). The only allowed values are 0 and 45.      | <code>0</code> |
-| **`duration`** | <code>number</code>                                   | This configuration option is not being used.                                                                                |                |
+| Prop           | Type                                                     | Description                                                                                                                 | Default        |
+| -------------- | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- | -------------- |
+| **`target`**   | <code><a href="#ilatlng">ILatLng</a> \| ILatLng[]</code> | Location on the Earth towards which the camera points or multiple locations towards which the camera points in the center . |                |
+| **`zoom`**     | <code>number</code>                                      | Sets the zoom of the map.                                                                                                   |                |
+| **`bearing`**  | <code>number</code>                                      | Bearing of the camera, in degrees clockwise from true north.                                                                | <code>0</code> |
+| **`tilt`**     | <code>number</code>                                      | The angle, in degrees, of the camera from the nadir (directly facing the Earth). The only allowed values are 0 and 45.      | <code>0</code> |
+| **`duration`** | <code>number</code>                                      | This configuration option is not being used.                                                                                |                |
 
 
-#### LatLng
+#### ILatLng
 
 An interface representing a pair of latitude and longitude coordinates.
 
@@ -1224,7 +1282,7 @@ An interface representing a pair of latitude and longitude coordinates.
 | ------------------- | --------------------------------------------------------------------- |
 | **`padding`**       | <code><a href="#mappadding">MapPadding</a></code>                     |
 | **`building`**      | <code>boolean</code>                                                  |
-| **`gestureBounds`** | <code>LatLng[]</code>                                                 |
+| **`gestureBounds`** | <code>ILatLng[]</code>                                                |
 | **`zoom`**          | <code><a href="#googlemapzoomoptions">GoogleMapZoomOptions</a></code> |
 
 
@@ -1255,14 +1313,14 @@ Controls for setting padding on the 'visible' region of the view.
 | **`mapId`** | <code>string</code> |
 
 
-#### MarkerOption
+#### MarkerOptions
 
 | Prop                   | Type                                                                         |
 | ---------------------- | ---------------------------------------------------------------------------- |
 | **`icon`**             | <code>(<a href="#markericon">MarkerIcon</a> & { anchor?: number[]; })</code> |
 | **`title`**            | <code>string</code>                                                          |
 | **`snippet`**          | <code>string</code>                                                          |
-| **`position`**         | <code><a href="#latlng">LatLng</a></code>                                    |
+| **`position`**         | <code><a href="#ilatlng">ILatLng</a></code>                                  |
 | **`infoWindowAnchor`** | <code>number[]</code>                                                        |
 | **`anchor`**           | <code>number[]</code>                                                        |
 | **`draggable`**        | <code>boolean</code>                                                         |
@@ -1302,44 +1360,48 @@ https://tools.ietf.org/html/rfc7946#section-3.1.6
 | **`coordinates`** | <code>Position[][]</code>                     |                                       |
 
 
-#### CircleOption
+#### CircleOptions
 
-| Prop              | Type                                      |
-| ----------------- | ----------------------------------------- |
-| **`center`**      | <code><a href="#latlng">LatLng</a></code> |
-| **`radius`**      | <code>number</code>                       |
-| **`strokeWidth`** | <code>number</code>                       |
-| **`strokeColor`** | <code>string</code>                       |
-| **`fillColor`**   | <code>string</code>                       |
-| **`clickable`**   | <code>boolean</code>                      |
-| **`visible`**     | <code>boolean</code>                      |
-| **`zIndex`**      | <code>number</code>                       |
+| Prop              | Type                                        |
+| ----------------- | ------------------------------------------- |
+| **`center`**      | <code><a href="#ilatlng">ILatLng</a></code> |
+| **`radius`**      | <code>number</code>                         |
+| **`strokeWidth`** | <code>number</code>                         |
+| **`strokeColor`** | <code>string</code>                         |
+| **`fillColor`**   | <code>string</code>                         |
+| **`clickable`**   | <code>boolean</code>                        |
+| **`visible`**     | <code>boolean</code>                        |
+| **`zIndex`**      | <code>number</code>                         |
 
 
-#### PolylineOption
+#### PolylineOptions
 
-| Prop            | Type                  |
-| --------------- | --------------------- |
-| **`points`**    | <code>LatLng[]</code> |
-| **`visible`**   | <code>boolean</code>  |
-| **`geodesic`**  | <code>boolean</code>  |
-| **`color`**     | <code>string</code>   |
-| **`width`**     | <code>number</code>   |
-| **`zIndex`**    | <code>number</code>   |
-| **`clickable`** | <code>boolean</code>  |
+| Prop            | Type                   |
+| --------------- | ---------------------- |
+| **`points`**    | <code>ILatLng[]</code> |
+| **`visible`**   | <code>boolean</code>   |
+| **`geodesic`**  | <code>boolean</code>   |
+| **`color`**     | <code>string</code>    |
+| **`width`**     | <code>number</code>    |
+| **`zIndex`**    | <code>number</code>    |
+| **`clickable`** | <code>boolean</code>   |
 
 
 #### CameraIdleCallbackData
 
-| Prop            | Type                      |
-| --------------- | ------------------------- |
-| **`mapId`**     | <code>string</code>       |
-| **`bounds`**    | <code>LatLngBounds</code> |
-| **`bearing`**   | <code>number</code>       |
-| **`latitude`**  | <code>number</code>       |
-| **`longitude`** | <code>number</code>       |
-| **`tilt`**      | <code>number</code>       |
-| **`zoom`**      | <code>number</code>       |
+| Prop            | Type                                        |
+| --------------- | ------------------------------------------- |
+| **`mapId`**     | <code>string</code>                         |
+| **`bounds`**    | <code>LatLngBounds</code>                   |
+| **`bearing`**   | <code>number</code>                         |
+| **`latitude`**  | <code>number</code>                         |
+| **`longitude`** | <code>number</code>                         |
+| **`tilt`**      | <code>number</code>                         |
+| **`zoom`**      | <code>number</code>                         |
+| **`nearLeft`**  | <code><a href="#ilatlng">ILatLng</a></code> |
+| **`nearRight`** | <code><a href="#ilatlng">ILatLng</a></code> |
+| **`farLeft`**   | <code><a href="#ilatlng">ILatLng</a></code> |
+| **`farRight`**  | <code><a href="#ilatlng">ILatLng</a></code> |
 
 
 #### CameraMoveStartedCallbackData
@@ -1348,6 +1410,13 @@ https://tools.ietf.org/html/rfc7946#section-3.1.6
 | --------------- | -------------------- |
 | **`mapId`**     | <code>string</code>  |
 | **`isGesture`** | <code>boolean</code> |
+
+
+#### CameraMoveCallbackData
+
+| Prop        | Type                |
+| ----------- | ------------------- |
+| **`mapId`** | <code>string</code> |
 
 
 #### ClusterClickCallbackData
@@ -1397,6 +1466,16 @@ https://tools.ietf.org/html/rfc7946#section-3.1.6
 | **`tag`**       | <code>string</code> |
 
 
+#### PoiClickCallbackData
+
+| Prop            | Type                |
+| --------------- | ------------------- |
+| **`mapId`**     | <code>string</code> |
+| **`poiId`**     | <code>string</code> |
+| **`latitude`**  | <code>number</code> |
+| **`longitude`** | <code>number</code> |
+
+
 #### CircleClickCallbackData
 
 | Prop           | Type                |
@@ -1423,25 +1502,25 @@ https://tools.ietf.org/html/rfc7946#section-3.1.6
 
 #### VisibleRegion
 
-| Prop            | Type                                      |
-| --------------- | ----------------------------------------- |
-| **`nearLeft`**  | <code><a href="#latlng">LatLng</a></code> |
-| **`nearRight`** | <code><a href="#latlng">LatLng</a></code> |
-| **`farLeft`**   | <code><a href="#latlng">LatLng</a></code> |
-| **`farRight`**  | <code><a href="#latlng">LatLng</a></code> |
-| **`southwest`** | <code><a href="#latlng">LatLng</a></code> |
-| **`northeast`** | <code><a href="#latlng">LatLng</a></code> |
+| Prop            | Type                                        |
+| --------------- | ------------------------------------------- |
+| **`nearLeft`**  | <code><a href="#ilatlng">ILatLng</a></code> |
+| **`nearRight`** | <code><a href="#ilatlng">ILatLng</a></code> |
+| **`farLeft`**   | <code><a href="#ilatlng">ILatLng</a></code> |
+| **`farRight`**  | <code><a href="#ilatlng">ILatLng</a></code> |
+| **`southwest`** | <code><a href="#ilatlng">ILatLng</a></code> |
+| **`northeast`** | <code><a href="#ilatlng">ILatLng</a></code> |
 
 
 #### GoogleMapsOptions
 
 | Prop              | Type                                                                  |
 | ----------------- | --------------------------------------------------------------------- |
-| **`mapType`**     | <code><a href="#maptype">MapType</a></code>                           |
+| **`mapType`**     | <code><a href="#googlemapsmaptypeid">GoogleMapsMapTypeId</a></code>   |
 | **`controls`**    | <code><a href="#googlemapcontrols">GoogleMapControls</a></code>       |
 | **`gestures`**    | <code><a href="#googlemapgestures">GoogleMapGestures</a></code>       |
 | **`styles`**      | <code>any[]</code>                                                    |
-| **`camera`**      | <code><a href="#cameraconfig">CameraConfig</a></code>                 |
+| **`camera`**      | <code><a href="#cameraposition">CameraPosition</a></code>             |
 | **`preferences`** | <code><a href="#googlemappreferences">GoogleMapPreferences</a></code> |
 
 
@@ -1481,7 +1560,7 @@ to determine if a position is a 2D or 3D position.
 ### Enums
 
 
-#### MapType
+#### GoogleMapsMapTypeId
 
 | Members         | Value                    | Description                              |
 | --------------- | ------------------------ | ---------------------------------------- |
@@ -1490,5 +1569,18 @@ to determine if a position is a 2D or 3D position.
 | **`Satellite`** | <code>'Satellite'</code> | Satellite imagery with no labels.        |
 | **`Terrain`**   | <code>'Terrain'</code>   | Topographic data.                        |
 | **`None`**      | <code>'None'</code>      | No base map tiles.                       |
+
+
+#### GoogleMapsEvent
+
+| Members               | Value                              |
+| --------------------- | ---------------------------------- |
+| **`MAP_READY`**       | <code>'onMapReady'</code>          |
+| **`MAP_CLICK`**       | <code>'onMapClick'</code>          |
+| **`POI_CLICK`**       | <code>'onPoiClick'</code>          |
+| **`CAMERA_MOVE_END`** | <code>'onCameraIdle'</code>        |
+| **`MARKER_CLICK`**    | <code>'onMarkerClick'</code>       |
+| **`MAP_DRAG`**        | <code>'onCameraMove'</code>        |
+| **`MAP_DRAG_START`**  | <code>'onCameraMoveStarted'</code> |
 
 </docgen-api>

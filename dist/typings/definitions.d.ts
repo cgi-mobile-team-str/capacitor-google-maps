@@ -1,23 +1,24 @@
 /**
  * An interface representing the viewports latitude and longitude bounds.
  */
-export interface LatLngBoundsInterface {
-    southwest: LatLng;
-    center: LatLng;
-    northeast: LatLng;
+export interface ILatLngBounds {
+    southwest: ILatLng;
+    center: ILatLng;
+    northeast: ILatLng;
 }
 export declare class LatLngBounds {
-    southwest: LatLng;
-    center: LatLng;
-    northeast: LatLng;
-    constructor(bounds: LatLngBoundsInterface);
-    contains(point: LatLng): Promise<boolean>;
-    extend(point: LatLng): Promise<LatLngBounds>;
+    southwest: ILatLng;
+    center: ILatLng;
+    northeast: ILatLng;
+    constructor(bounds: ILatLngBounds);
+    constructor(points: ILatLng[]);
+    contains(point: ILatLng): Promise<boolean>;
+    extend(point: ILatLng): Promise<LatLngBounds>;
 }
 /**
  * An interface representing a pair of latitude and longitude coordinates.
  */
-export interface LatLng {
+export interface ILatLng {
     /**
      * Coordinate latitude, in degrees. This value is in the range [-90, 90].
      */
@@ -26,6 +27,17 @@ export interface LatLng {
      * Coordinate longitude, in degrees. This value is in the range [-180, 180].
      */
     lng: number;
+}
+export declare class LatLng implements ILatLng {
+    /**
+     * Coordinate latitude, in degrees. This value is in the range [-90, 90].
+     */
+    lat: number;
+    /**
+     * Coordinate longitude, in degrees. This value is in the range [-180, 180].
+     */
+    lng: number;
+    constructor(lat: number, lng: number);
 }
 export interface Size {
     width: number;
@@ -41,7 +53,7 @@ export interface Point {
  * For iOS and Android only the config options declared on Polygon are available.
  */
 export interface Polygon extends google.maps.PolygonOptions {
-    shapes: LatLng[][];
+    shapes: ILatLng[][];
     strokeColor?: string;
     strokeOpacity?: number;
     strokeWidth?: number;
@@ -57,8 +69,8 @@ export interface Polygon extends google.maps.PolygonOptions {
     title?: string;
     tag?: string;
 }
-export interface PolygonOption {
-    points: LatLng[][];
+export interface PolygonOptions {
+    points: ILatLng[][];
     visible?: boolean;
     strokeColor?: string;
     strokeWidth?: number;
@@ -68,7 +80,7 @@ export interface PolygonOption {
 export declare class CapacitorPolygon implements Polygon {
     mapId: string;
     id: string;
-    shapes: LatLng[][];
+    shapes: ILatLng[][];
     visible?: boolean | undefined | null;
     strokeColor?: string;
     strokeWidth?: number;
@@ -85,7 +97,7 @@ export declare class CapacitorPolygon implements Polygon {
  * For iOS and Android only the config options declared on Circle are available.
  */
 export interface Circle extends google.maps.CircleOptions {
-    center: LatLng;
+    center: ILatLng;
     fillColor?: string;
     fillOpacity?: number;
     strokeColor?: string;
@@ -101,8 +113,8 @@ export interface Circle extends google.maps.CircleOptions {
     title?: string;
     tag?: string;
 }
-export interface CircleOption {
-    center: LatLng;
+export interface CircleOptions {
+    center: ILatLng;
     radius: number;
     strokeWidth?: number;
     strokeColor?: string;
@@ -114,7 +126,7 @@ export interface CircleOption {
 export declare class CapacitorCircle implements Circle {
     mapId: string;
     id: string;
-    center: LatLng;
+    center: ILatLng;
     radius: number;
     strokeColor?: string;
     fillColor?: string;
@@ -125,7 +137,7 @@ export declare class CapacitorCircle implements Circle {
     constructor(obj: Circle & {
         id: string;
     }, mapId: string);
-    setCenter(center: LatLng): Promise<void>;
+    setCenter(center: ILatLng): Promise<void>;
     remove(): Promise<void>;
 }
 /**
@@ -154,8 +166,8 @@ export interface Polyline extends google.maps.PolylineOptions {
      */
     [key: string]: any;
 }
-export interface PolylineOption {
-    points: LatLng[];
+export interface PolylineOptions {
+    points: ILatLng[];
     visible?: boolean;
     geodesic?: boolean;
     color?: string;
@@ -167,7 +179,7 @@ export interface PolylineOption {
 export declare class CapacitorPolyline implements Polyline {
     mapId: string;
     id: string;
-    points: LatLng[] | null | undefined;
+    points: ILatLng[] | null | undefined;
     visible?: boolean | null;
     geodesic?: boolean;
     strokeColor?: string;
@@ -182,6 +194,7 @@ export declare class CapacitorPolyline implements Polyline {
     set(key: string, value: any): void;
     setStrokeColor(color: string): Promise<void>;
     setStrokeWidth(width: number): Promise<void>;
+    isRemoved(): Promise<boolean>;
     remove(): Promise<void>;
 }
 /**
@@ -269,17 +282,17 @@ export interface GoogleMapConfig extends Omit<google.maps.MapOptions, 'styles'> 
     iOSMapId?: string;
     controls?: GoogleMapControls;
     gestures?: GoogleMapGestures;
-    camera?: CameraConfig;
+    camera?: CameraPosition;
     preferences?: GoogleMapPreferences;
 }
 /**
  * Configuration properties for a Google Map Camera
  */
-export interface CameraConfig {
+export interface CameraPosition {
     /**
      * Location on the Earth towards which the camera points or multiple locations towards which the camera points in the center .
      */
-    target?: LatLng | LatLng[];
+    target?: ILatLng | ILatLng[];
     /**
      * Sets the zoom of the map.
      */
@@ -303,7 +316,7 @@ export interface CameraConfig {
      */
     duration?: number;
 }
-export declare enum MapType {
+export declare enum GoogleMapsMapTypeId {
     /**
      * Basic map.
      */
@@ -325,6 +338,15 @@ export declare enum MapType {
      */
     None = "None"
 }
+export declare enum GoogleMapsEvent {
+    MAP_READY = "onMapReady",
+    MAP_CLICK = "onMapClick",
+    POI_CLICK = "onPoiClick",
+    CAMERA_MOVE_END = "onCameraIdle",
+    MARKER_CLICK = "onMarkerClick",
+    MAP_DRAG = "onCameraMove",
+    MAP_DRAG_START = "onCameraMoveStarted"
+}
 /**
  * Controls for setting padding on the 'visible' region of the view.
  */
@@ -341,7 +363,7 @@ export interface Marker {
     /**
      * Marker position
      */
-    coordinate: LatLng;
+    coordinate: ILatLng;
     /**
      * Sets the opacity of the marker, between 0 (completely transparent) and 1 inclusive.
      *
@@ -431,13 +453,13 @@ export interface Marker {
      */
     [key: string]: any;
 }
-export interface MarkerOption {
+export interface MarkerOptions {
     icon?: MarkerIcon & {
         anchor?: number[];
     };
     title?: string;
     snippet?: string;
-    position: LatLng;
+    position: ILatLng;
     infoWindowAnchor?: number[];
     anchor?: number[];
     draggable?: boolean;
@@ -457,7 +479,7 @@ export interface MarkerIcon {
 export declare class CapacitorMarker implements Marker {
     mapId: string;
     id: string;
-    coordinate: LatLng;
+    coordinate: ILatLng;
     opacity?: number | undefined;
     title?: string | undefined;
     snippet?: string | undefined;
@@ -485,7 +507,9 @@ export declare class CapacitorMarker implements Marker {
     setIconAnchor(x: number, y: number): Promise<void>;
     setZIndex(zIndex: number): Promise<void>;
     setVisible(isVisible: boolean): Promise<void>;
-    getPosition(): Promise<LatLng>;
+    getPosition(): Promise<ILatLng>;
+    isRemoved(): Promise<boolean>;
+    remove(): Promise<void>;
 }
 /**
  * The callback function to be called when map events are emitted.
@@ -513,10 +537,17 @@ export interface CameraIdleCallbackData {
     longitude: number;
     tilt: number;
     zoom: number;
+    nearLeft: ILatLng;
+    nearRight: ILatLng;
+    farLeft: ILatLng;
+    farRight: ILatLng;
 }
 export interface CameraMoveStartedCallbackData {
     mapId: string;
     isGesture: boolean;
+}
+export interface CameraMoveCallbackData {
+    mapId: string;
 }
 export interface ClusterClickCallbackData {
     mapId: string;
@@ -538,6 +569,12 @@ export interface PolygonClickCallbackData {
     polygonId: string;
     tag?: string;
 }
+export interface PoiClickCallbackData {
+    mapId: string;
+    poiId: string;
+    latitude: number;
+    longitude: number;
+}
 export interface CircleClickCallbackData {
     mapId: string;
     circleId: string;
@@ -547,12 +584,12 @@ export interface MyLocationButtonClickCallbackData {
     mapId: string;
 }
 export interface VisibleRegion {
-    nearLeft: LatLng;
-    nearRight: LatLng;
-    farLeft: LatLng;
-    farRight: LatLng;
-    southwest: LatLng;
-    northeast: LatLng;
+    nearLeft: ILatLng;
+    nearRight: ILatLng;
+    farLeft: ILatLng;
+    farRight: ILatLng;
+    southwest: ILatLng;
+    northeast: ILatLng;
 }
 export interface GoogleMapZoomOptions {
     /**
@@ -581,14 +618,14 @@ export interface GoogleMapGestures {
 export interface GoogleMapPreferences {
     padding?: MapPadding;
     building?: boolean;
-    gestureBounds?: LatLng[];
+    gestureBounds?: ILatLng[];
     zoom?: GoogleMapZoomOptions;
 }
 export interface GoogleMapsOptions {
-    mapType?: MapType;
+    mapType?: GoogleMapsMapTypeId;
     controls?: GoogleMapControls;
     gestures?: GoogleMapGestures;
     styles?: any[];
-    camera?: CameraConfig;
+    camera?: CameraPosition;
     preferences?: GoogleMapPreferences;
 }
