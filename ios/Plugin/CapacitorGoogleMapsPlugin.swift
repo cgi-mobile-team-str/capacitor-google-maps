@@ -189,27 +189,15 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
                 throw GoogleMapErrors.invalidMapId
             }
 
-            guard let markerIdStrings = call.getArray("markerIds") as? [String] else {
+            guard let markerIds = call.getArray("markerIds") as? [String] else {
                 throw GoogleMapErrors.invalidArguments("markerIds are invalid or missing")
-            }
-
-            if markerIdStrings.isEmpty {
-                throw GoogleMapErrors.invalidArguments("markerIds requires at least one marker id")
-            }
-
-            let ids: [Int] = try markerIdStrings.map { idString in
-                guard let markerId = Int(idString) else {
-                    throw GoogleMapErrors.invalidArguments("markerIds are invalid or missing")
-                }
-
-                return markerId
             }
 
             guard let map = self.maps[id] else {
                 throw GoogleMapErrors.mapNotFound
             }
 
-            try map.removeMarkers(ids: ids)
+            try map.removeMarkers(ids: markerIds)
 
             call.resolve()
         } catch {
@@ -223,12 +211,8 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
                 throw GoogleMapErrors.invalidMapId
             }
 
-            guard let markerIdString = call.getString("markerId") else {
+            guard let markerId = call.getString("markerId") else {
                 throw GoogleMapErrors.invalidArguments("markerId is invalid or missing")
-            }
-
-            guard let markerId = Int(markerIdString) ?? markerIdString.hashValue as Int? else {
-                throw GoogleMapErrors.invalidArguments("markerId is invalid")
             }
 
             guard let map = self.maps[id] else {
@@ -1002,9 +986,9 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
         ]
     }
     
-    private func formatMarkerForResponse(markerId: Int, mapId: String, marker: Marker) -> PluginCallResultData {
+    private func formatMarkerForResponse(markerId: String, mapId: String, marker: Marker) -> PluginCallResultData {
         var results: PluginCallResultData = [
-            "id": marker.id ?? String(markerId),
+            "id": marker.id ?? markerId,
             "mapId": mapId,
             "coordinate": [
                 "lat": marker.coordinate.lat,
@@ -1276,9 +1260,10 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
                 "items": items
             ])
         } else {
+            
             self.notifyListeners("onMarkerClick", data: [
                 "mapId": self.findMapIdByMapView(mapView),
-                "markerId": String(marker.hash.hashValue),
+                "markerId": marker.userData as? String ?? String(marker.hash.hashValue),
                 "latitude": marker.position.latitude,
                 "longitude": marker.position.longitude,
                 "title": marker.title ?? "",
@@ -1414,7 +1399,7 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
 
     @objc func addMarkers(_ call: CAPPluginCall) {
         do {
-            var pairsIdMarker: [(Int, Marker)] = []
+            var pairsIdMarker: [(String, Marker)] = []
             
             guard let id = call.getString("id") else {
                 throw GoogleMapErrors.invalidMapId
@@ -1425,7 +1410,7 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
             }
 
             if optionsListObjs.isEmpty {
-                throw GoogleMapErrors.invalidArguments("options requires at least one option")
+                throw GoogleMapErrors.invalidArguments("marker options requires at least one option")
             }
 
             guard let map = self.maps[id] else {
@@ -1456,11 +1441,7 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
                 throw GoogleMapErrors.invalidMapId
             }
 
-            guard let markerIdString = call.getString("markerId") else {
-                throw GoogleMapErrors.invalidArguments("markerId is invalid or missing")
-            }
-
-            guard let markerId = Int(markerIdString) else {
+            guard let markerId = call.getString("markerId") else {
                 throw GoogleMapErrors.invalidArguments("markerId is invalid or missing")
             }
             
@@ -1490,11 +1471,7 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
                 throw GoogleMapErrors.invalidMapId
             }
 
-            guard let markerIdString = call.getString("markerId") else {
-                throw GoogleMapErrors.invalidArguments("markerId is invalid or missing")
-            }
-
-            guard let markerId = Int(markerIdString) else {
+            guard let markerId = call.getString("markerId") else {
                 throw GoogleMapErrors.invalidArguments("markerId is invalid or missing")
             }
             
@@ -1525,11 +1502,7 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
                 throw GoogleMapErrors.invalidMapId
             }
 
-            guard let markerIdString = call.getString("markerId") else {
-                throw GoogleMapErrors.invalidArguments("markerId is invalid or missing")
-            }
-
-            guard let markerId = Int(markerIdString) else {
+            guard let markerId = call.getString("markerId") else {
                 throw GoogleMapErrors.invalidArguments("markerId is invalid or missing")
             }
             
@@ -1556,11 +1529,7 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
                 throw GoogleMapErrors.invalidMapId
             }
 
-            guard let markerIdString = call.getString("markerId") else {
-                throw GoogleMapErrors.invalidArguments("markerId is invalid or missing")
-            }
-
-            guard let markerId = Int(markerIdString) else {
+            guard let markerId = call.getString("markerId") else {
                 throw GoogleMapErrors.invalidArguments("markerId is invalid or missing")
             }
             
@@ -1587,11 +1556,7 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
                 throw GoogleMapErrors.invalidMapId
             }
 
-            guard let markerIdString = call.getString("markerId") else {
-                throw GoogleMapErrors.invalidArguments("markerId is invalid or missing")
-            }
-
-            guard let markerId = Int(markerIdString) else {
+            guard let markerId = call.getString("markerId") else {
                 throw GoogleMapErrors.invalidArguments("markerId is invalid or missing")
             }
             
@@ -1618,12 +1583,8 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
                 throw GoogleMapErrors.invalidMapId
             }
 
-            guard let markerIdString = call.getString("markerId") else {
+            guard let markerId = call.getString("markerId") else {
                 throw GoogleMapErrors.invalidArguments("markerId is invalid or missing")
-            }
-
-            guard let markerId = Int(markerIdString) ?? markerIdString.hashValue as Int? else {
-                throw GoogleMapErrors.invalidArguments("markerId is invalid")
             }
             
             guard let map = self.maps[id] else {
@@ -1656,7 +1617,7 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
             }
 
             if optionsListObjs.isEmpty {
-                throw GoogleMapErrors.invalidArguments("options requires at least one option")
+                throw GoogleMapErrors.invalidArguments("polyline options requires at least one option")
             }
 
             guard let map = self.maps[id] else {
@@ -1902,7 +1863,7 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
             }
 
             if optionsListObjs.isEmpty {
-                throw GoogleMapErrors.invalidArguments("options requires at least one option")
+                throw GoogleMapErrors.invalidArguments("circle options requires at least one option")
             }
 
             guard let map = self.maps[id] else {
@@ -2060,7 +2021,7 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
             }
 
             if optionsListObjs.isEmpty {
-                throw GoogleMapErrors.invalidArguments("options requires at least one option")
+                throw GoogleMapErrors.invalidArguments("polygon options requires at least one option")
             }
 
             guard let map = self.maps[id] else {

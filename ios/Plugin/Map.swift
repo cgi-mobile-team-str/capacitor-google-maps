@@ -74,7 +74,7 @@ public class Map {
     var config: GoogleMapConfig
     var mapViewController: GMViewController
     var targetViewController: UIView?
-    var markers = [Int: GMSMarker]()
+    var markers = [String: GMSMarker]()
     var polygons = [Int: GMSPolygon]()
     var circles = [Int: GMSCircle]()
     var polylines = [Int: GMSPolyline]()
@@ -404,7 +404,7 @@ public class Map {
         }
     }
 
-    func removeMarkers(ids: [Int]) throws {
+    func removeMarkers(ids: [String]) throws {
         DispatchQueue.main.sync {
             var markers: [GMSMarker] = []
             ids.forEach { id in
@@ -471,13 +471,13 @@ public class Map {
     
     // BEGIN MARKER METHODS
     
-    func addMarker(options: MarkerOptions) throws -> (Int, Marker) {
-        var markerHash = 0
+    func addMarker(options: MarkerOptions) throws -> (String, Marker) {
+        var markerHash = ""
         let marker = Marker(options: options)
 
         DispatchQueue.main.sync {
             let newMarker = self.buildMarker(marker: marker)
-            let idToUse = marker.id?.hashValue ?? newMarker.hash.hashValue
+            let idToUse = marker.id ?? String(newMarker.hash.hashValue)
             
             if self.mapViewController.clusteringEnabled {
                 self.mapViewController.addMarkersToCluster(markers: [newMarker])
@@ -493,8 +493,8 @@ public class Map {
         return (markerHash, addedMarker: marker)
     }
 
-    func addMarkers(optionsList: [MarkerOptions]) throws -> [(Int, Marker)] {
-        var pairsIdMarker: [(Int, Marker)] = []
+    func addMarkers(optionsList: [MarkerOptions]) throws -> [(String, Marker)] {
+        var pairsIdMarker: [(String, Marker)] = []
 
         DispatchQueue.main.sync {
             var googleMapsMarkers: [GMSMarker] = []
@@ -506,7 +506,7 @@ public class Map {
             
             markers.forEach { marker in
                 let newMarker = self.buildMarker(marker: marker)
-                let idToUse = marker.id?.hashValue ?? newMarker.hash.hashValue
+                let idToUse = marker.id ?? String(newMarker.hash.hashValue)
 
                 if self.mapViewController.clusteringEnabled {
                     googleMapsMarkers.append(newMarker)
@@ -527,7 +527,7 @@ public class Map {
         return pairsIdMarker
     }
     
-    func setMarkerIcon(markerId: Int?, url: String?, size: CGSize?) throws {
+    func setMarkerIcon(markerId: String?, url: String?, size: CGSize?) throws {
         guard let markerIndex = markerId, let marker = self.markers[markerIndex] else {
             throw GoogleMapErrors.markerNotFound
         }
@@ -582,7 +582,7 @@ public class Map {
         }
     }
 
-    func setMarkerIconAnchor(markerId: Int, x: Double, y: Double) throws {
+    func setMarkerIconAnchor(markerId: String, x: Double, y: Double) throws {
         guard let marker = self.markers[markerId] else {
             throw GoogleMapErrors.markerNotFound
         }
@@ -596,7 +596,7 @@ public class Map {
         }
     }
     
-    func setMarkerZIndex(markerId: Int, zIndex: Int32) throws {
+    func setMarkerZIndex(markerId: String, zIndex: Int32) throws {
         guard let marker = self.markers[markerId] else {
             throw GoogleMapErrors.markerNotFound
         }
@@ -606,7 +606,7 @@ public class Map {
         }
     }
     
-    func setMarkerVisibility(markerId: Int, isVisible: Bool) throws {
+    func setMarkerVisibility(markerId: String, isVisible: Bool) throws {
         guard let marker = self.markers[markerId] else {
             throw GoogleMapErrors.markerNotFound
         }
@@ -616,14 +616,14 @@ public class Map {
         }
     }
     
-    func getMarkerPosition(markerId: Int) throws -> LatLng {
+    func getMarkerPosition(markerId: String) throws -> LatLng {
         guard let marker = self.markers[markerId] else {
             throw GoogleMapErrors.markerNotFound
         }
         return LatLng(lat: marker.position.latitude, lng: marker.position.longitude)
     }
     
-    func removeMarker(id: Int) throws {
+    func removeMarker(id: String) throws {
         if let marker = self.markers[id] {
             DispatchQueue.main.async {
                 if self.mapViewController.clusteringEnabled {
@@ -639,7 +639,7 @@ public class Map {
         }
     }
     
-    func isMarkerRemoved(markerId: Int) -> Bool {
+    func isMarkerRemoved(markerId: String) -> Bool {
         return self.markers[markerId] == nil
     }
     
@@ -1053,6 +1053,9 @@ public class Map {
         newMarker.isDraggable = marker.draggable ?? false
         newMarker.zIndex = marker.zIndex
         newMarker.map = marker.isVisible != false ? newMarker.map : nil
+        //use userdata as marker Id
+        newMarker.userData = marker.id
+        
         if let iconAnchor = marker.iconAnchor {
             newMarker.groundAnchor = iconAnchor
         }
