@@ -2,6 +2,7 @@ import Foundation
 import Capacitor
 
 public struct Marker {
+    let id: String?
     let coordinate: LatLng
     let opacity: Float?
     let title: String?
@@ -36,10 +37,7 @@ public struct Marker {
         if let anchorObject = fromJSObject["iconAnchor"] as? JSObject {
             if let x = anchorObject["x"] as? Double, let y = anchorObject["y"] as? Double {
                 if let size = iconSize {
-                    let u = x / size.width
-                    let v = y / size.height
-
-                    iconAnchor = CGPoint(x: u, y: v)
+                    iconAnchor = GoogleMapsUtils.buildIconAnchorPoint(x: x, y: y, iconSize: size)
                 }
             }
         }
@@ -67,10 +65,18 @@ public struct Marker {
         self.color = tintColor
         self.zIndex = Int32((fromJSObject["zIndex"] as? Int) ?? 0)
         self.isVisible = fromJSObject["isVisible"] as? Bool ?? true
+        self.id = fromJSObject["id"] as? String ?? ""
     }
     
     init (options:MarkerOptions) {
         var iconAnchor: CGPoint?
+        let x: Float = options.anchor?.first
+            ?? options.icon?.anchor?.first
+            ?? 0.0
+        let y: Float = options.anchor?.last
+            ?? options.icon?.anchor?.last
+            ?? 0.0
+
         self.coordinate = options.position
         self.opacity = options.alpha ?? 1
         self.title = options.title ?? ""
@@ -79,14 +85,15 @@ public struct Marker {
         self.isFlat = options.flat ?? false
         self.iconUrl = options.icon?.url
         self.iconSize = options.icon?.size
-        if let x = options.anchor?[0] as? Double, let y = options.anchor?[1] as? Double {
-            iconAnchor = CGPoint(x: x, y: y)
+        if let size = options.icon?.size {
+            iconAnchor = GoogleMapsUtils.buildIconAnchorPoint(x: Double(x), y: Double(y), iconSize: size)
         }
         self.iconAnchor = iconAnchor
         self.draggable = options.draggable ?? false
         self.isVisible = options.visible ?? true
         self.color = nil
         self.extras = options.extras
+        self.id = options.id
     }
     
 }

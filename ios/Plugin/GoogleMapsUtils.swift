@@ -126,4 +126,12 @@ struct GoogleMapsUtils {
 
         return shape
     }
+    
+    static func buildIconAnchorPoint(x: Double, y: Double, iconSize: CGSize) -> CGPoint {
+        let u = x / iconSize.width
+        let v = y / iconSize.height
+
+        let iconAnchor = CGPoint(x: u, y: v)
+        return iconAnchor
+    }
 }

@@ -1004,7 +1004,7 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
     
     private func formatMarkerForResponse(markerId: Int, mapId: String, marker: Marker) -> PluginCallResultData {
         var results: PluginCallResultData = [
-            "id": String(markerId),
+            "id": marker.id ?? String(markerId),
             "mapId": mapId,
             "coordinate": [
                 "lat": marker.coordinate.lat,
@@ -1159,6 +1159,7 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
         let mapId = self.findMapIdByMapView(mapView)
         let map = self.maps[mapId]
         let bounds = map?.getMapLatLngBounds()
+        let visibleRegion = map?.getVisibleRegion()
         
         let data: PluginCallResultData = [
             "mapId": mapId,
@@ -1170,7 +1171,23 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
             "latitude": cameraPosition.target.latitude,
             "longitude": cameraPosition.target.longitude,
             "tilt": cameraPosition.viewingAngle,
-            "zoom": cameraPosition.zoom
+            "zoom": cameraPosition.zoom,
+            "nearLeft": [
+                "lat": visibleRegion?.nearLeft.latitude,
+                "lng": visibleRegion?.nearLeft.longitude
+            ],
+            "nearRight": [
+                "lat": visibleRegion?.nearRight.latitude,
+                "lng": visibleRegion?.nearRight.longitude
+            ],
+            "farLeft": [
+                "lat": visibleRegion?.farLeft.latitude,
+                "lng": visibleRegion?.farLeft.longitude
+            ],
+            "farRight": [
+                "lat": visibleRegion?.farRight.latitude,
+                "lng": visibleRegion?.farRight.longitude
+            ],
         ]
 
         self.notifyListeners("onBoundsChanged", data: data)
@@ -1185,6 +1202,18 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
         ])
     }
 
+    // onCameraMove
+    public func mapView(_ mapView: GMSMapView, didChange position: GMSCameraPosition) {
+        self.notifyListeners("onCameraMove", data: [
+            "mapId": self.findMapIdByMapView(mapView),
+            "latitude": position.target.latitude,
+            "longitude": position.target.longitude,
+            "zoom": position.zoom,
+            "bearing": position.bearing,
+            "tilt": position.viewingAngle
+        ])
+    }
+    
     // onMapClick
     public func mapView(_ mapView: GMSMapView, didTapAt coordinate: CLLocationCoordinate2D) {
         self.notifyListeners("onMapClick", data: [
@@ -1341,6 +1370,17 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
     public func mapView(_ mapView: GMSMapView, didTapMyLocation location: CLLocationCoordinate2D) {
         self.notifyListeners("onMyLocationButtonClick", data: [
             "mapId": self.findMapIdByMapView(mapView),
+            "latitude": location.latitude,
+            "longitude": location.longitude
+        ])
+    }
+    
+    //OnPoiClick
+    public func mapView(_ mapView: GMSMapView, didTapPOIWithPlaceID placeID: String,
+                        name: String, location: CLLocationCoordinate2D) {
+        self.notifyListeners("onPoiClick", data: [
+            "mapId": self.findMapIdByMapView(mapView),
+            "poiId": placeID,
             "latitude": location.latitude,
             "longitude": location.longitude
         ])
@@ -1572,6 +1612,34 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
         }
     }
     
+    @objc func isMarkerRemoved(_ call: CAPPluginCall) {
+        do {
+            guard let id = call.getString("id") else {
+                throw GoogleMapErrors.invalidMapId
+            }
+
+            guard let markerIdString = call.getString("markerId") else {
+                throw GoogleMapErrors.invalidArguments("markerId is invalid or missing")
+            }
+
+            guard let markerId = Int(markerIdString) else {
+                throw GoogleMapErrors.invalidArguments("markerId is invalid or missing")
+            }
+            
+            guard let map = self.maps[id] else {
+                throw GoogleMapErrors.mapNotFound
+            }
+
+            let isRemoved = map.isMarkerRemoved(markerId: markerId)
+
+            call.resolve([
+                "isRemoved": isRemoved
+            ])
+        } catch {
+            handleError(call, error: error)
+        }
+    }
+    
     // END MARKER METHODS
     
     // BEGIN POLYLINE METHODS
@@ -1667,6 +1735,37 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
         }
     }
     
+    @objc func setPolylineZIndex(_ call: CAPPluginCall) {
+        do {
+            guard let id = call.getString("id") else {
+                throw GoogleMapErrors.invalidMapId
+            }
+
+            guard let polylineIdString = call.getString("polylineId") else {
+                throw GoogleMapErrors.invalidArguments("polylineId is invalid or missing")
+            }
+
+            guard let polylineId = Int(polylineIdString) else {
+                throw GoogleMapErrors.invalidArguments("polylineId is invalid or missing")
+            }
+            
+            guard let zIndex = call.getFloat("zIndex") else {
+                throw GoogleMapErrors.invalidArguments("zIndex is invalid or missing")
+            }
+            
+            guard let map = self.maps[id] else {
+                throw GoogleMapErrors.mapNotFound
+            }
+
+            try map.setPolylineZIndex(polylineId: polylineId, zIndex: zIndex)
+
+            call.resolve()
+
+        } catch {
+            handleError(call, error: error)
+        }
+    }
+    
     @objc func setPolylineStrokeWidth(_ call: CAPPluginCall) {
         do {
             guard let id = call.getString("id") else {
@@ -1754,6 +1853,34 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
             try map.removePolylines(ids: ids)
 
             call.resolve()
+        } catch {
+            handleError(call, error: error)
+        }
+    }
+    
+    @objc func isPolylineRemoved(_ call: CAPPluginCall) {
+        do {
+            guard let id = call.getString("id") else {
+                throw GoogleMapErrors.invalidMapId
+            }
+
+            guard let polylineIdString = call.getString("polylineId") else {
+                throw GoogleMapErrors.invalidArguments("polylineId is invalid or missing")
+            }
+
+            guard let polylineId = Int(polylineIdString) else {
+                throw GoogleMapErrors.invalidArguments("polylineId is invalid or missing")
+            }
+            
+            guard let map = self.maps[id] else {
+                throw GoogleMapErrors.mapNotFound
+            }
+
+            let isRemoved = map.isPolylineRemoved(polylineId: polylineId)
+
+            call.resolve([
+                "isRemoved": isRemoved
+            ])
         } catch {
             handleError(call, error: error)
         }

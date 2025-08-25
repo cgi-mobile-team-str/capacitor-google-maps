@@ -477,16 +477,17 @@ public class Map {
 
         DispatchQueue.main.sync {
             let newMarker = self.buildMarker(marker: marker)
-
+            let idToUse = marker.id?.hashValue ?? newMarker.hash.hashValue
+            
             if self.mapViewController.clusteringEnabled {
                 self.mapViewController.addMarkersToCluster(markers: [newMarker])
             } else {
                 newMarker.map = self.mapViewController.GMapView
             }
 
-            self.markers[newMarker.hash.hashValue] = newMarker
+            self.markers[idToUse] = newMarker
             
-            markerHash = newMarker.hash.hashValue
+            markerHash = idToUse
         }
 
         return (markerHash, addedMarker: marker)
@@ -505,6 +506,7 @@ public class Map {
             
             markers.forEach { marker in
                 let newMarker = self.buildMarker(marker: marker)
+                let idToUse = marker.id?.hashValue ?? newMarker.hash.hashValue
 
                 if self.mapViewController.clusteringEnabled {
                     googleMapsMarkers.append(newMarker)
@@ -512,9 +514,9 @@ public class Map {
                     newMarker.map = self.mapViewController.GMapView
                 }
 
-                self.markers[newMarker.hash.hashValue] = newMarker
+                self.markers[idToUse] = newMarker
 
-                pairsIdMarker.append((newMarker.hash.hashValue, addedMarker:  marker))
+                pairsIdMarker.append((idToUse, addedMarker:  marker))
             }
 
             if self.mapViewController.clusteringEnabled {
@@ -529,29 +531,54 @@ public class Map {
         guard let markerIndex = markerId, let marker = self.markers[markerIndex] else {
             throw GoogleMapErrors.markerNotFound
         }
-
+        
         DispatchQueue.main.async {
-            guard let urlString = url, !urlString.isEmpty else {
-                marker.icon = nil
-                return
+            if let iconUrl = url {
+                if iconUrl.starts(with: "https:") {
+                    if let url = URL(string: iconUrl) {
+                        URLSession.shared.dataTask(with: url) { (data, _, _) in
+                            DispatchQueue.main.async {
+                                if let data = data, let iconImage = UIImage(data: data) {
+                                    self.markerIcons[iconUrl] = iconImage
+                                    if let iconSize = size {
+                                        marker.icon = iconImage.resizeImageTo(size: iconSize)
+                                    } else {
+                                        marker.icon = iconImage
+                                    }
+                                }
+                            }
+                        }.resume()
+                    }
+                } else if iconUrl.starts(with: "data:image") {
+                    if let commaIndex = iconUrl.firstIndex(of: ",") {
+                        let base64String = String(iconUrl.suffix(from: iconUrl.index(after: commaIndex)))
+                        if let imageData = Data(base64Encoded: base64String),
+                           let iconImage = UIImage(data: imageData) {
+                            self.markerIcons[iconUrl] = iconImage
+                            if let iconSize = size {
+                                marker.icon = iconImage.resizeImageTo(size: iconSize)
+                            } else {
+                                marker.icon = iconImage
+                            }
+                        } else {
+                            print("CapacitorGoogleMaps Warning: Invalid base64 image data for '\(iconUrl)'. Using default marker icon.")
+                        }
+                    }
+                } else if let iconImage = UIImage(named: "public/\(iconUrl)") {
+                    self.markerIcons[iconUrl] = iconImage
+                    if let iconSize = size {
+                        marker.icon = iconImage.resizeImageTo(size: iconSize)
+                    } else {
+                        marker.icon = iconImage
+                    }
+                } else {
+                    var detailedMessage = ""
+                    if iconUrl.hasSuffix(".svg") {
+                        detailedMessage = "SVG not supported."
+                    }
+                    print("CapacitorGoogleMaps Warning: could not load image '\(iconUrl)'. \(detailedMessage)  Using default marker icon.")
+                }
             }
-
-            let filePath = Bundle.main.path(forResource: "public/\(urlString)", ofType: nil)
-
-            guard let validPath = filePath,
-                  let image = UIImage(contentsOfFile: validPath) else {
-                print("can't load given url")
-                return
-            }
-
-            let finalImage: UIImage
-            if let targetSize = size {
-                finalImage = self.resizeImage(image: image, targetSize: targetSize)
-            } else {
-                finalImage = image
-            }
-
-            marker.icon = finalImage
         }
     }
 
@@ -610,6 +637,10 @@ public class Map {
         } else {
             throw GoogleMapErrors.markerNotFound
         }
+    }
+    
+    func isMarkerRemoved(markerId: Int) -> Bool {
+        return self.markers[markerId] == nil
     }
     
     private func resizeImage(image: UIImage, targetSize: CGSize) -> UIImage {
@@ -672,6 +703,16 @@ public class Map {
         }
     }
     
+    func setPolylineZIndex(polylineId: Int, zIndex: Float) throws {
+        guard let line = self.polylines[polylineId] else {
+            throw GoogleMapErrors.polylineNotFound
+        }
+        
+        DispatchQueue.main.sync {
+            line.zIndex = Int32(zIndex)
+        }
+    }
+    
     func setPolylineStrokeWidth(polylineId: Int, strokeWidth: Float) throws {
         guard let line = self.polylines[polylineId] else {
             throw GoogleMapErrors.polylineNotFound
@@ -702,6 +743,10 @@ public class Map {
                 }
             }
         }
+    }
+    
+    func isPolylineRemoved(polylineId: Int) -> Bool {
+        return self.polylines[polylineId] == nil
     }
     
     // END POLYLINE METHODS

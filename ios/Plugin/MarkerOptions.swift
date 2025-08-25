@@ -2,7 +2,7 @@ import Foundation
 import Capacitor
 
 public struct MarkerOptions {
-    
+    let id: String?
     let icon: MarkerIcon?
     let title: String?
     let snippet: String?
@@ -24,6 +24,7 @@ public struct MarkerOptions {
         var infoWindowAnchor: [Float] = []
         var anchor: [Float] = []
         var propertyNames: [String] = [
+            "id",
             "icon",
             "title",
             "snippet",
@@ -83,6 +84,7 @@ public struct MarkerOptions {
         self.zIndex = fromJSObject["snippet"] as? Float
         self.disableAutoPan = fromJSObject["disableAutoPan"] as? Bool
         self.alpha = fromJSObject["alpha"] as? Float ?? 1
+        self.id = fromJSObject["id"] as? String ?? nil
         
         for key in fromJSObject.keys {
             if !propertyNames.contains(key) {

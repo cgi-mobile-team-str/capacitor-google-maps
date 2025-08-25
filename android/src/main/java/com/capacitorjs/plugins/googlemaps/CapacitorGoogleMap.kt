@@ -707,14 +707,16 @@ class CapacitorGoogleMap(
                                 this@CapacitorGoogleMap.buildMarker(it)
                             }
                     val googleMapMarker = googleMap?.addMarker(markerOptions.await())
+                    val idToUse = if (it.id.isNullOrEmpty() != true)  it.id else googleMapMarker!!.id
+                    googleMapMarker?.snippet = idToUse
                     it.googleMapMarker = googleMapMarker
 
                     if (googleMapMarker != null) {
                         if (clusterManager != null) {
                             googleMapMarker.remove()
                         }
-                        markers[googleMapMarker.id] = it
-                        idMarkerPairs.add(Pair(googleMapMarker.id, it))
+                        markers[idToUse!!] = it
+                        idMarkerPairs.add(Pair(idToUse, it))
                     }
                 }
 
@@ -807,19 +809,6 @@ class CapacitorGoogleMap(
                         "Could not load image '${finalUrl}': ${detailedMessage}. Using default marker icon."
                     )
                 }
-                /*val finalUrl = url ?: marker.iconUrl
-                marker.setIcon(finalUrl, size)
-                if (finalUrl != null && finalUrl != "") {
-                    val inputStream = context.assets.open("public/$finalUrl")
-                    val originalBitmap = BitmapFactory.decodeStream(inputStream)
-                    val descriptor = if (size != null) {
-                        val scaledBitmap = originalBitmap.scale(size.width, size.height, false)
-                        BitmapDescriptorFactory.fromBitmap(scaledBitmap)
-                    } else {
-                        BitmapDescriptorFactory.fromBitmap(originalBitmap)
-                    }
-                    marker.googleMapMarker?.setIcon(descriptor)
-                }*/
                 callback(null)
             }
         } catch (e: GoogleMapsError) {
@@ -1025,9 +1014,7 @@ class CapacitorGoogleMap(
             val polyline = polylines[polylineId]
             polyline ?: throw PolylineNotFound()
             CoroutineScope(Dispatchers.Main).launch {
-                Log.d("value : ", polyline.googleMapsPolyline.toString())
                 polyline.googleMapsPolyline?.remove()
-                Log.d("value : ", polyline.googleMapsPolyline.toString())
                 polylines.remove(polylineId)
                 callback(null)
             }
