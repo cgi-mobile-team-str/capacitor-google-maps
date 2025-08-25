@@ -49,10 +49,13 @@ CAP_PLUGIN(CapacitorGoogleMapsPlugin, "CapacitorGoogleMaps",
    CAP_PLUGIN_METHOD(setMarkerIconAnchor, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(setMarkerZIndex, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(setMarkerVisibility, CAPPluginReturnPromise);
+   CAP_PLUGIN_METHOD(isMarkerRemoved, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(getMarkerPosition, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(addPolyline, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(setPolylineStrokeColor, CAPPluginReturnPromise);
+   CAP_PLUGIN_METHOD(setPolylineZIndex, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(setPolylineStrokeWidth, CAPPluginReturnPromise);
+   CAP_PLUGIN_METHOD(isPolylineRemoved, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(removePolyline, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(setCameraTarget, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(getCameraTarget, CAPPluginReturnPromise);

@@ -227,8 +227,8 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
                 throw GoogleMapErrors.invalidArguments("markerId is invalid or missing")
             }
 
-            guard let markerId = Int(markerIdString) else {
-                throw GoogleMapErrors.invalidArguments("markerId is invalid or missing")
+            guard let markerId = Int(markerIdString) ?? markerIdString.hashValue as Int? else {
+                throw GoogleMapErrors.invalidArguments("markerId is invalid")
             }
 
             guard let map = self.maps[id] else {
@@ -1622,8 +1622,8 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
                 throw GoogleMapErrors.invalidArguments("markerId is invalid or missing")
             }
 
-            guard let markerId = Int(markerIdString) else {
-                throw GoogleMapErrors.invalidArguments("markerId is invalid or missing")
+            guard let markerId = Int(markerIdString) ?? markerIdString.hashValue as Int? else {
+                throw GoogleMapErrors.invalidArguments("markerId is invalid")
             }
             
             guard let map = self.maps[id] else {
