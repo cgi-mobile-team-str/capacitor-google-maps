@@ -29,17 +29,18 @@ enum TargetType: Codable {
 
 public struct GoogleMapCameraConfig: Codable {
     var target: TargetType
-    let zoom: Float?
+    let zoom: Double?
     let bearing: Double?
     let angle: Double?
     let duration: Double?
 
     init(fromJSObject: JSObject) throws {
-        zoom = fromJSObject["zoom"] as? Float
-        bearing = fromJSObject["bearing"] as? Double
-        angle = fromJSObject["angle"] as? Double
-        duration = fromJSObject["duration"] as? Double
-
+        print("duration : ", fromJSObject["duration"])
+        self.zoom = fromJSObject["zoom"] as? Double
+        self.bearing = fromJSObject["bearing"] as? Double
+        self.angle = fromJSObject["tilt"] as? Double
+        self.duration = fromJSObject["duration"] as? Double
+        
         let rawTarget = fromJSObject["target"]
 
         if let targetObj = rawTarget as? JSObject {

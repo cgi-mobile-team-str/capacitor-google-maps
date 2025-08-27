@@ -134,4 +134,23 @@ struct GoogleMapsUtils {
         let iconAnchor = CGPoint(x: u, y: v)
         return iconAnchor
     }
+    
+    static func safeJSONValue(_ value: Any?) -> Any? {
+        guard let value = value else { return nil }
+
+        if value is String || value is Int || value is Double || value is Float || value is Bool {
+            return value
+        }
+
+        if let dict = value as? [String: Any] {
+            return dict.mapValues { safeJSONValue($0) }
+        }
+
+        if let array = value as? [Any] {
+            return array.compactMap { safeJSONValue($0) }
+        }
+
+        // Fallback: force to string so it won't crash
+        return String(describing: value)
+    }
 }

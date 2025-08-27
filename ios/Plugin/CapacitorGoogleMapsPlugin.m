@@ -39,6 +39,7 @@ CAP_PLUGIN(CapacitorGoogleMapsPlugin, "CapacitorGoogleMaps",
    CAP_PLUGIN_METHOD(enableMyLocation, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(enableTiltGesture, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(enableTiltRotateGesture, CAPPluginReturnPromise);
+   CAP_PLUGIN_METHOD(enableAllGestures, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(setMapPreferences, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(animateCamera, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(moveCamera, CAPPluginReturnPromise);

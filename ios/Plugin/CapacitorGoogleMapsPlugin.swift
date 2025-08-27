@@ -800,6 +800,28 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
         }
     }
     
+    @objc func enableAllGestures(_ call: CAPPluginCall) {
+        do {
+            guard let id = call.getString("id") else {
+                throw GoogleMapErrors.invalidMapId
+            }
+
+            guard let map = self.maps[id] else {
+                throw GoogleMapErrors.mapNotFound
+            }
+
+            guard let isEnabled = call.getBool("isEnabled") else {
+                throw GoogleMapErrors.invalidArguments("isEnabled is missing")
+            }
+
+            try map.enableAllGestures(isEnabled: isEnabled)
+
+            call.resolve()
+        } catch {
+            handleError(call, error: error)
+        }
+    }
+    
     @objc func setMapPreferences(_ call: CAPPluginCall) {
         do {
             guard let id = call.getString("id") else {
@@ -1014,6 +1036,7 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
         ]
 
         for (key, value) in marker.extras {
+            //print("🧩 Extra:", key, "=", String(describing: value))
             results[key] = value
         }
         

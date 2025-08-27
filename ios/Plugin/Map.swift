@@ -291,7 +291,9 @@ public class Map {
     func moveCamera(config: GoogleMapCameraConfig) throws {
         DispatchQueue.main.sync {
             let newCamera = setupCameraPosition(config: config)
-            self.mapViewController.GMapView.camera = newCamera        }
+            let updateCamera = GMSCameraUpdate.setTarget(newCamera.target, zoom: newCamera.zoom)
+            self.mapViewController.GMapView.moveCamera(updateCamera)
+        }
 
     }
     
@@ -457,6 +459,15 @@ public class Map {
     func enableTiltRotateGesture(isEnabled: Bool) throws {
         DispatchQueue.main.sync {
             self.mapViewController.GMapView.settings.rotateGestures = isEnabled
+        }
+    }
+    
+    func enableAllGestures(isEnabled: Bool) throws {
+        DispatchQueue.main.sync {
+            self.mapViewController.GMapView.settings.rotateGestures = isEnabled
+            self.mapViewController.GMapView.settings.tiltGestures = isEnabled
+            self.mapViewController.GMapView.settings.scrollGestures = isEnabled
+            self.mapViewController.GMapView.settings.zoomGestures = isEnabled
         }
     }
     
@@ -902,6 +913,7 @@ public class Map {
     
     private func setupCameraPosition(config: GoogleMapCameraConfig) -> GMSCameraPosition {
         let currentCamera = self.mapViewController.GMapView.camera
+        var zoom = currentCamera.zoom
         var lat: Double = currentCamera.target.latitude
         var lng: Double = currentCamera.target.longitude
         if case .point(let targetPoint) = config.target {
@@ -925,7 +937,10 @@ public class Map {
             lng = currentCamera.target.longitude
         }
         
-        let zoom = config.zoom ?? currentCamera.zoom
+        if let configZoom = config.zoom {
+            zoom = Float(configZoom)
+        }
+        
         let bearing = config.bearing ?? Double(currentCamera.bearing)
         let angle = config.angle ?? currentCamera.viewingAngle
         
