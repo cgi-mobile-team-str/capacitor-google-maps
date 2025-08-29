@@ -20,6 +20,7 @@ class  CapacitorMarkerOptions(fromJSONObject: JSONObject) {
     var zIndex: Float? = null
     var disableAutoPan: Boolean? = null
     var alpha: Float? = 1f
+    var clickable: Boolean = true
     var extras: MutableMap<String, Any?> = mutableMapOf()
 
     init {
@@ -39,6 +40,7 @@ class  CapacitorMarkerOptions(fromJSONObject: JSONObject) {
             "zIndex",
             "disableAutoPan",
             "alpha",
+            "clickable",
             "extras"
         )
         val keys = fromJSONObject.keys()
@@ -79,6 +81,7 @@ class  CapacitorMarkerOptions(fromJSONObject: JSONObject) {
         animation = fromJSONObject.optString("animation")
         disableAutoPan = fromJSONObject.optBoolean("disableAutoPan")
         alpha = fromJSONObject.optDouble("alpha", 1.0).toFloat()
+        clickable = fromJSONObject.optBoolean("clickable", true)
         while (keys.hasNext()) {
             val key = keys.next()
             if (key !in propertyNames) {

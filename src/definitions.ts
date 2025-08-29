@@ -590,6 +590,7 @@ export interface Marker {
    */
   zIndex?: number;
   isVisible?: boolean;
+  clickable?: boolean;
   /**
    * Accept own properties
    * You can get the property later using `get()` method.
@@ -612,6 +613,7 @@ export interface MarkerOptions {
   zIndex?: number;
   disableAutoPan?: boolean;
   alpha?: number;
+  clickable?: boolean;
   [key: string]: any;
 }
 
@@ -636,6 +638,7 @@ export class CapacitorMarker implements Marker {
   draggable?: boolean | undefined;
   zIndex?: number | undefined;
   isVisible?: boolean | undefined;
+  clickable?: boolean;
   [key: string]: any;
 
   constructor(obj: Marker & { id: string }, mapId: string) {
@@ -654,6 +657,7 @@ export class CapacitorMarker implements Marker {
     this.draggable = obj.draggable;
     this.zIndex = obj.zIndex;
     this.isVisible = obj.isVisible;
+    this.clickable = obj.clickable;
     Object.assign(this, obj);
   }
 

@@ -17,6 +17,7 @@
         let zIndex: Float?
         let disableAutoPan: Bool?
         let alpha: Float?
+        let clickable: Bool?
         var extras: [String: Any?] = [:]
 
         init(fromJSObject: JSObject) throws {
@@ -39,6 +40,7 @@
                 "zIndex",
                 "disableAutoPan",
                 "alpha",
+                "clickable",
                 "extras"
 
             ]
@@ -85,6 +87,7 @@
             self.disableAutoPan = fromJSObject["disableAutoPan"] as? Bool
             self.alpha = fromJSObject["alpha"] as? Float ?? 1
             self.id = fromJSObject["id"] as? String ?? nil
+            self.clickable = fromJSObject["clickable"] as? Bool ?? true
             
             for key in fromJSObject.keys {
                 if !propertyNames.contains(key) {

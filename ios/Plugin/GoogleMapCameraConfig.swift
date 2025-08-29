@@ -35,7 +35,6 @@ public struct GoogleMapCameraConfig: Codable {
     let duration: Double?
 
     init(fromJSObject: JSObject) throws {
-        print("duration : ", fromJSObject["duration"])
         self.zoom = fromJSObject["zoom"] as? Double
         self.bearing = fromJSObject["bearing"] as? Double
         self.angle = fromJSObject["tilt"] as? Double

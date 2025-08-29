@@ -15,6 +15,7 @@ public struct Marker {
     let color: UIColor?
     let zIndex: Int32
     let isVisible: Bool?
+    let clickable: Bool?
     var extras: [String: Any?] = [:]
 
     init(fromJSObject: JSObject) throws {
@@ -66,15 +67,16 @@ public struct Marker {
         self.zIndex = Int32((fromJSObject["zIndex"] as? Int) ?? 0)
         self.isVisible = fromJSObject["isVisible"] as? Bool ?? true
         self.id = fromJSObject["id"] as? String ?? ""
+        self.clickable = fromJSObject["clickable"] as? Bool ?? true
     }
     
     init (options:MarkerOptions) {
         var iconAnchor: CGPoint?
-        let x: Float = options.anchor?.first
-            ?? options.icon?.anchor?.first
+        let x: Float = options.icon?.anchor?.first
+            ?? options.anchor?.first
             ?? 0.0
-        let y: Float = options.anchor?.last
-            ?? options.icon?.anchor?.last
+        let y: Float =  options.icon?.anchor?.last
+            ?? options.anchor?.last
             ?? 0.0
 
         self.coordinate = options.position
@@ -94,6 +96,7 @@ public struct Marker {
         self.color = nil
         self.extras = options.extras
         self.id = options.id
+        self.clickable = options.clickable ?? true
     }
     
 }

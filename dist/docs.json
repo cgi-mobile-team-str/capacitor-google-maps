@@ -1703,6 +1703,13 @@
           "docs": "",
           "complexTypes": [],
           "type": "number | undefined"
+        },
+        {
+          "name": "clickable",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "boolean | undefined"
         }
       ]
     },

@@ -190,6 +190,7 @@ var capacitorCapacitorGoogleMaps = (function (exports, core, rxjs, markercluster
             this.draggable = obj.draggable;
             this.zIndex = obj.zIndex;
             this.isVisible = obj.isVisible;
+            this.clickable = obj.clickable;
             Object.assign(this, obj);
         }
         get(key) {

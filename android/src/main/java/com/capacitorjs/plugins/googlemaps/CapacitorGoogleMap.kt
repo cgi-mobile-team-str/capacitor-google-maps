@@ -708,7 +708,7 @@ class CapacitorGoogleMap(
                             }
                     val googleMapMarker = googleMap?.addMarker(markerOptions.await())
                     val idToUse = if (it.id.isNullOrEmpty() != true)  it.id else googleMapMarker!!.id
-                    googleMapMarker?.tag = idToUse
+                    googleMapMarker?.tag = MarkerTag(idToUse!!, it.clickable)
                     it.googleMapMarker = googleMapMarker
 
                     if (googleMapMarker != null) {
@@ -746,7 +746,7 @@ class CapacitorGoogleMap(
                     }
                 val googleMapMarker = googleMap?.addMarker(markerOptions.await())
                 val idToUse = if (marker.id.isNullOrEmpty() != true)  marker.id else googleMapMarker!!.id
-                googleMapMarker?.tag = idToUse
+                googleMapMarker?.tag = MarkerTag(idToUse!!, marker.clickable)
                 marker.googleMapMarker = googleMapMarker
 
                 if (clusterManager != null) {
@@ -1423,7 +1423,6 @@ class CapacitorGoogleMap(
         if(iconAnchor != null) {
             markerOptions.anchor(iconAnchor.x, iconAnchor.y)
         }
-
         if (!marker.iconUrl.isNullOrEmpty()) {
             if (this.markerIcons.contains(marker.iconUrl)) {
                 val cachedBitmap = this.markerIcons[marker.iconUrl]
@@ -1468,7 +1467,6 @@ class CapacitorGoogleMap(
         }
 
         marker.markerOptions = markerOptions
-
         return markerOptions
     }
 
@@ -1679,12 +1677,17 @@ class CapacitorGoogleMap(
 
     override fun onMarkerClick(marker: Marker): Boolean {
         val data = JSObject()
+        val tag: MarkerTag = marker.tag as MarkerTag
+        if(tag.clickable == false) {
+            return true
+        }
         data.put("mapId", this@CapacitorGoogleMap.id)
-        data.put("markerId", marker.tag ?: marker.id)
+        data.put("markerId", tag.id ?: marker.id)
         data.put("latitude", marker.position.latitude)
         data.put("longitude", marker.position.longitude)
         data.put("title", marker.title)
         data.put("snippet", marker.snippet)
+
         delegate.notify("onMarkerClick", data)
         return false
     }

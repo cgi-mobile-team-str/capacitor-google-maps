@@ -1068,6 +1068,7 @@ public class Map {
         newMarker.isDraggable = marker.draggable ?? false
         newMarker.zIndex = marker.zIndex
         newMarker.map = marker.isVisible != false ? newMarker.map : nil
+        newMarker.isTappable = marker.clickable ?? true
         //use userdata as marker Id
         newMarker.userData = marker.id
         

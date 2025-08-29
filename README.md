@@ -1331,6 +1331,7 @@ Controls for setting padding on the 'visible' region of the view.
 | **`zIndex`**           | <code>number</code>                                                          |
 | **`disableAutoPan`**   | <code>boolean</code>                                                         |
 | **`alpha`**            | <code>number</code>                                                          |
+| **`clickable`**        | <code>boolean</code>                                                         |
 
 
 #### MarkerIcon
