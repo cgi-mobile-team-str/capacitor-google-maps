@@ -1072,6 +1072,7 @@ public class Map {
         //use userdata as marker Id
         newMarker.userData = marker.id
         
+        newMarker.rotation = CLLocationDegrees(marker.rotation ?? 0)
         if let iconAnchor = marker.iconAnchor {
             newMarker.groundAnchor = iconAnchor
         }

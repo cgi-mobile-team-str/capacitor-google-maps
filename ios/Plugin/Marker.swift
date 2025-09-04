@@ -16,6 +16,7 @@ public struct Marker {
     let zIndex: Int32
     let isVisible: Bool?
     let clickable: Bool?
+    let rotation: Float?
     var extras: [String: Any?] = [:]
 
     init(fromJSObject: JSObject) throws {
@@ -68,6 +69,7 @@ public struct Marker {
         self.isVisible = fromJSObject["isVisible"] as? Bool ?? true
         self.id = fromJSObject["id"] as? String ?? ""
         self.clickable = fromJSObject["clickable"] as? Bool ?? true
+        self.rotation = fromJSObject["rotation"] as? Float ?? 0
     }
     
     init (options:MarkerOptions) {
@@ -97,6 +99,7 @@ public struct Marker {
         self.extras = options.extras
         self.id = options.id
         self.clickable = options.clickable ?? true
+        self.rotation = options.rotation ?? 0
     }
     
 }

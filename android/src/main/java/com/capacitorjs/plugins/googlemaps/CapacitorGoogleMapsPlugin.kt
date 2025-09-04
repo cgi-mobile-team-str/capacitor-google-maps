@@ -2030,6 +2030,7 @@ class CapacitorGoogleMapsPlugin : Plugin(), OnMapsSdkInitializedCallback {
         res.put("iconAnchor", anchorObj)
         res.put("draggable", pairIdMarker.second.draggable)
         res.put("colorHue", pairIdMarker.second.colorHue)
+        res.put("rotation", pairIdMarker.second.rotation)
         res.put("isVisible", pairIdMarker.second.isVisible)
         pairIdMarker.second.extras.forEach { (key, value) ->
             res.put(key, value)

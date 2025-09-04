@@ -507,7 +507,6 @@ class CapacitorGoogleMap(
                 if(config.camera != null) {
                     animateGoogleCamera(config.camera!!)
                 }
-
                 callback(null)
             }
         } catch (e: GoogleMapsError) {
@@ -1419,6 +1418,7 @@ class CapacitorGoogleMap(
         markerOptions.draggable(marker.draggable)
         markerOptions.zIndex(marker.zIndex)
         markerOptions.visible(marker.isVisible)
+        markerOptions.rotation(marker.rotation ?: 0f)
         val iconAnchor = marker.iconAnchor
         if(iconAnchor != null) {
             markerOptions.anchor(iconAnchor.x, iconAnchor.y)

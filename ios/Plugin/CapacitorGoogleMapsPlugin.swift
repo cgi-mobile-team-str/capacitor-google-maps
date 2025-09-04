@@ -1032,7 +1032,8 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
             ],
             "draggable": marker.draggable,
             "colorHue": marker.color,
-            "isVisible": marker.isVisible
+            "isVisible": marker.isVisible,
+            "rotation": marker.rotation
         ]
 
         for (key, value) in marker.extras {

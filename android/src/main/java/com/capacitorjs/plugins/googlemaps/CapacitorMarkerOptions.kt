@@ -76,7 +76,7 @@ class  CapacitorMarkerOptions(fromJSONObject: JSONObject) {
         }
         draggable = fromJSONObject.optBoolean("draggable", false)
         flat = fromJSONObject.optBoolean("flat", false)
-        rotation = fromJSONObject.optDouble("rotation", 0.0).toFloat()
+        rotation = fromJSONObject.optLong("rotation", 0).toFloat()
         visible = fromJSONObject.optBoolean("visible", true)
         animation = fromJSONObject.optString("animation")
         disableAutoPan = fromJSONObject.optBoolean("disableAutoPan")
