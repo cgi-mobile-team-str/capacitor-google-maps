@@ -313,17 +313,8 @@ public class Map {
     }
 
     func setCameraBearing(bearing: Double) throws {
-        let currentCamera = self.mapViewController.GMapView.camera
-
-        let lat = currentCamera.target.latitude
-        let lng = currentCamera.target.longitude
-        let zoom = currentCamera.zoom
-        let angle = currentCamera.viewingAngle
-
-        let newCamera = GMSCameraPosition(latitude: lat, longitude: lng, zoom: zoom, bearing: bearing, viewingAngle: angle)
-        
-        DispatchQueue.main.sync {
-            self.mapViewController.GMapView.animate(to: newCamera)
+        DispatchQueue.main.async {
+            self.mapViewController.GMapView.animate(toBearing: bearing)
         }
     }
     

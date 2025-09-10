@@ -520,10 +520,13 @@ class CapacitorGoogleMap(
             CoroutineScope(Dispatchers.Main).launch {
                 val currentPosition = googleMap!!.cameraPosition
                 val updatedPosition =
-                    CameraPosition.Builder(currentPosition)
+                    CameraPosition.Builder()
+                        .target(currentPosition.target)
                         .bearing(bearing.toFloat())
+                        .zoom(currentPosition.zoom)
+                        .tilt(currentPosition.tilt)
                         .build()
-                googleMap?.animateCamera(CameraUpdateFactory.newCameraPosition(updatedPosition))
+                googleMap?.moveCamera(CameraUpdateFactory.newCameraPosition(updatedPosition))
                 callback(null)
             }
         } catch (e: GoogleMapsError) {
