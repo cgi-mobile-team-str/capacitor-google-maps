@@ -278,9 +278,12 @@ public class Map {
 
     func animateCamera(config: GoogleMapCameraConfig) throws {
         DispatchQueue.main.sync {
-          CATransaction.begin()
-          CATransaction.setValue(NSNumber(value: config.duration ?? 1.0), forKey: kCATransactionAnimationDuration)
           let newCamera = setupCameraPosition(config: config)
+          let configDuration = config.duration ?? 1000
+          
+          CATransaction.begin()
+          CATransaction.setAnimationDuration(CFTimeInterval(configDuration/1000))
+          CATransaction.setAnimationTimingFunction(CAMediaTimingFunction(name: .easeInEaseOut))
           CATransaction.setCompletionBlock({
             self.mapViewController.GMapView.animate(to: newCamera)
           })

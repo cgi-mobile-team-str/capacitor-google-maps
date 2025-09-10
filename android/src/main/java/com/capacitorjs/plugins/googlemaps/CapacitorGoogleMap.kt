@@ -62,7 +62,7 @@ class CapacitorGoogleMap(
 
     private val isReadyChannel = Channel<Boolean>()
     private var debounceJob: Job? = null
-
+    private var isDragging = false
     init {
         val bridge = delegate.bridge
 
@@ -1748,6 +1748,29 @@ class CapacitorGoogleMap(
         delegate.notify("onMyLocationClick", data)
     }
 
+    override fun onCameraMoveStarted(reason: Int) {
+        val data = JSObject()
+        data.put("mapId", this@CapacitorGoogleMap.id)
+        data.put("isGesture", reason == 1)
+        delegate.notify("onCameraMoveStarted", data)
+        if(reason == OnCameraMoveStartedListener.REASON_GESTURE) {
+            isDragging = true
+        }
+    }
+
+    override fun onCameraMove() {
+        if(isDragging) {
+            val data = JSObject()
+            data.put("mapId", this@CapacitorGoogleMap.id)
+            debounceJob?.cancel()
+            debounceJob = CoroutineScope(Dispatchers.Main).launch {
+                delay(100)
+                clusterManager?.cluster()
+            }
+            delegate.notify("onCameraMove", data)
+        }
+    }
+
     override fun onCameraIdle() {
         val data = JSObject()
         data.put("mapId", this@CapacitorGoogleMap.id)
@@ -1763,13 +1786,7 @@ class CapacitorGoogleMap(
         data.put("nearRight",  CapacitorGoogleMapsUtils.latLngToJSObject(this@CapacitorGoogleMap.googleMap?.projection?.visibleRegion?.nearRight))
         delegate.notify("onCameraIdle", data)
         delegate.notify("onBoundsChanged", data)
-    }
-
-    override fun onCameraMoveStarted(reason: Int) {
-        val data = JSObject()
-        data.put("mapId", this@CapacitorGoogleMap.id)
-        data.put("isGesture", reason == 1)
-        delegate.notify("onCameraMoveStarted", data)
+        isDragging = false
     }
 
     override fun onInfoWindowClick(marker: Marker) {
@@ -1781,17 +1798,6 @@ class CapacitorGoogleMap(
         data.put("title", marker.title)
         data.put("snippet", marker.snippet)
         delegate.notify("onInfoWindowClick", data)
-    }
-
-    override fun onCameraMove() {
-        val data = JSObject()
-        data.put("mapId", this@CapacitorGoogleMap.id)
-        debounceJob?.cancel()
-        debounceJob = CoroutineScope(Dispatchers.Main).launch {
-            delay(100)
-            clusterManager?.cluster()
-        }
-        delegate.notify("onCameraMove", data)
     }
 
     override fun onPolygonClick(polygon: Polygon) {

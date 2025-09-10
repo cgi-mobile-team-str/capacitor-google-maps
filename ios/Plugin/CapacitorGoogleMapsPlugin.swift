@@ -68,7 +68,8 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
     private var maps = [String: Map]()
     private var isInitialized = false
     private var locationManager = CLLocationManager()
-
+    private var isDragging = false
+    
     func checkLocationPermission() -> String {
         let locationState: String
 
@@ -1162,6 +1163,31 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
 
     // --- EVENT LISTENERS ---
 
+    // onCameraMoveStarted
+    public func mapView(_ mapView: GMSMapView, willMove gesture: Bool) {
+        self.notifyListeners("onCameraMoveStarted", data: [
+            "mapId": self.findMapIdByMapView(mapView),
+            "isGesture": gesture
+        ])
+        if gesture {
+            isDragging = true
+        }
+    }
+
+    // onCameraMove
+    public func mapView(_ mapView: GMSMapView, didChange position: GMSCameraPosition) {
+        if isDragging {
+            self.notifyListeners("onCameraMove", data: [
+                "mapId": self.findMapIdByMapView(mapView),
+                "latitude": position.target.latitude,
+                "longitude": position.target.longitude,
+                "zoom": position.zoom,
+                "bearing": position.bearing,
+                "tilt": position.viewingAngle
+            ])
+        }
+    }
+    
     // onCameraIdle
     public func mapView(_ mapView: GMSMapView, idleAt cameraPosition: GMSCameraPosition) {
         let mapId = self.findMapIdByMapView(mapView)
@@ -1200,26 +1226,8 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
 
         self.notifyListeners("onBoundsChanged", data: data)
         self.notifyListeners("onCameraIdle", data: data)
-    }
-
-    // onCameraMoveStarted
-    public func mapView(_ mapView: GMSMapView, willMove gesture: Bool) {
-        self.notifyListeners("onCameraMoveStarted", data: [
-            "mapId": self.findMapIdByMapView(mapView),
-            "isGesture": gesture
-        ])
-    }
-
-    // onCameraMove
-    public func mapView(_ mapView: GMSMapView, didChange position: GMSCameraPosition) {
-        self.notifyListeners("onCameraMove", data: [
-            "mapId": self.findMapIdByMapView(mapView),
-            "latitude": position.target.latitude,
-            "longitude": position.target.longitude,
-            "zoom": position.zoom,
-            "bearing": position.bearing,
-            "tilt": position.viewingAngle
-        ])
+        
+        isDragging = false
     }
     
     // onMapClick
