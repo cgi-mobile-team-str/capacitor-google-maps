@@ -384,10 +384,10 @@ class CapacitorGoogleMap(
                     clusterManager?.removeItem(marker)
                     clusterManager?.cluster()
                 }
-
+                marker.googleMapMarker?.tag = null
                 marker.googleMapMarker?.remove()
+                marker.googleMapMarker = null
                 markers.remove(id)
-
                 callback(null)
             }
         } catch (e: GoogleMapsError) {
@@ -405,9 +405,10 @@ class CapacitorGoogleMap(
                 ids.forEach {
                     val marker = markers[it]
                     if (marker != null) {
+                        marker.googleMapMarker?.tag = null
                         marker.googleMapMarker?.remove()
+                        marker.googleMapMarker = null
                         markers.remove(it)
-
                         deletedMarkers.add(marker)
                     }
                 }
