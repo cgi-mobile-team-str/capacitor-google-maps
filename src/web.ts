@@ -313,6 +313,14 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
     }
   }
 
+  async clearMarkers(args: { id: string; }): Promise<void> {
+    const map = this.maps[args.id];
+    for (const id in map.markers) {
+      map.markers[id].map = null;
+      delete map.markers[id];
+    }
+  }
+
   async removeMarker(_args: RemoveMarkerArgs): Promise<void> {
     if (this.maps[_args.id].markers[_args.markerId]) {
       this.maps[_args.id].markers[_args.markerId].map = null;

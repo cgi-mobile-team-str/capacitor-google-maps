@@ -433,6 +433,10 @@ export class GoogleMap {
     });
   }
 
+  async clearMarkers(): Promise<void> {
+    return CapacitorGoogleMaps.clearMarkers({ id: this.id }); 
+  }
+
   async addPolygons(optionsList: PolygonOptions[]): Promise<CapacitorPolygon[]> {
     const res = await CapacitorGoogleMaps.addPolygons({
       id: this.id,

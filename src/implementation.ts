@@ -379,6 +379,7 @@ export interface CapacitorGoogleMapsPlugin extends Plugin {
   fromPointToLatLng(args: FromPointToLatLngArgs): Promise<{latLng: ILatLng}>
   isMarkerRemoved(args: { id: string, markerId: string }): Promise<{isRemoved: boolean}>
   isPolylineRemoved(args: { id: string, polylineId: string }): Promise<{isRemoved: boolean}>
+  clearMarkers(args: { id: string }): Promise<void>;
 }
 
 const CapacitorGoogleMaps = registerPlugin<CapacitorGoogleMapsPlugin>('CapacitorGoogleMaps', {

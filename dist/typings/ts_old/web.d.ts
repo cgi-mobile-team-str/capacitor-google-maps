@@ -40,6 +40,9 @@ export declare class CapacitorGoogleMapsWeb extends WebPlugin implements Capacit
     }): Promise<LatLngBounds>;
     fitBounds(_args: FitBoundsArgs): Promise<void>;
     removeMarkers(_args: RemoveMarkersArgs): Promise<void>;
+    clearMarkers(args: {
+        id: string;
+    }): Promise<void>;
     removeMarker(_args: RemoveMarkerArgs): Promise<void>;
     addPolygons(_args: AddPolygonsArgs): Promise<{
         polygons: (Polygon & {

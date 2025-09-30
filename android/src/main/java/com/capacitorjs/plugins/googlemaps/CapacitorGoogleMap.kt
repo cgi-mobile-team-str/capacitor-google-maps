@@ -398,10 +398,7 @@ class CapacitorGoogleMap(
     fun removeMarkers(ids: List<String>, callback: (error: GoogleMapsError?) -> Unit) {
         try {
             googleMap ?: throw GoogleMapNotAvailable()
-
             CoroutineScope(Dispatchers.Main).launch {
-                val deletedMarkers: MutableList<CapacitorGoogleMapMarker> = mutableListOf()
-
                 ids.forEach {
                     val marker = markers[it]
                     if (marker != null) {
@@ -409,17 +406,27 @@ class CapacitorGoogleMap(
                         marker.googleMapMarker?.remove()
                         marker.googleMapMarker = null
                         markers.remove(it)
-                        deletedMarkers.add(marker)
                     }
                 }
-
-                if (clusterManager != null) {
-                    clusterManager?.removeItems(deletedMarkers)
-                    clusterManager?.cluster()
-                }
-
                 callback(null)
             }
+        } catch (e: GoogleMapsError) {
+            callback(e)
+        }
+    }
+
+    fun clearMarkers(callback: (error: GoogleMapsError?) -> Unit) {
+        try {
+            googleMap ?: throw GoogleMapNotAvailable()
+
+            CoroutineScope(Dispatchers.Main).launch {
+                markers.values.forEach { marker ->
+                    marker.googleMapMarker?.remove()
+                }
+                markers.clear()
+                callback(null)
+            }
+
         } catch (e: GoogleMapsError) {
             callback(e)
         }
@@ -709,18 +716,21 @@ class CapacitorGoogleMap(
                             CoroutineScope(Dispatchers.IO).async {
                                 this@CapacitorGoogleMap.buildMarker(it)
                             }
-                    val googleMapMarker = googleMap?.addMarker(markerOptions.await())
-                    val idToUse = if (it.id.isNullOrEmpty() != true)  it.id else googleMapMarker!!.id
-                    googleMapMarker?.tag = MarkerTag(idToUse!!, it.clickable)
-                    it.googleMapMarker = googleMapMarker
+                    if (!markers.containsKey(it.id)) {
+                        val googleMapMarker = googleMap?.addMarker(markerOptions.await())
+                        val idToUse = if (it.id.isNullOrEmpty() != true)  it.id else googleMapMarker!!.id
+                        googleMapMarker?.tag = MarkerTag(idToUse!!, it.clickable)
+                        it.googleMapMarker = googleMapMarker
 
-                    if (googleMapMarker != null) {
-                        if (clusterManager != null) {
-                            googleMapMarker.remove()
+                        if (googleMapMarker != null) {
+                            if (clusterManager != null) {
+                                googleMapMarker.remove()
+                            }
+                            markers[idToUse!!] = it
+                            idMarkerPairs.add(Pair(idToUse, it))
                         }
-                        markers[idToUse!!] = it
-                        idMarkerPairs.add(Pair(idToUse, it))
                     }
+
                 }
 
                 if (clusterManager != null) {

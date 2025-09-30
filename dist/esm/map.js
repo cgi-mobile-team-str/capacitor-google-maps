@@ -259,6 +259,9 @@ export class GoogleMap {
             markerIds: ids,
         });
     }
+    async clearMarkers() {
+        return CapacitorGoogleMaps.clearMarkers({ id: this.id });
+    }
     async addPolygons(optionsList) {
         const res = await CapacitorGoogleMaps.addPolygons({
             id: this.id,

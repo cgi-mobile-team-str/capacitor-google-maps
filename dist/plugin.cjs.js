@@ -515,6 +515,9 @@ class GoogleMap {
             markerIds: ids,
         });
     }
+    async clearMarkers() {
+        return CapacitorGoogleMaps.clearMarkers({ id: this.id });
+    }
     async addPolygons(optionsList) {
         const res = await CapacitorGoogleMaps.addPolygons({
             id: this.id,
@@ -1503,6 +1506,13 @@ class CapacitorGoogleMapsWeb extends core.WebPlugin {
                 map.markers[id].map = null;
                 delete map.markers[id];
             }
+        }
+    }
+    async clearMarkers(args) {
+        const map = this.maps[args.id];
+        for (const id in map.markers) {
+            map.markers[id].map = null;
+            delete map.markers[id];
         }
     }
     async removeMarker(_args) {

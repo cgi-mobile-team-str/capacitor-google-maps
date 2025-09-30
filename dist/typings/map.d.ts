@@ -171,6 +171,7 @@ export declare class GoogleMap {
      * @returns
      */
     removeMarkers(ids: string[]): Promise<void>;
+    clearMarkers(): Promise<void>;
     addPolygons(optionsList: PolygonOptions[]): Promise<CapacitorPolygon[]>;
     addPolygon(options: PolygonOptions): Promise<CapacitorPolygon>;
     addPolylines(optionsList: PolylineOptions[]): Promise<CapacitorPolyline[]>;

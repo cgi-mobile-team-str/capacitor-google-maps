@@ -204,6 +204,13 @@ export class CapacitorGoogleMapsWeb extends WebPlugin {
             }
         }
     }
+    async clearMarkers(args) {
+        const map = this.maps[args.id];
+        for (const id in map.markers) {
+            map.markers[id].map = null;
+            delete map.markers[id];
+        }
+    }
     async removeMarker(_args) {
         if (this.maps[_args.id].markers[_args.markerId]) {
             this.maps[_args.id].markers[_args.markerId].map = null;

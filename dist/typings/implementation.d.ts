@@ -379,6 +379,9 @@ export interface CapacitorGoogleMapsPlugin extends Plugin {
     }): Promise<{
         isRemoved: boolean;
     }>;
+    clearMarkers(args: {
+        id: string;
+    }): Promise<void>;
 }
 declare const CapacitorGoogleMaps: CapacitorGoogleMapsPlugin;
 export { CapacitorGoogleMaps };

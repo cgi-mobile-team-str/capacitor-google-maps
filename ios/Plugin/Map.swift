@@ -66,6 +66,7 @@ class GMViewController: UIViewController {
             clusterManager.cluster()
         }
     }
+    
 }
 
 // swiftlint:disable type_body_length
@@ -414,6 +415,15 @@ public class Map {
             if self.mapViewController.clusteringEnabled {
                 self.mapViewController.removeMarkersFromCluster(markers: markers)
             }
+        }
+    }
+    
+    func clearMarkers() throws {
+        DispatchQueue.main.sync {
+            self.markers.forEach { marker in
+                marker.value.map = nil
+            }
+            self.markers.removeAll()
         }
     }
 

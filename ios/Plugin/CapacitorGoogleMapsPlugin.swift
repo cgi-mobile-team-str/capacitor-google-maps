@@ -206,6 +206,24 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
         }
     }
 
+    @objc func clearMarkers(_ call: CAPPluginCall) {
+        do {
+            guard let id = call.getString("id") else {
+                throw GoogleMapErrors.invalidMapId
+            }
+            
+            guard let map = self.maps[id] else {
+                throw GoogleMapErrors.mapNotFound
+            }
+
+            try map.clearMarkers()
+
+            call.resolve()
+        } catch {
+            handleError(call, error: error)
+        }
+    }
+    
     @objc func removeMarker(_ call: CAPPluginCall) {
         do {
             guard let id = call.getString("id") else {
