@@ -34,16 +34,7 @@ CAP_PLUGIN(CapacitorGoogleMapsPlugin, "CapacitorGoogleMaps",
    CAP_PLUGIN_METHOD(fitBounds, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(mapBoundsContains, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(mapBoundsExtend, CAPPluginReturnPromise);
-   CAP_PLUGIN_METHOD(getVisibleRegion, CAPPluginReturnPromise);
-   CAP_PLUGIN_METHOD(enableCompass, CAPPluginReturnPromise);
-   CAP_PLUGIN_METHOD(enableMyLocation, CAPPluginReturnPromise);
-   CAP_PLUGIN_METHOD(enableTiltGesture, CAPPluginReturnPromise);
-   CAP_PLUGIN_METHOD(enableTiltRotateGesture, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(enableAllGestures, CAPPluginReturnPromise);
-   CAP_PLUGIN_METHOD(setMapPreferences, CAPPluginReturnPromise);
-   CAP_PLUGIN_METHOD(animateCamera, CAPPluginReturnPromise);
-   CAP_PLUGIN_METHOD(moveCamera, CAPPluginReturnPromise);
-   CAP_PLUGIN_METHOD(setCameraBearing, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(getCameraZoom, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(setOptions, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(setMarkerIcon, CAPPluginReturnPromise);
@@ -58,13 +49,11 @@ CAP_PLUGIN(CapacitorGoogleMapsPlugin, "CapacitorGoogleMaps",
    CAP_PLUGIN_METHOD(setPolylineStrokeWidth, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(isPolylineRemoved, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(removePolyline, CAPPluginReturnPromise);
-   CAP_PLUGIN_METHOD(setCameraTarget, CAPPluginReturnPromise);
-   CAP_PLUGIN_METHOD(getCameraTarget, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(fromPointToLatLng, CAPPluginReturnPromise);
-   CAP_PLUGIN_METHOD(addCircle, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(setCircleCenter, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(removeCircle, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(addPolygon, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(removePolygon, CAPPluginReturnPromise);
    CAP_PLUGIN_METHOD(clearMarkers, CAPPluginReturnPromise);
+    CAP_PLUGIN_METHOD(setCamera, CAPPluginReturnPromise);
 )

@@ -3,8 +3,10 @@ import { WebPlugin } from '@capacitor/core';
 import type { Cluster, onClusterClickHandler } from '@googlemaps/markerclusterer';
 import { MarkerClusterer, SuperClusterAlgorithm } from '@googlemaps/markerclusterer';
 
-import type { Circle, ILatLng, Marker, Polygon, Polyline, VisibleRegion } from './definitions';
-import { GoogleMapsMapTypeId, LatLngBounds } from './definitions';
+import type { ICircle, IMarker, IPolygon, IPolyline } from './definitions';
+import type { LatLng } from './original-plugin/definitions';
+import { MapType } from './original-plugin/definitions';
+import { LatLngBounds } from './definitions';
 import type {
   AddMarkerArgs,
   CameraArgs,
@@ -22,13 +24,11 @@ import type {
   EnableClusteringArgs,
   FitBoundsArgs,
   MapBoundsExtendArgs,
-  AddPolygonsArgs,
   RemovePolygonsArgs,
   AddCirclesArgs,
   RemoveCirclesArgs,
   AddPolylinesArgs,
   RemovePolylinesArgs,
-  EnableCompassArgs,
   MapOptionsArgs,
   MarkerIconArgs,
   MarkerIconAnchorArgs,
@@ -39,18 +39,10 @@ import type {
   PolylineStrokeColorArgs,
   PolylineStrokeWidthArgs,
   RemovePolylineArgs,
-  SetCameraTargetArgs,
   FromPointToLatLngArgs,
-  AddCircleArgs,
   RemoveCircleArgs,
   SetCircleCenterArgs,
-  EnableToolbarArgs,
-  EnableMyLocationArgs,
   EnableAllGesturesArgs,
-  EnableTiltGestureArgs,
-  CameraBearingArgs,
-  SetMapPreferencesArgs,
-  EnableTiltRotateGestureArgs,
   AddPolygonArgs,
   RemovePolygonArgs,
   PolylineZIndexArgs,
@@ -173,25 +165,13 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
   async disableTouch(_args: { id: string }): Promise<void> {
     this.maps[_args.id].map.setOptions({ gestureHandling: 'none' });
   }
-
-  async moveCamera(_args: CameraArgs): Promise<void> {
+  
+  async setCamera(_args: CameraArgs): Promise<void> {
     // Animation not supported yet...
     this.maps[_args.id].map.moveCamera({
-      //TODO UPDATE CENTER
-      // center: _args.config.target,
+      center: _args.config.coordinate,
       heading: _args.config.bearing,
-      tilt: _args.config.tilt,
-      zoom: _args.config.zoom,
-    });
-  }
-
-  async animateCamera(_args: CameraArgs): Promise<void> {
-    // Animation not supported yet...
-    this.maps[_args.id].map.moveCamera({
-      //TODO UPDATE CENTER
-      // center: _args.config.target,
-      heading: _args.config.bearing,
-      tilt: _args.config.tilt,
+      tilt: _args.config.angle,
       zoom: _args.config.zoom,
     });
   }
@@ -200,7 +180,7 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
     let type = this.maps[_args.id].map.getMapTypeId();
     if (type !== undefined) {
       if (type === 'roadmap') {
-        type = GoogleMapsMapTypeId.Normal;
+        type = MapType.Normal;
       }
       return { type: `${type.charAt(0).toUpperCase()}${type.slice(1)}` };
     }
@@ -209,7 +189,7 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
 
   async setMapType(_args: MapTypeArgs): Promise<void> {
     let mapType = _args.mapType.toLowerCase();
-    if (_args.mapType === GoogleMapsMapTypeId.Normal) {
+    if (_args.mapType === MapType.Normal) {
       mapType = 'roadmap';
     }
     this.maps[_args.id].map.setMapTypeId(mapType);
@@ -313,40 +293,11 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
     }
   }
 
-  async clearMarkers(args: { id: string; }): Promise<void> {
-    const map = this.maps[args.id];
-    for (const id in map.markers) {
-      map.markers[id].map = null;
-      delete map.markers[id];
-    }
-  }
-
   async removeMarker(_args: RemoveMarkerArgs): Promise<void> {
     if (this.maps[_args.id].markers[_args.markerId]) {
       this.maps[_args.id].markers[_args.markerId].map = null;
       delete this.maps[_args.id].markers[_args.markerId];
     }
-  }
-
-  async addPolygons(_args: AddPolygonsArgs): Promise<{ polygons: (Polygon & { id: string })[] }> {
-    const mapObj = this.maps[_args.id];
-    if (!mapObj) throw new Error(`Map with id ${_args.id} not found`);
-
-    const polygons: (Polygon & { id: string })[] = [];
-
-    for (const opts of _args.optionsList) {
-      const polygon = new google.maps.Polygon(opts);
-      polygon.setMap(mapObj.map);
-
-      const id = '' + this.currPolygonId++;
-      mapObj.polygons[id] = polygon;
-
-      await this.setPolygonListeners(_args.id, id, polygon);
-
-      polygons.push({ ...opts, shapes: opts.points, id });
-    }
-
-    return { polygons };
   }
 
   async removePolygons(args: RemovePolygonsArgs): Promise<void> {
@@ -618,87 +569,9 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
     });
   }
 
-  async getVisibleRegion(_args: { id: string }): Promise<VisibleRegion> {
-    const map = this.maps[_args.id].map;
-    const bounds = map.getBounds();
-    if (!bounds) throw new Error('Map bounds not available');
-
-    const ne = bounds.getNorthEast();
-    const sw = bounds.getSouthWest();
-
-    const projection = map.getProjection();
-    if (!projection) throw new Error('Projection not available');
-
-    return {
-      nearLeft: { lat: sw.lat(), lng: sw.lng() },
-      nearRight: { lat: sw.lat(), lng: ne.lng() },
-      farLeft: { lat: ne.lat(), lng: sw.lng() },
-      farRight: { lat: ne.lat(), lng: ne.lng() },
-      southwest: { lat: sw.lat(), lng: sw.lng() },
-      northeast: { lat: ne.lat(), lng: ne.lng() },
-    };
-  }
-
-  async enableCompass(_args: EnableCompassArgs): Promise<void> {
-    this.maps[_args.id].map.setOptions({
-      rotateControl: _args.enabled,
-    });
-  }
-
-  async enableToolbar(_args: EnableToolbarArgs): Promise<void> {
-    this.maps[_args.id].map.setOptions({
-      zoomControl: _args.isEnabled,
-      mapTypeControl: _args.isEnabled,
-    });
-  }
-
-  async enableMyLocation(_args: EnableMyLocationArgs): Promise<void> {
-    if (_args.isEnabled && navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((pos) => {
-        const latLng = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
-        this.maps[_args.id].map.setCenter(latLng);
-      });
-    }
-  }
-
   async enableAllGestures(_args: EnableAllGesturesArgs): Promise<void> {
     this.maps[_args.id].map.setOptions({
       gestureHandling: _args.isEnabled ? 'auto' : 'none',
-    });
-  }
-
-  async enableTiltGesture(_args: EnableTiltGestureArgs): Promise<void> {
-    this.maps[_args.id].map.setOptions({
-      tilt: _args.isEnabled ? 45 : 0,
-    });
-  }
-
-  async enableTiltRotateGesture(_args: EnableTiltRotateGestureArgs): Promise<void> {
-    this.maps[_args.id].map.setOptions({
-      rotateControl: _args.isEnabled,
-      tilt: _args.isEnabled ? 45 : 0,
-    });
-  }
-
-  async setMapPreferences(_args: SetMapPreferencesArgs): Promise<void> {
-    this.maps[_args.id].map.setOptions({
-      styles: [],
-      mapTypeControl: true,
-      fullscreenControl: true,
-    });
-    const bounds = this.maps[_args.id].map.getBounds();
-    if (_args.padding && bounds != null) {
-      this.maps[_args.id].map.fitBounds(bounds, _args.padding );
-    }
-
-    if (_args.building !== undefined) {
-      this.maps[_args.id].map.setOptions({ isFractionalZoomEnabled: _args.building });
-    }
-  }
-
-  async setCameraBearing(_args: CameraBearingArgs): Promise<void> {
-    this.maps[_args.id].map.setOptions({
-      heading: _args.bearing,
     });
   }
 
@@ -710,7 +583,7 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
     return { cameraZoom: this.maps[_args.id].map.getZoom() ?? 0 };
   }
 
-  async addMarker(_args: AddMarkerArgs): Promise<Marker & { id: string }> {
+  async addMarker(_args: AddMarkerArgs): Promise<IMarker & { id: string }> {
     if (!this.AdvancedMarkerElement) throw new Error('AdvancedMarkerElement not loaded');
 
     const marker = new this.AdvancedMarkerElement({
@@ -727,8 +600,8 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
     return {..._args.options, coordinate: _args.options.position,  id };
   }
 
-  async addMarkers(_args: AddMarkersArgs): Promise<{ markers: (Marker & { id: string })[] }> {
-    const results: (Marker & { id: string })[] = [];
+  async addMarkers(_args: AddMarkersArgs): Promise<{ markers: (IMarker & { id: string })[] }> {
+    const results: (IMarker & { id: string })[] = [];
     for (const options of _args.optionsList) {
       const added = await this.addMarker({ id: _args.id, options });
       results.push(added);
@@ -763,14 +636,14 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
     if (marker) marker.map = _args.isVisible ? this.maps[_args.id].map : null;
   }
 
-  async getMarkerPosition(_args: MarkerPositionArgs): Promise<{ position: ILatLng }> {
+  async getMarkerPosition(_args: MarkerPositionArgs): Promise<{ position: LatLng }> {
     const marker = this.maps[_args.id].markers[_args.markerId];
     if (!marker) throw new Error('Marker not found');
     const pos = marker.position as google.maps.LatLngLiteral;
     return { position: { lat: pos.lat, lng: pos.lng } };
   }
 
-  async addPolyline(_args: AddPolylineArgs): Promise<Polyline & { id: string }> {
+  async addPolyline(_args: AddPolylineArgs): Promise<IPolyline & { id: string }> {
     const polyline = new google.maps.Polyline(_args.options);
     polyline.setMap(this.maps[_args.id].map);
 
@@ -804,25 +677,20 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
     }
   }
 
-  async addCircles(_args: AddCirclesArgs): Promise<{ circles: (Circle & { id: string })[] }> {
-    const results: (Circle & { id: string })[] = [];
-    for (const circle of _args.optionsList) {
-      const added = await this.addCircle({ id: _args.id, options: circle });
-      results.push(added);
+  async addCircles(_args: AddCirclesArgs): Promise<{ circles: (ICircle & { id: string })[] }> {
+    const results: (ICircle & { id: string })[] = [];
+    for (const circleOptions of _args.optionsList) {
+      const circle = new google.maps.Circle(circleOptions);
+      circle.setMap(this.maps[_args.id].map);
+
+      const id = '' + this.currCircleId++;
+      this.maps[_args.id].circles[id] = circle;
+
+      await this.setCircleListeners(_args.id, id, circle);
+
+      results.push({ ...circleOptions, id });
     }
     return { circles: results };
-  }
-
-  async addCircle(_args: AddCircleArgs): Promise<Circle & { id: string }> {
-    const circle = new google.maps.Circle(_args.options);
-    circle.setMap(this.maps[_args.id].map);
-
-    const id = '' + this.currCircleId++;
-    this.maps[_args.id].circles[id] = circle;
-
-    await this.setCircleListeners(_args.id, id, circle);
-
-    return { ..._args.options, id };
   }
 
   async setCircleCenter(_args: SetCircleCenterArgs): Promise<void> {
@@ -838,24 +706,7 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
     }
   }
 
-  async setCameraTarget(_args: SetCameraTargetArgs): Promise<void> {
-    const map = this.maps[_args.id].map;
-    if (Array.isArray(_args.target)) {
-      const bounds = new google.maps.LatLngBounds();
-      _args.target.forEach((t) => bounds.extend(t));
-      map.fitBounds(bounds);
-    } else {
-      map.setCenter(_args.target);
-    }
-  }
-
-  async getCameraTarget(_args: { id: string }): Promise<{ cameraTarget: ILatLng }> {
-    const center = this.maps[_args.id].map.getCenter();
-    if (!center) throw new Error('Center not available');
-    return { cameraTarget: { lat: center.lat(), lng: center.lng() } };
-  }
-
-  async fromPointToLatLng(_args: FromPointToLatLngArgs): Promise<{ latLng: ILatLng }> {
+  async fromPointToLatLng(_args: FromPointToLatLngArgs): Promise<{ latLng: LatLng }> {
     const map = this.maps[_args.id].map;
     const projection = map.getProjection();
     if (!projection) throw new Error('Projection not ready');
@@ -867,11 +718,11 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
     return { latLng: { lat: latLng.lat(), lng: latLng.lng() } };
   }
 
-  async addPolylines(_args: AddPolylinesArgs): Promise<{ polylines: (Polyline & { id: string })[] }> {
+  async addPolylines(_args: AddPolylinesArgs): Promise<{ polylines: (IPolyline & { id: string })[] }> {
     const mapObj = this.maps[_args.id];
     if (!mapObj) throw new Error(`Map with id ${_args.id} not found`);
 
-    const polylines: (Polyline & { id: string })[] = [];
+    const polylines: (IPolyline & { id: string })[] = [];
 
     for (const opts of _args.optionsList) {
       const polyline = new google.maps.Polyline(opts);
@@ -888,7 +739,7 @@ export class CapacitorGoogleMapsWeb extends WebPlugin implements CapacitorGoogle
     return { polylines };
   }
 
-  async addPolygon(_args: AddPolygonArgs): Promise<Polygon & { id: string; }> {
+  async addPolygon(_args: AddPolygonArgs): Promise<IPolygon & { id: string; }> {
     const polygon = new google.maps.Polygon(_args.options);
     polygon.setMap(this.maps[_args.id].map);
 

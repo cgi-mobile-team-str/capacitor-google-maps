@@ -1,5 +1,6 @@
 import { Plugin } from '@capacitor/core';
-import { CameraPosition, Circle, CircleOptions, GoogleMapConfig, GoogleMapsOptions, ILatLng, LatLngBounds, MapPadding, GoogleMapsMapTypeId, Marker, MarkerOptions, Polygon, PolygonOptions, Polyline, PolylineOptions, Size, VisibleRegion } from './definitions';
+import { CameraPosition, ICircle, CircleOptions, IGoogleMapConfig, GoogleMapsOptions, LatLngBounds, MapPadding, IMarker, MarkerOptions, IPolygon, PolygonOptions, IPolyline, PolylineOptions, Size } from './definitions';
+import { LatLng, MapType } from './original-plugin/definitions';
 /**
  * An interface containing the options used when creating a map.
  */
@@ -15,7 +16,7 @@ export interface CreateMapArgs {
     /**
      * The initial configuration settings for the map.
      */
-    config: GoogleMapConfig;
+    config: IGoogleMapConfig;
     /**
      * The DOM element that the Google Map View will be mounted on which determines size and positioning.
      */
@@ -53,10 +54,6 @@ export interface AddMarkerArgs {
     id: string;
     options: MarkerOptions;
 }
-export interface AddPolygonsArgs {
-    id: string;
-    optionsList: PolygonOptions[];
-}
 export interface AddPolygonArgs {
     id: string;
     options: PolygonOptions;
@@ -87,7 +84,7 @@ export interface CameraArgs {
 }
 export interface MapTypeArgs {
     id: string;
-    mapType: GoogleMapsMapTypeId;
+    mapType: MapType;
 }
 export interface IndoorMapArgs {
     id: string;
@@ -154,7 +151,7 @@ export interface MarkerPositionArgs {
 }
 export interface MapBoundsContainsArgs {
     bounds: LatLngBounds;
-    point: ILatLng;
+    point: LatLng;
 }
 export type MapBoundsExtendArgs = MapBoundsContainsArgs;
 export interface EnableClusteringArgs {
@@ -166,38 +163,9 @@ export interface FitBoundsArgs {
     bounds: LatLngBounds;
     padding?: number;
 }
-export interface EnableCompassArgs {
-    id: string;
-    enabled: boolean;
-}
-export interface EnableToolbarArgs {
-    id: string;
-    isEnabled: boolean;
-}
-export interface EnableMyLocationArgs {
-    id: string;
-    isEnabled: boolean;
-}
 export interface EnableAllGesturesArgs {
     id: string;
     isEnabled: boolean;
-}
-export interface EnableTiltGestureArgs {
-    id: string;
-    isEnabled: boolean;
-}
-export interface EnableTiltRotateGestureArgs {
-    id: string;
-    isEnabled: boolean;
-}
-export interface SetMapPreferencesArgs {
-    id: string;
-    padding?: MapPadding;
-    building?: boolean;
-}
-export interface CameraBearingArgs {
-    id: string;
-    bearing: number;
 }
 export interface AddPolylineArgs {
     id: string;
@@ -222,14 +190,10 @@ export interface RemovePolylineArgs {
     id: string;
     polylineId: string;
 }
-export interface AddCircleArgs {
-    id: string;
-    options: CircleOptions;
-}
 export interface SetCircleCenterArgs {
     id: string;
     circleId: string;
-    center: ILatLng;
+    center: LatLng;
 }
 export interface RemoveCircleArgs {
     id: string;
@@ -238,10 +202,6 @@ export interface RemoveCircleArgs {
 export interface RemovePolygonArgs {
     id: string;
     polygonId: string;
-}
-export interface SetCameraTargetArgs {
-    id: string;
-    target: ILatLng | ILatLng[];
 }
 export interface FromPointToLatLngArgs {
     id: string;
@@ -255,44 +215,36 @@ export interface CapacitorGoogleMapsPlugin extends Plugin {
     disableTouch(args: {
         id: string;
     }): Promise<void>;
-    addMarker(args: AddMarkerArgs): Promise<Marker & {
+    addMarker(args: AddMarkerArgs): Promise<IMarker & {
         id: string;
     }>;
     addMarkers(args: AddMarkersArgs): Promise<{
-        markers: (Marker & {
+        markers: (IMarker & {
             id: string;
         })[];
     }>;
     removeMarker(args: RemoveMarkerArgs): Promise<void>;
     removeMarkers(args: RemoveMarkersArgs): Promise<void>;
-    addPolygons(args: AddPolygonsArgs): Promise<{
-        polygons: (Polygon & {
-            id: string;
-        })[];
-    }>;
-    addPolygon(args: AddPolygonArgs): Promise<Polygon & {
+    addPolygon(args: AddPolygonArgs): Promise<IPolygon & {
         id: string;
     }>;
     removePolygons(args: RemovePolygonsArgs): Promise<void>;
     removePolygon(args: RemovePolygonArgs): Promise<void>;
     addCircles(args: AddCirclesArgs): Promise<{
-        circles: (Circle & {
+        circles: (ICircle & {
             id: string;
         })[];
     }>;
     removeCircles(args: RemoveCirclesArgs): Promise<void>;
-    addCircle(args: AddCircleArgs): Promise<Circle & {
-        id: string;
-    }>;
     setCircleCenter(args: SetCircleCenterArgs): Promise<void>;
     removeCircle(args: RemoveCircleArgs): Promise<void>;
     addPolylines(args: AddPolylinesArgs): Promise<{
-        polylines: (Polyline & {
+        polylines: (IPolyline & {
             id: string;
         })[];
     }>;
     removePolylines(args: RemovePolylinesArgs): Promise<void>;
-    addPolyline(args: AddPolylineArgs): Promise<Polyline & {
+    addPolyline(args: AddPolylineArgs): Promise<IPolyline & {
         id: string;
     }>;
     setPolylineStrokeColor(args: PolylineStrokeColorArgs): Promise<void>;
@@ -304,8 +256,6 @@ export interface CapacitorGoogleMapsPlugin extends Plugin {
         id: string;
     }): Promise<void>;
     destroy(args: DestroyMapArgs): Promise<void>;
-    animateCamera(args: CameraArgs): Promise<void>;
-    moveCamera(args: CameraArgs): Promise<void>;
     getMapType(args: {
         id: string;
     }): Promise<{
@@ -339,33 +289,17 @@ export interface CapacitorGoogleMapsPlugin extends Plugin {
     mapBoundsExtend(args: MapBoundsExtendArgs): Promise<{
         bounds: LatLngBounds;
     }>;
-    getVisibleRegion(args: {
-        id: string;
-    }): Promise<VisibleRegion>;
-    enableCompass(args: EnableCompassArgs): Promise<void>;
-    enableToolbar(args: EnableToolbarArgs): Promise<void>;
-    enableMyLocation(args: EnableMyLocationArgs): Promise<void>;
     enableAllGestures(args: EnableAllGesturesArgs): Promise<void>;
-    enableTiltGesture(args: EnableTiltGestureArgs): Promise<void>;
-    enableTiltRotateGesture(args: EnableTiltRotateGestureArgs): Promise<void>;
-    setMapPreferences(args: SetMapPreferencesArgs): Promise<void>;
-    setCameraBearing(args: CameraBearingArgs): Promise<void>;
     setOptions(args: MapOptionsArgs): Promise<void>;
     setMarkerIcon(args: MarkerIconArgs): Promise<void>;
     setMarkerIconAnchor(args: MarkerIconAnchorArgs): Promise<void>;
     setMarkerZIndex(args: MarkerZIndexArgs): Promise<void>;
     setMarkerVisibility(args: MarkerVisibilityArgs): Promise<void>;
     getMarkerPosition(args: MarkerPositionArgs): Promise<{
-        position: ILatLng;
-    }>;
-    setCameraTarget(args: SetCameraTargetArgs): Promise<void>;
-    getCameraTarget(args: {
-        id: string;
-    }): Promise<{
-        cameraTarget: ILatLng;
+        position: LatLng;
     }>;
     fromPointToLatLng(args: FromPointToLatLngArgs): Promise<{
-        latLng: ILatLng;
+        latLng: LatLng;
     }>;
     isMarkerRemoved(args: {
         id: string;
@@ -379,9 +313,7 @@ export interface CapacitorGoogleMapsPlugin extends Plugin {
     }): Promise<{
         isRemoved: boolean;
     }>;
-    clearMarkers(args: {
-        id: string;
-    }): Promise<void>;
+    setCamera(args: CameraArgs): Promise<void>;
 }
 declare const CapacitorGoogleMaps: CapacitorGoogleMapsPlugin;
 export { CapacitorGoogleMaps };

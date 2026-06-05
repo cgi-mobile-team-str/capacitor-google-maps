@@ -1,50 +1,46 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 import {
-  ILatLngBounds,
   LatLngBounds,
-  GoogleMapsMapTypeId,
   GoogleMapsEvent,
-  Marker,
+  IMarker,
   MarkerOptions,
   CapacitorMarker,
-  Polygon,
+  IPolygon,
   PolygonOptions,
   CapacitorPolygon,
-  Circle,
+  ICircle,
   CircleOptions,
   CapacitorCircle,
-  Polyline,
+  IPolyline,
   PolylineOptions,
   CapacitorPolyline,
-  StyleSpan,
   VisibleRegion,
   GoogleMapsOptions,
   GoogleMapControls,
   GoogleMapZoomOptions,
   GoogleMapGestures,
   GoogleMapPreferences,
-  LatLng,
-  ILatLng,
+  LatLngImpl,
   CameraPosition
 } from './definitions';
-import { GoogleMap } from './map';
+import { MapType, StyleSpan, LatLng, LatLngBoundsInterface } from './original-plugin/definitions'; 
+import { GoogleMapNavi as GoogleMap } from './map-navi';
 
 export {
   GoogleMap,
-  ILatLngBounds,
   LatLngBounds,
-  GoogleMapsMapTypeId,
+  MapType,
   GoogleMapsEvent,
-  Marker,
+  IMarker,
   MarkerOptions,
   CapacitorMarker,
-  Polygon,
+  IPolygon,
   PolygonOptions,
   CapacitorPolygon,
-  Circle,
+  ICircle,
   CircleOptions,
   CapacitorCircle,
-  Polyline,
+  IPolyline,
   PolylineOptions,
   CapacitorPolyline,
   StyleSpan,
@@ -55,8 +51,9 @@ export {
   GoogleMapGestures,
   GoogleMapPreferences,
   LatLng,
-  ILatLng,
-  CameraPosition
+  LatLngImpl,
+  CameraPosition,
+  LatLngBoundsInterface,
 };
 
 declare global {

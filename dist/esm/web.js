@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { WebPlugin } from '@capacitor/core';
 import { MarkerClusterer, SuperClusterAlgorithm } from '@googlemaps/markerclusterer';
-import { GoogleMapsMapTypeId, LatLngBounds } from './definitions';
+import { MapType } from './original-plugin/definitions';
+import { LatLngBounds } from './definitions';
 export class CapacitorGoogleMapsWeb extends WebPlugin {
     constructor() {
         super(...arguments);
@@ -86,23 +87,12 @@ export class CapacitorGoogleMapsWeb extends WebPlugin {
     async disableTouch(_args) {
         this.maps[_args.id].map.setOptions({ gestureHandling: 'none' });
     }
-    async moveCamera(_args) {
+    async setCamera(_args) {
         // Animation not supported yet...
         this.maps[_args.id].map.moveCamera({
-            //TODO UPDATE CENTER
-            // center: _args.config.target,
+            center: _args.config.coordinate,
             heading: _args.config.bearing,
-            tilt: _args.config.tilt,
-            zoom: _args.config.zoom,
-        });
-    }
-    async animateCamera(_args) {
-        // Animation not supported yet...
-        this.maps[_args.id].map.moveCamera({
-            //TODO UPDATE CENTER
-            // center: _args.config.target,
-            heading: _args.config.bearing,
-            tilt: _args.config.tilt,
+            tilt: _args.config.angle,
             zoom: _args.config.zoom,
         });
     }
@@ -110,7 +100,7 @@ export class CapacitorGoogleMapsWeb extends WebPlugin {
         let type = this.maps[_args.id].map.getMapTypeId();
         if (type !== undefined) {
             if (type === 'roadmap') {
-                type = GoogleMapsMapTypeId.Normal;
+                type = MapType.Normal;
             }
             return { type: `${type.charAt(0).toUpperCase()}${type.slice(1)}` };
         }
@@ -118,7 +108,7 @@ export class CapacitorGoogleMapsWeb extends WebPlugin {
     }
     async setMapType(_args) {
         let mapType = _args.mapType.toLowerCase();
-        if (_args.mapType === GoogleMapsMapTypeId.Normal) {
+        if (_args.mapType === MapType.Normal) {
             mapType = 'roadmap';
         }
         this.maps[_args.id].map.setMapTypeId(mapType);
@@ -204,33 +194,11 @@ export class CapacitorGoogleMapsWeb extends WebPlugin {
             }
         }
     }
-    async clearMarkers(args) {
-        const map = this.maps[args.id];
-        for (const id in map.markers) {
-            map.markers[id].map = null;
-            delete map.markers[id];
-        }
-    }
     async removeMarker(_args) {
         if (this.maps[_args.id].markers[_args.markerId]) {
             this.maps[_args.id].markers[_args.markerId].map = null;
             delete this.maps[_args.id].markers[_args.markerId];
         }
-    }
-    async addPolygons(_args) {
-        const mapObj = this.maps[_args.id];
-        if (!mapObj)
-            throw new Error(`Map with id ${_args.id} not found`);
-        const polygons = [];
-        for (const opts of _args.optionsList) {
-            const polygon = new google.maps.Polygon(opts);
-            polygon.setMap(mapObj.map);
-            const id = '' + this.currPolygonId++;
-            mapObj.polygons[id] = polygon;
-            await this.setPolygonListeners(_args.id, id, polygon);
-            polygons.push(Object.assign(Object.assign({}, opts), { shapes: opts.points, id }));
-        }
-        return { polygons };
     }
     async removePolygons(args) {
         const map = this.maps[args.id];
@@ -467,77 +435,9 @@ export class CapacitorGoogleMapsWeb extends WebPlugin {
             mapId: mapId,
         });
     }
-    async getVisibleRegion(_args) {
-        const map = this.maps[_args.id].map;
-        const bounds = map.getBounds();
-        if (!bounds)
-            throw new Error('Map bounds not available');
-        const ne = bounds.getNorthEast();
-        const sw = bounds.getSouthWest();
-        const projection = map.getProjection();
-        if (!projection)
-            throw new Error('Projection not available');
-        return {
-            nearLeft: { lat: sw.lat(), lng: sw.lng() },
-            nearRight: { lat: sw.lat(), lng: ne.lng() },
-            farLeft: { lat: ne.lat(), lng: sw.lng() },
-            farRight: { lat: ne.lat(), lng: ne.lng() },
-            southwest: { lat: sw.lat(), lng: sw.lng() },
-            northeast: { lat: ne.lat(), lng: ne.lng() },
-        };
-    }
-    async enableCompass(_args) {
-        this.maps[_args.id].map.setOptions({
-            rotateControl: _args.enabled,
-        });
-    }
-    async enableToolbar(_args) {
-        this.maps[_args.id].map.setOptions({
-            zoomControl: _args.isEnabled,
-            mapTypeControl: _args.isEnabled,
-        });
-    }
-    async enableMyLocation(_args) {
-        if (_args.isEnabled && navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition((pos) => {
-                const latLng = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
-                this.maps[_args.id].map.setCenter(latLng);
-            });
-        }
-    }
     async enableAllGestures(_args) {
         this.maps[_args.id].map.setOptions({
             gestureHandling: _args.isEnabled ? 'auto' : 'none',
-        });
-    }
-    async enableTiltGesture(_args) {
-        this.maps[_args.id].map.setOptions({
-            tilt: _args.isEnabled ? 45 : 0,
-        });
-    }
-    async enableTiltRotateGesture(_args) {
-        this.maps[_args.id].map.setOptions({
-            rotateControl: _args.isEnabled,
-            tilt: _args.isEnabled ? 45 : 0,
-        });
-    }
-    async setMapPreferences(_args) {
-        this.maps[_args.id].map.setOptions({
-            styles: [],
-            mapTypeControl: true,
-            fullscreenControl: true,
-        });
-        const bounds = this.maps[_args.id].map.getBounds();
-        if (_args.padding && bounds != null) {
-            this.maps[_args.id].map.fitBounds(bounds, _args.padding);
-        }
-        if (_args.building !== undefined) {
-            this.maps[_args.id].map.setOptions({ isFractionalZoomEnabled: _args.building });
-        }
-    }
-    async setCameraBearing(_args) {
-        this.maps[_args.id].map.setOptions({
-            heading: _args.bearing,
         });
     }
     async setOptions(_args) {
@@ -634,19 +534,15 @@ export class CapacitorGoogleMapsWeb extends WebPlugin {
     }
     async addCircles(_args) {
         const results = [];
-        for (const circle of _args.optionsList) {
-            const added = await this.addCircle({ id: _args.id, options: circle });
-            results.push(added);
+        for (const circleOptions of _args.optionsList) {
+            const circle = new google.maps.Circle(circleOptions);
+            circle.setMap(this.maps[_args.id].map);
+            const id = '' + this.currCircleId++;
+            this.maps[_args.id].circles[id] = circle;
+            await this.setCircleListeners(_args.id, id, circle);
+            results.push(Object.assign(Object.assign({}, circleOptions), { id }));
         }
         return { circles: results };
-    }
-    async addCircle(_args) {
-        const circle = new google.maps.Circle(_args.options);
-        circle.setMap(this.maps[_args.id].map);
-        const id = '' + this.currCircleId++;
-        this.maps[_args.id].circles[id] = circle;
-        await this.setCircleListeners(_args.id, id, circle);
-        return Object.assign(Object.assign({}, _args.options), { id });
     }
     async setCircleCenter(_args) {
         const circle = this.maps[_args.id].circles[_args.circleId];
@@ -659,23 +555,6 @@ export class CapacitorGoogleMapsWeb extends WebPlugin {
             circle.setMap(null);
             delete this.maps[_args.id].circles[_args.circleId];
         }
-    }
-    async setCameraTarget(_args) {
-        const map = this.maps[_args.id].map;
-        if (Array.isArray(_args.target)) {
-            const bounds = new google.maps.LatLngBounds();
-            _args.target.forEach((t) => bounds.extend(t));
-            map.fitBounds(bounds);
-        }
-        else {
-            map.setCenter(_args.target);
-        }
-    }
-    async getCameraTarget(_args) {
-        const center = this.maps[_args.id].map.getCenter();
-        if (!center)
-            throw new Error('Center not available');
-        return { cameraTarget: { lat: center.lat(), lng: center.lng() } };
     }
     async fromPointToLatLng(_args) {
         const map = this.maps[_args.id].map;

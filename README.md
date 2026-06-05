@@ -304,17 +304,13 @@ export default MyMap;
 * [`addMarkers(...)`](#addmarkers)
 * [`removeMarker(...)`](#removemarker)
 * [`removeMarkers(...)`](#removemarkers)
-* [`addPolygons(...)`](#addpolygons)
 * [`removePolygons(...)`](#removepolygons)
 * [`addCircles(...)`](#addcircles)
-* [`addCircle(...)`](#addcircle)
 * [`removeCircles(...)`](#removecircles)
 * [`addPolylines(...)`](#addpolylines)
-* [`addPolyline(...)`](#addpolyline)
 * [`removePolylines(...)`](#removepolylines)
 * [`destroy()`](#destroy)
-* [`moveCamera(...)`](#movecamera)
-* [`animateCamera(...)`](#animatecamera)
+* [`setCamera(...)`](#setcamera)
 * [`getMapType()`](#getmaptype)
 * [`setMapType(...)`](#setmaptype)
 * [`enableIndoorMaps(...)`](#enableindoormaps)
@@ -327,15 +323,12 @@ export default MyMap;
 * [`setOnBoundsChangedListener(...)`](#setonboundschangedlistener)
 * [`setOnCameraIdleListener(...)`](#setoncameraidlelistener)
 * [`setOnCameraMoveStartedListener(...)`](#setoncameramovestartedlistener)
-* [`setOnCameraMoveListener(...)`](#setoncameramovelistener)
 * [`setOnClusterClickListener(...)`](#setonclusterclicklistener)
 * [`setOnClusterInfoWindowClickListener(...)`](#setonclusterinfowindowclicklistener)
 * [`setOnInfoWindowClickListener(...)`](#setoninfowindowclicklistener)
 * [`setOnMapClickListener(...)`](#setonmapclicklistener)
-* [`setOnMapReadyListener(...)`](#setonmapreadylistener)
 * [`setOnMarkerClickListener(...)`](#setonmarkerclicklistener)
 * [`setOnPolygonClickListener(...)`](#setonpolygonclicklistener)
-* [`setOnPoiClickListener(...)`](#setonpoiclicklistener)
 * [`setOnCircleClickListener(...)`](#setoncircleclicklistener)
 * [`setOnPolylineClickListener(...)`](#setonpolylineclicklistener)
 * [`setOnMarkerDragStartListener(...)`](#setonmarkerdragstartlistener)
@@ -343,21 +336,6 @@ export default MyMap;
 * [`setOnMarkerDragEndListener(...)`](#setonmarkerdragendlistener)
 * [`setOnMyLocationButtonClickListener(...)`](#setonmylocationbuttonclicklistener)
 * [`setOnMyLocationClickListener(...)`](#setonmylocationclicklistener)
-* [`getVisibleRegion()`](#getvisibleregion)
-* [`enableCompass(...)`](#enablecompass)
-* [`enableToolbar(...)`](#enabletoolbar)
-* [`enableMyLocation(...)`](#enablemylocation)
-* [`enableAllGestures(...)`](#enableallgestures)
-* [`enableTiltGesture(...)`](#enabletiltgesture)
-* [`enableTiltRotateGesture(...)`](#enabletiltrotategesture)
-* [`setMapPreferences(...)`](#setmappreferences)
-* [`setCameraBearing(...)`](#setcamerabearing)
-* [`setOptions(...)`](#setoptions)
-* [`getCameraZoom()`](#getcamerazoom)
-* [`setCameraTarget(...)`](#setcameratarget)
-* [`getCameraTarget()`](#getcameratarget)
-* [`fromPointToLatLng(...)`](#frompointtolatlng)
-* [`on(...)`](#on)
 * [Interfaces](#interfaces)
 * [Type Aliases](#type-aliases)
 * [Enums](#enums)
@@ -426,14 +404,14 @@ disableClustering() => Promise<void>
 ### addMarker(...)
 
 ```typescript
-addMarker(options: MarkerOptions) => Promise<CapacitorMarker>
+addMarker(marker: Marker) => Promise<string>
 ```
 
-| Param         | Type                                                    |
-| ------------- | ------------------------------------------------------- |
-| **`options`** | <code><a href="#markeroptions">MarkerOptions</a></code> |
+| Param        | Type                                      |
+| ------------ | ----------------------------------------- |
+| **`marker`** | <code><a href="#marker">Marker</a></code> |
 
-**Returns:** <code>Promise&lt;CapacitorMarker&gt;</code>
+**Returns:** <code>Promise&lt;string&gt;</code>
 
 --------------------
 
@@ -441,14 +419,14 @@ addMarker(options: MarkerOptions) => Promise<CapacitorMarker>
 ### addMarkers(...)
 
 ```typescript
-addMarkers(optionsList: MarkerOptions[]) => Promise<CapacitorMarker[]>
+addMarkers(markers: Marker[]) => Promise<string[]>
 ```
 
-| Param             | Type                         |
-| ----------------- | ---------------------------- |
-| **`optionsList`** | <code>MarkerOptions[]</code> |
+| Param         | Type                  |
+| ------------- | --------------------- |
+| **`markers`** | <code>Marker[]</code> |
 
-**Returns:** <code>Promise&lt;CapacitorMarker[]&gt;</code>
+**Returns:** <code>Promise&lt;string[]&gt;</code>
 
 --------------------
 
@@ -479,21 +457,6 @@ removeMarkers(ids: string[]) => Promise<void>
 --------------------
 
 
-### addPolygons(...)
-
-```typescript
-addPolygons(polygons: Polygon[]) => Promise<string[]>
-```
-
-| Param          | Type                   |
-| -------------- | ---------------------- |
-| **`polygons`** | <code>Polygon[]</code> |
-
-**Returns:** <code>Promise&lt;string[]&gt;</code>
-
---------------------
-
-
 ### removePolygons(...)
 
 ```typescript
@@ -510,29 +473,14 @@ removePolygons(ids: string[]) => Promise<void>
 ### addCircles(...)
 
 ```typescript
-addCircles(optionsList: CircleOptions[]) => Promise<CapacitorCircle[]>
+addCircles(circles: Circle[]) => Promise<string[]>
 ```
 
-| Param             | Type                         |
-| ----------------- | ---------------------------- |
-| **`optionsList`** | <code>CircleOptions[]</code> |
+| Param         | Type                  |
+| ------------- | --------------------- |
+| **`circles`** | <code>Circle[]</code> |
 
-**Returns:** <code>Promise&lt;CapacitorCircle[]&gt;</code>
-
---------------------
-
-
-### addCircle(...)
-
-```typescript
-addCircle(options: CircleOptions) => Promise<CapacitorCircle>
-```
-
-| Param         | Type                                                    |
-| ------------- | ------------------------------------------------------- |
-| **`options`** | <code><a href="#circleoptions">CircleOptions</a></code> |
-
-**Returns:** <code>Promise&lt;CapacitorCircle&gt;</code>
+**Returns:** <code>Promise&lt;string[]&gt;</code>
 
 --------------------
 
@@ -553,29 +501,14 @@ removeCircles(ids: string[]) => Promise<void>
 ### addPolylines(...)
 
 ```typescript
-addPolylines(optionsList: PolylineOptions[]) => Promise<CapacitorPolyline[]>
+addPolylines(polylines: Polyline[]) => Promise<string[]>
 ```
 
-| Param             | Type                           |
-| ----------------- | ------------------------------ |
-| **`optionsList`** | <code>PolylineOptions[]</code> |
+| Param           | Type                    |
+| --------------- | ----------------------- |
+| **`polylines`** | <code>Polyline[]</code> |
 
-**Returns:** <code>Promise&lt;CapacitorPolyline[]&gt;</code>
-
---------------------
-
-
-### addPolyline(...)
-
-```typescript
-addPolyline(options: PolylineOptions) => Promise<CapacitorPolyline>
-```
-
-| Param         | Type                                                        |
-| ------------- | ----------------------------------------------------------- |
-| **`options`** | <code><a href="#polylineoptions">PolylineOptions</a></code> |
-
-**Returns:** <code>Promise&lt;CapacitorPolyline&gt;</code>
+**Returns:** <code>Promise&lt;string[]&gt;</code>
 
 --------------------
 
@@ -602,28 +535,15 @@ destroy() => Promise<void>
 --------------------
 
 
-### moveCamera(...)
+### setCamera(...)
 
 ```typescript
-moveCamera(config: CameraPosition) => Promise<void>
+setCamera(config: CameraConfig) => Promise<void>
 ```
 
-| Param        | Type                                                      |
-| ------------ | --------------------------------------------------------- |
-| **`config`** | <code><a href="#cameraposition">CameraPosition</a></code> |
-
---------------------
-
-
-### animateCamera(...)
-
-```typescript
-animateCamera(config: CameraPosition) => Promise<void>
-```
-
-| Param        | Type                                                      |
-| ------------ | --------------------------------------------------------- |
-| **`config`** | <code><a href="#cameraposition">CameraPosition</a></code> |
+| Param        | Type                                                  |
+| ------------ | ----------------------------------------------------- |
+| **`config`** | <code><a href="#cameraconfig">CameraConfig</a></code> |
 
 --------------------
 
@@ -631,12 +551,12 @@ animateCamera(config: CameraPosition) => Promise<void>
 ### getMapType()
 
 ```typescript
-getMapType() => Promise<GoogleMapsMapTypeId>
+getMapType() => Promise<MapType>
 ```
 
 Get current map type
 
-**Returns:** <code>Promise&lt;<a href="#googlemapsmaptypeid">GoogleMapsMapTypeId</a>&gt;</code>
+**Returns:** <code>Promise&lt;<a href="#maptype">MapType</a>&gt;</code>
 
 --------------------
 
@@ -644,12 +564,12 @@ Get current map type
 ### setMapType(...)
 
 ```typescript
-setMapType(mapType: GoogleMapsMapTypeId) => Promise<void>
+setMapType(mapType: MapType) => Promise<void>
 ```
 
-| Param         | Type                                                                |
-| ------------- | ------------------------------------------------------------------- |
-| **`mapType`** | <code><a href="#googlemapsmaptypeid">GoogleMapsMapTypeId</a></code> |
+| Param         | Type                                        |
+| ------------- | ------------------------------------------- |
+| **`mapType`** | <code><a href="#maptype">MapType</a></code> |
 
 --------------------
 
@@ -787,19 +707,6 @@ setOnCameraMoveStartedListener(callback?: MapListenerCallback<CameraMoveStartedC
 --------------------
 
 
-### setOnCameraMoveListener(...)
-
-```typescript
-setOnCameraMoveListener(callback?: MapListenerCallback<CameraMoveCallbackData> | undefined) => Promise<void>
-```
-
-| Param          | Type                                                                                                                                    |
-| -------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| **`callback`** | <code><a href="#maplistenercallback">MapListenerCallback</a>&lt;<a href="#cameramovecallbackdata">CameraMoveCallbackData</a>&gt;</code> |
-
---------------------
-
-
 ### setOnClusterClickListener(...)
 
 ```typescript
@@ -852,19 +759,6 @@ setOnMapClickListener(callback?: MapListenerCallback<MapClickCallbackData> | und
 --------------------
 
 
-### setOnMapReadyListener(...)
-
-```typescript
-setOnMapReadyListener(callback?: MapListenerCallback<MapReadyCallbackData> | undefined) => Promise<void>
-```
-
-| Param          | Type                                                                                                                                |
-| -------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| **`callback`** | <code><a href="#maplistenercallback">MapListenerCallback</a>&lt;<a href="#mapreadycallbackdata">MapReadyCallbackData</a>&gt;</code> |
-
---------------------
-
-
 ### setOnMarkerClickListener(...)
 
 ```typescript
@@ -887,19 +781,6 @@ setOnPolygonClickListener(callback?: MapListenerCallback<PolygonClickCallbackDat
 | Param          | Type                                                                                                                                        |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
 | **`callback`** | <code><a href="#maplistenercallback">MapListenerCallback</a>&lt;<a href="#polygonclickcallbackdata">PolygonClickCallbackData</a>&gt;</code> |
-
---------------------
-
-
-### setOnPoiClickListener(...)
-
-```typescript
-setOnPoiClickListener(callback?: MapListenerCallback<PoiClickCallbackData> | undefined) => Promise<void>
-```
-
-| Param          | Type                                                                                                                                |
-| -------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| **`callback`** | <code><a href="#maplistenercallback">MapListenerCallback</a>&lt;<a href="#poiclickcallbackdata">PoiClickCallbackData</a>&gt;</code> |
 
 --------------------
 
@@ -995,200 +876,6 @@ setOnMyLocationClickListener(callback?: MapListenerCallback<MapClickCallbackData
 --------------------
 
 
-### getVisibleRegion()
-
-```typescript
-getVisibleRegion() => Promise<VisibleRegion>
-```
-
-**Returns:** <code>Promise&lt;<a href="#visibleregion">VisibleRegion</a>&gt;</code>
-
---------------------
-
-
-### enableCompass(...)
-
-```typescript
-enableCompass(enabled: boolean) => Promise<void>
-```
-
-| Param         | Type                 |
-| ------------- | -------------------- |
-| **`enabled`** | <code>boolean</code> |
-
---------------------
-
-
-### enableToolbar(...)
-
-```typescript
-enableToolbar(isEnabled: boolean) => Promise<void>
-```
-
-| Param           | Type                 |
-| --------------- | -------------------- |
-| **`isEnabled`** | <code>boolean</code> |
-
---------------------
-
-
-### enableMyLocation(...)
-
-```typescript
-enableMyLocation(isEnabled: boolean) => Promise<void>
-```
-
-| Param           | Type                 |
-| --------------- | -------------------- |
-| **`isEnabled`** | <code>boolean</code> |
-
---------------------
-
-
-### enableAllGestures(...)
-
-```typescript
-enableAllGestures(isEnabled: boolean) => Promise<void>
-```
-
-| Param           | Type                 |
-| --------------- | -------------------- |
-| **`isEnabled`** | <code>boolean</code> |
-
---------------------
-
-
-### enableTiltGesture(...)
-
-```typescript
-enableTiltGesture(isEnabled: boolean) => Promise<void>
-```
-
-| Param           | Type                 |
-| --------------- | -------------------- |
-| **`isEnabled`** | <code>boolean</code> |
-
---------------------
-
-
-### enableTiltRotateGesture(...)
-
-```typescript
-enableTiltRotateGesture(isEnabled: boolean) => Promise<void>
-```
-
-| Param           | Type                 |
-| --------------- | -------------------- |
-| **`isEnabled`** | <code>boolean</code> |
-
---------------------
-
-
-### setMapPreferences(...)
-
-```typescript
-setMapPreferences(padding?: MapPadding | undefined, building?: boolean | undefined) => Promise<void>
-```
-
-| Param          | Type                                              |
-| -------------- | ------------------------------------------------- |
-| **`padding`**  | <code><a href="#mappadding">MapPadding</a></code> |
-| **`building`** | <code>boolean</code>                              |
-
---------------------
-
-
-### setCameraBearing(...)
-
-```typescript
-setCameraBearing(bearing: number) => Promise<void>
-```
-
-| Param         | Type                |
-| ------------- | ------------------- |
-| **`bearing`** | <code>number</code> |
-
---------------------
-
-
-### setOptions(...)
-
-```typescript
-setOptions(config: GoogleMapsOptions) => Promise<void>
-```
-
-| Param        | Type                                                            |
-| ------------ | --------------------------------------------------------------- |
-| **`config`** | <code><a href="#googlemapsoptions">GoogleMapsOptions</a></code> |
-
---------------------
-
-
-### getCameraZoom()
-
-```typescript
-getCameraZoom() => Promise<number>
-```
-
-**Returns:** <code>Promise&lt;number&gt;</code>
-
---------------------
-
-
-### setCameraTarget(...)
-
-```typescript
-setCameraTarget(target: ILatLng | ILatLng[]) => Promise<void>
-```
-
-| Param        | Type                                                     |
-| ------------ | -------------------------------------------------------- |
-| **`target`** | <code><a href="#ilatlng">ILatLng</a> \| ILatLng[]</code> |
-
---------------------
-
-
-### getCameraTarget()
-
-```typescript
-getCameraTarget() => Promise<ILatLng>
-```
-
-**Returns:** <code>Promise&lt;<a href="#ilatlng">ILatLng</a>&gt;</code>
-
---------------------
-
-
-### fromPointToLatLng(...)
-
-```typescript
-fromPointToLatLng(points: number[]) => Promise<ILatLng>
-```
-
-| Param        | Type                  |
-| ------------ | --------------------- |
-| **`points`** | <code>number[]</code> |
-
-**Returns:** <code>Promise&lt;<a href="#ilatlng">ILatLng</a>&gt;</code>
-
---------------------
-
-
-### on(...)
-
-```typescript
-on(event: GoogleMapsEvent) => Observable<any>
-```
-
-| Param       | Type                                                        |
-| ----------- | ----------------------------------------------------------- |
-| **`event`** | <code><a href="#googlemapsevent">GoogleMapsEvent</a></code> |
-
-**Returns:** <code>Observable&lt;any&gt;</code>
-
---------------------
-
-
 ### Interfaces
 
 
@@ -1213,60 +900,28 @@ For web, all the javascript Google Maps options are available as
 GoogleMapConfig extends google.maps.MapOptions.
 For iOS and Android only the config options declared on <a href="#googlemapconfig">GoogleMapConfig</a> are available.
 
-| Prop                   | Type                                                                  | Description                                                                                                                                               | Default            | Since |
-| ---------------------- | --------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ | ----- |
-| **`width`**            | <code>number</code>                                                   | Override width for native map.                                                                                                                            |                    |       |
-| **`height`**           | <code>number</code>                                                   | Override height for native map.                                                                                                                           |                    |       |
-| **`x`**                | <code>number</code>                                                   | Override absolute x coordinate position for native map.                                                                                                   |                    |       |
-| **`y`**                | <code>number</code>                                                   | Override absolute y coordinate position for native map.                                                                                                   |                    |       |
-| **`androidLiteMode`**  | <code>boolean</code>                                                  | Enables image-based lite mode on Android.                                                                                                                 | <code>false</code> |       |
-| **`devicePixelRatio`** | <code>number</code>                                                   | Override pixel ratio for native map.                                                                                                                      |                    |       |
-| **`styles`**           | <code>string \| null</code>                                           | Styles to apply to each of the default map types. Note that for satellite, hybrid and terrain modes, these styles will only apply to labels and geometry. |                    | 4.3.0 |
-| **`mapId`**            | <code>string</code>                                                   | A map id associated with a specific map style or feature. [Use Map IDs](https://developers.google.com/maps/documentation/get-map-id) Only for Web.        |                    | 5.4.0 |
-| **`androidMapId`**     | <code>string</code>                                                   | A map id associated with a specific map style or feature. [Use Map IDs](https://developers.google.com/maps/documentation/get-map-id) Only for Android.    |                    | 5.4.0 |
-| **`iOSMapId`**         | <code>string</code>                                                   | A map id associated with a specific map style or feature. [Use Map IDs](https://developers.google.com/maps/documentation/get-map-id) Only for iOS.        |                    | 5.4.0 |
-| **`controls`**         | <code><a href="#googlemapcontrols">GoogleMapControls</a></code>       |                                                                                                                                                           |                    |       |
-| **`gestures`**         | <code><a href="#googlemapgestures">GoogleMapGestures</a></code>       |                                                                                                                                                           |                    |       |
-| **`camera`**           | <code><a href="#cameraposition">CameraPosition</a></code>             |                                                                                                                                                           |                    |       |
-| **`preferences`**      | <code><a href="#googlemappreferences">GoogleMapPreferences</a></code> |                                                                                                                                                           |                    |       |
+| Prop                   | Type                                      | Description                                                                                                                                                                                                                                                                                                                                               | Default            | Since |
+| ---------------------- | ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ | ----- |
+| **`width`**            | <code>number</code>                       | Override width for native map.                                                                                                                                                                                                                                                                                                                            |                    |       |
+| **`height`**           | <code>number</code>                       | Override height for native map.                                                                                                                                                                                                                                                                                                                           |                    |       |
+| **`x`**                | <code>number</code>                       | Override absolute x coordinate position for native map.                                                                                                                                                                                                                                                                                                   |                    |       |
+| **`y`**                | <code>number</code>                       | Override absolute y coordinate position for native map.                                                                                                                                                                                                                                                                                                   |                    |       |
+| **`center`**           | <code><a href="#latlng">LatLng</a></code> | Default location on the Earth towards which the camera points.                                                                                                                                                                                                                                                                                            |                    |       |
+| **`zoom`**             | <code>number</code>                       | Sets the zoom of the map.                                                                                                                                                                                                                                                                                                                                 |                    |       |
+| **`androidLiteMode`**  | <code>boolean</code>                      | Enables image-based lite mode on Android.                                                                                                                                                                                                                                                                                                                 | <code>false</code> |       |
+| **`devicePixelRatio`** | <code>number</code>                       | Override pixel ratio for native map.                                                                                                                                                                                                                                                                                                                      |                    |       |
+| **`styles`**           | <code>MapTypeStyle[] \| null</code>       | Styles to apply to each of the default map types. Note that for satellite, hybrid and terrain modes, these styles will only apply to labels and geometry.                                                                                                                                                                                                 |                    | 4.3.0 |
+| **`mapId`**            | <code>string</code>                       | A map id associated with a specific map style or feature. [Use Map IDs](https://developers.google.com/maps/documentation/get-map-id) Only for Web.                                                                                                                                                                                                        |                    | 5.4.0 |
+| **`androidMapId`**     | <code>string</code>                       | A map id associated with a specific map style or feature. [Use Map IDs](https://developers.google.com/maps/documentation/get-map-id) Only for Android.                                                                                                                                                                                                    |                    | 5.4.0 |
+| **`iOSMapId`**         | <code>string</code>                       | A map id associated with a specific map style or feature. [Use Map IDs](https://developers.google.com/maps/documentation/get-map-id) Only for iOS.                                                                                                                                                                                                        |                    | 5.4.0 |
+| **`maxZoom`**          | <code>number \| null</code>               | The maximum zoom level which will be displayed on the map. If omitted, or set to &lt;code&gt;null&lt;/code&gt;, the maximum zoom from the current map type is used instead. Valid zoom values are numbers from zero up to the supported &lt;a href="https://developers.google.com/maps/documentation/javascript/maxzoom"&gt;maximum zoom level&lt;/a&gt;. |                    |       |
+| **`minZoom`**          | <code>number \| null</code>               | The minimum zoom level which will be displayed on the map. If omitted, or set to &lt;code&gt;null&lt;/code&gt;, the minimum zoom from the current map type is used instead. Valid zoom values are numbers from zero up to the supported &lt;a href="https://developers.google.com/maps/documentation/javascript/maxzoom"&gt;maximum zoom level&lt;/a&gt;. |                    |       |
+| **`mapTypeId`**        | <code>string \| null</code>               | The initial Map mapTypeId. Defaults to &lt;code&gt;ROADMAP&lt;/code&gt;.                                                                                                                                                                                                                                                                                  |                    |       |
+| **`heading`**          | <code>number \| null</code>               | The heading for aerial imagery in degrees measured clockwise from cardinal direction North. Headings are snapped to the nearest available angle for which imagery is available.                                                                                                                                                                           |                    |       |
+| **`restriction`**      | <code>MapRestriction \| null</code>       | Defines a boundary that restricts the area of the map accessible to users. When set, a user can only pan and zoom while the camera view stays inside the limits of the boundary.                                                                                                                                                                          |                    |       |
 
 
-#### GoogleMapControls
-
-| Prop                   | Type                 |
-| ---------------------- | -------------------- |
-| **`compass`**          | <code>boolean</code> |
-| **`myLocationButton`** | <code>boolean</code> |
-| **`myLocation`**       | <code>boolean</code> |
-| **`indoorPicker`**     | <code>boolean</code> |
-| **`zoom`**             | <code>boolean</code> |
-| **`mapToolbar`**       | <code>boolean</code> |
-
-
-#### GoogleMapGestures
-
-| Prop         | Type                 |
-| ------------ | -------------------- |
-| **`scroll`** | <code>boolean</code> |
-| **`zoom`**   | <code>boolean</code> |
-| **`tilt`**   | <code>boolean</code> |
-| **`rotate`** | <code>boolean</code> |
-
-
-#### CameraPosition
-
-Configuration properties for a Google Map Camera
-
-| Prop           | Type                                                     | Description                                                                                                                 | Default        |
-| -------------- | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- | -------------- |
-| **`target`**   | <code><a href="#ilatlng">ILatLng</a> \| ILatLng[]</code> | Location on the Earth towards which the camera points or multiple locations towards which the camera points in the center . |                |
-| **`zoom`**     | <code>number</code>                                      | Sets the zoom of the map.                                                                                                   |                |
-| **`bearing`**  | <code>number</code>                                      | Bearing of the camera, in degrees clockwise from true north.                                                                | <code>0</code> |
-| **`tilt`**     | <code>number</code>                                      | The angle, in degrees, of the camera from the nadir (directly facing the Earth). The only allowed values are 0 and 45.      | <code>0</code> |
-| **`duration`** | <code>number</code>                                      | This configuration option is not being used.                                                                                |                |
-
-
-#### ILatLng
+#### LatLng
 
 An interface representing a pair of latitude and longitude coordinates.
 
@@ -1276,14 +931,109 @@ An interface representing a pair of latitude and longitude coordinates.
 | **`lng`** | <code>number</code> | Coordinate longitude, in degrees. This value is in the range [-180, 180]. |
 
 
-#### GoogleMapPreferences
+#### MapReadyCallbackData
 
-| Prop                | Type                                                                  |
-| ------------------- | --------------------------------------------------------------------- |
-| **`padding`**       | <code><a href="#mappadding">MapPadding</a></code>                     |
-| **`building`**      | <code>boolean</code>                                                  |
-| **`gestureBounds`** | <code>ILatLng[]</code>                                                |
-| **`zoom`**          | <code><a href="#googlemapzoomoptions">GoogleMapZoomOptions</a></code> |
+| Prop        | Type                |
+| ----------- | ------------------- |
+| **`mapId`** | <code>string</code> |
+
+
+#### Marker
+
+A marker is an icon placed at a particular point on the map's surface.
+
+| Prop             | Type                                                         | Description                                                                                                                                                                               | Default            | Since |
+| ---------------- | ------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ | ----- |
+| **`coordinate`** | <code><a href="#latlng">LatLng</a></code>                    | <a href="#marker">Marker</a> position                                                                                                                                                     |                    |       |
+| **`opacity`**    | <code>number</code>                                          | Sets the opacity of the marker, between 0 (completely transparent) and 1 inclusive.                                                                                                       | <code>1</code>     |       |
+| **`title`**      | <code>string</code>                                          | Title, a short description of the overlay.                                                                                                                                                |                    |       |
+| **`snippet`**    | <code>string</code>                                          | Snippet text, shown beneath the title in the info window when selected.                                                                                                                   |                    |       |
+| **`isFlat`**     | <code>boolean</code>                                         | Controls whether this marker should be flat against the Earth's surface or a billboard facing the camera.                                                                                 | <code>false</code> |       |
+| **`iconUrl`**    | <code>string</code>                                          | Path to a marker icon to render. It can be relative to the web app public directory, or a https url of a remote marker icon. **SVGs are not supported on native platforms.**              |                    | 4.2.0 |
+| **`iconSize`**   | <code><a href="#size">Size</a></code>                        | Controls the scaled size of the marker image set in `iconUrl`.                                                                                                                            |                    | 4.2.0 |
+| **`iconOrigin`** | <code><a href="#point">Point</a></code>                      | The position of the image within a sprite, if any. By default, the origin is located at the top left corner of the image .                                                                |                    | 4.2.0 |
+| **`iconAnchor`** | <code><a href="#point">Point</a></code>                      | The position at which to anchor an image in correspondence to the location of the marker on the map. By default, the anchor is located along the center point of the bottom of the image. |                    | 4.2.0 |
+| **`tintColor`**  | <code>{ r: number; g: number; b: number; a: number; }</code> | Customizes the color of the default marker image. Each value must be between 0 and 255. Only for iOS and Android.                                                                         |                    | 4.2.0 |
+| **`draggable`**  | <code>boolean</code>                                         | Controls whether this marker can be dragged interactively                                                                                                                                 | <code>false</code> |       |
+| **`zIndex`**     | <code>number</code>                                          | Specifies the stack order of this marker, relative to other markers on the map. A marker with a high z-index is drawn on top of markers with lower z-indexes                              | <code>0</code>     |       |
+
+
+#### Size
+
+| Prop         | Type                |
+| ------------ | ------------------- |
+| **`width`**  | <code>number</code> |
+| **`height`** | <code>number</code> |
+
+
+#### Point
+
+<a href="#point">Point</a> geometry object.
+https://tools.ietf.org/html/rfc7946#section-3.1.2
+
+| Prop              | Type                                          | Description                           |
+| ----------------- | --------------------------------------------- | ------------------------------------- |
+| **`type`**        | <code>'<a href="#point">Point</a>'</code>     | Specifies the type of GeoJSON object. |
+| **`coordinates`** | <code><a href="#position">Position</a></code> |                                       |
+
+
+#### Circle
+
+For web, all the javascript <a href="#circle">Circle</a> options are available as
+Circle extends google.maps.CircleOptions.
+For iOS and Android only the config options declared on <a href="#circle">Circle</a> are available.
+
+| Prop               | Type                 | Description                                                                                                                                                                            |
+| ------------------ | -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`fillColor`**    | <code>string</code>  | The fill color. All CSS3 colors are supported except for extended named colors.                                                                                                        |
+| **`fillOpacity`**  | <code>number</code>  | The fill opacity between 0.0 and 1.0.                                                                                                                                                  |
+| **`strokeColor`**  | <code>string</code>  | The stroke color. All CSS3 colors are supported except for extended named colors.                                                                                                      |
+| **`strokeWeight`** | <code>number</code>  | The stroke width in pixels.                                                                                                                                                            |
+| **`geodesic`**     | <code>boolean</code> |                                                                                                                                                                                        |
+| **`clickable`**    | <code>boolean</code> | Indicates whether this &lt;code&gt;<a href="#circle">Circle</a>&lt;/code&gt; handles mouse events.                                                                                     |
+| **`title`**        | <code>string</code>  | Title, a short description of the overlay. Some overlays, such as markers, will display the title on the map. The title is also the default accessibility text. Only available on iOS. |
+| **`tag`**          | <code>string</code>  |                                                                                                                                                                                        |
+
+
+#### Polyline
+
+For web, all the javascript <a href="#polyline">Polyline</a> options are available as
+Polyline extends google.maps.PolylineOptions.
+For iOS and Android only the config options declared on <a href="#polyline">Polyline</a> are available.
+
+| Prop                | Type                     | Description                                                                                                                                                                                                                                                                                                                                                                                    |
+| ------------------- | ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`strokeColor`**   | <code>string</code>      | The stroke color. All CSS3 colors are supported except for extended named colors.                                                                                                                                                                                                                                                                                                              |
+| **`strokeOpacity`** | <code>number</code>      | The stroke opacity between 0.0 and 1.0.                                                                                                                                                                                                                                                                                                                                                        |
+| **`strokeWeight`**  | <code>number</code>      | The stroke width in pixels.                                                                                                                                                                                                                                                                                                                                                                    |
+| **`geodesic`**      | <code>boolean</code>     | When &lt;code&gt;true&lt;/code&gt;, edges of the polygon are interpreted as geodesic and will follow the curvature of the Earth. When &lt;code&gt;false&lt;/code&gt;, edges of the polygon are rendered as straight lines in screen space. Note that the shape of a geodesic polygon may appear to change when dragged, as the dimensions are maintained relative to the surface of the earth. |
+| **`clickable`**     | <code>boolean</code>     | Indicates whether this &lt;code&gt;<a href="#polyline">Polyline</a>&lt;/code&gt; handles mouse events.                                                                                                                                                                                                                                                                                         |
+| **`tag`**           | <code>string</code>      |                                                                                                                                                                                                                                                                                                                                                                                                |
+| **`styleSpans`**    | <code>StyleSpan[]</code> | Used to specify the color of one or more segments of a polyline. The styleSpans property is an array of <a href="#stylespan">StyleSpan</a> objects. Setting the spans property is the preferred way to change the color of a polyline. Only on iOS and Android.                                                                                                                                |
+
+
+#### StyleSpan
+
+Describes the style for some region of a polyline.
+
+| Prop           | Type                | Description                                                                       |
+| -------------- | ------------------- | --------------------------------------------------------------------------------- |
+| **`color`**    | <code>string</code> | The stroke color. All CSS3 colors are supported except for extended named colors. |
+| **`segments`** | <code>number</code> | The length of this span in number of segments.                                    |
+
+
+#### CameraConfig
+
+Configuration properties for a Google Map Camera
+
+| Prop                    | Type                                      | Description                                                                                                            | Default            |
+| ----------------------- | ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | ------------------ |
+| **`coordinate`**        | <code><a href="#latlng">LatLng</a></code> | Location on the Earth towards which the camera points.                                                                 |                    |
+| **`zoom`**              | <code>number</code>                       | Sets the zoom of the map.                                                                                              |                    |
+| **`bearing`**           | <code>number</code>                       | Bearing of the camera, in degrees clockwise from true north.                                                           | <code>0</code>     |
+| **`angle`**             | <code>number</code>                       | The angle, in degrees, of the camera from the nadir (directly facing the Earth). The only allowed values are 0 and 45. | <code>0</code>     |
+| **`animate`**           | <code>boolean</code>                      | Animate the transition to the new Camera properties.                                                                   | <code>false</code> |
+| **`animationDuration`** | <code>number</code>                       | This configuration option is not being used.                                                                           |                    |
 
 
 #### MapPadding
@@ -1298,111 +1048,17 @@ Controls for setting padding on the 'visible' region of the view.
 | **`bottom`** | <code>number</code> |
 
 
-#### GoogleMapZoomOptions
-
-| Prop          | Type                | Description                        |
-| ------------- | ------------------- | ---------------------------------- |
-| **`minZoom`** | <code>number</code> | The minimum zoom level of the map. |
-| **`maxZoom`** | <code>number</code> | The maximum zoom level of the map. |
-
-
-#### MapReadyCallbackData
-
-| Prop        | Type                |
-| ----------- | ------------------- |
-| **`mapId`** | <code>string</code> |
-
-
-#### MarkerOptions
-
-| Prop                   | Type                                                                         |
-| ---------------------- | ---------------------------------------------------------------------------- |
-| **`icon`**             | <code>(<a href="#markericon">MarkerIcon</a> & { anchor?: number[]; })</code> |
-| **`title`**            | <code>string</code>                                                          |
-| **`snippet`**          | <code>string</code>                                                          |
-| **`position`**         | <code><a href="#ilatlng">ILatLng</a></code>                                  |
-| **`infoWindowAnchor`** | <code>number[]</code>                                                        |
-| **`anchor`**           | <code>number[]</code>                                                        |
-| **`draggable`**        | <code>boolean</code>                                                         |
-| **`flat`**             | <code>boolean</code>                                                         |
-| **`rotation`**         | <code>number</code>                                                          |
-| **`visible`**          | <code>boolean</code>                                                         |
-| **`animation`**        | <code>string</code>                                                          |
-| **`zIndex`**           | <code>number</code>                                                          |
-| **`disableAutoPan`**   | <code>boolean</code>                                                         |
-| **`alpha`**            | <code>number</code>                                                          |
-| **`clickable`**        | <code>boolean</code>                                                         |
-
-
-#### MarkerIcon
-
-| Prop       | Type                                  |
-| ---------- | ------------------------------------- |
-| **`url`**  | <code>string</code>                   |
-| **`size`** | <code><a href="#size">Size</a></code> |
-
-
-#### Size
-
-| Prop         | Type                |
-| ------------ | ------------------- |
-| **`width`**  | <code>number</code> |
-| **`height`** | <code>number</code> |
-
-
-#### Polygon
-
-<a href="#polygon">Polygon</a> geometry object.
-https://tools.ietf.org/html/rfc7946#section-3.1.6
-
-| Prop              | Type                                          | Description                           |
-| ----------------- | --------------------------------------------- | ------------------------------------- |
-| **`type`**        | <code>'<a href="#polygon">Polygon</a>'</code> | Specifies the type of GeoJSON object. |
-| **`coordinates`** | <code>Position[][]</code>                     |                                       |
-
-
-#### CircleOptions
-
-| Prop              | Type                                        |
-| ----------------- | ------------------------------------------- |
-| **`center`**      | <code><a href="#ilatlng">ILatLng</a></code> |
-| **`radius`**      | <code>number</code>                         |
-| **`strokeWidth`** | <code>number</code>                         |
-| **`strokeColor`** | <code>string</code>                         |
-| **`fillColor`**   | <code>string</code>                         |
-| **`clickable`**   | <code>boolean</code>                        |
-| **`visible`**     | <code>boolean</code>                        |
-| **`zIndex`**      | <code>number</code>                         |
-
-
-#### PolylineOptions
-
-| Prop            | Type                   |
-| --------------- | ---------------------- |
-| **`points`**    | <code>ILatLng[]</code> |
-| **`visible`**   | <code>boolean</code>   |
-| **`geodesic`**  | <code>boolean</code>   |
-| **`color`**     | <code>string</code>    |
-| **`width`**     | <code>number</code>    |
-| **`zIndex`**    | <code>number</code>    |
-| **`clickable`** | <code>boolean</code>   |
-
-
 #### CameraIdleCallbackData
 
-| Prop            | Type                                        |
-| --------------- | ------------------------------------------- |
-| **`mapId`**     | <code>string</code>                         |
-| **`bounds`**    | <code>LatLngBounds</code>                   |
-| **`bearing`**   | <code>number</code>                         |
-| **`latitude`**  | <code>number</code>                         |
-| **`longitude`** | <code>number</code>                         |
-| **`tilt`**      | <code>number</code>                         |
-| **`zoom`**      | <code>number</code>                         |
-| **`nearLeft`**  | <code><a href="#ilatlng">ILatLng</a></code> |
-| **`nearRight`** | <code><a href="#ilatlng">ILatLng</a></code> |
-| **`farLeft`**   | <code><a href="#ilatlng">ILatLng</a></code> |
-| **`farRight`**  | <code><a href="#ilatlng">ILatLng</a></code> |
+| Prop            | Type                      |
+| --------------- | ------------------------- |
+| **`mapId`**     | <code>string</code>       |
+| **`bounds`**    | <code>LatLngBounds</code> |
+| **`bearing`**   | <code>number</code>       |
+| **`latitude`**  | <code>number</code>       |
+| **`longitude`** | <code>number</code>       |
+| **`tilt`**      | <code>number</code>       |
+| **`zoom`**      | <code>number</code>       |
 
 
 #### CameraMoveStartedCallbackData
@@ -1411,13 +1067,6 @@ https://tools.ietf.org/html/rfc7946#section-3.1.6
 | --------------- | -------------------- |
 | **`mapId`**     | <code>string</code>  |
 | **`isGesture`** | <code>boolean</code> |
-
-
-#### CameraMoveCallbackData
-
-| Prop        | Type                |
-| ----------- | ------------------- |
-| **`mapId`** | <code>string</code> |
 
 
 #### ClusterClickCallbackData
@@ -1467,16 +1116,6 @@ https://tools.ietf.org/html/rfc7946#section-3.1.6
 | **`tag`**       | <code>string</code> |
 
 
-#### PoiClickCallbackData
-
-| Prop            | Type                |
-| --------------- | ------------------- |
-| **`mapId`**     | <code>string</code> |
-| **`poiId`**     | <code>string</code> |
-| **`latitude`**  | <code>number</code> |
-| **`longitude`** | <code>number</code> |
-
-
 #### CircleClickCallbackData
 
 | Prop           | Type                |
@@ -1499,30 +1138,6 @@ https://tools.ietf.org/html/rfc7946#section-3.1.6
 | Prop        | Type                |
 | ----------- | ------------------- |
 | **`mapId`** | <code>string</code> |
-
-
-#### VisibleRegion
-
-| Prop            | Type                                        |
-| --------------- | ------------------------------------------- |
-| **`nearLeft`**  | <code><a href="#ilatlng">ILatLng</a></code> |
-| **`nearRight`** | <code><a href="#ilatlng">ILatLng</a></code> |
-| **`farLeft`**   | <code><a href="#ilatlng">ILatLng</a></code> |
-| **`farRight`**  | <code><a href="#ilatlng">ILatLng</a></code> |
-| **`southwest`** | <code><a href="#ilatlng">ILatLng</a></code> |
-| **`northeast`** | <code><a href="#ilatlng">ILatLng</a></code> |
-
-
-#### GoogleMapsOptions
-
-| Prop              | Type                                                                  |
-| ----------------- | --------------------------------------------------------------------- |
-| **`mapType`**     | <code><a href="#googlemapsmaptypeid">GoogleMapsMapTypeId</a></code>   |
-| **`controls`**    | <code><a href="#googlemapcontrols">GoogleMapControls</a></code>       |
-| **`gestures`**    | <code><a href="#googlemapgestures">GoogleMapGestures</a></code>       |
-| **`styles`**      | <code>any[]</code>                                                    |
-| **`camera`**      | <code><a href="#cameraposition">CameraPosition</a></code>             |
-| **`preferences`** | <code><a href="#googlemappreferences">GoogleMapPreferences</a></code> |
 
 
 ### Type Aliases
@@ -1558,10 +1173,17 @@ to determine if a position is a 2D or 3D position.
 <code>number[]</code>
 
 
+#### Marker
+
+Supports markers of either either "legacy" or "advanced" types.
+
+<code>google.maps.<a href="#marker">Marker</a> | google.maps.marker.AdvancedMarkerElement</code>
+
+
 ### Enums
 
 
-#### GoogleMapsMapTypeId
+#### MapType
 
 | Members         | Value                    | Description                              |
 | --------------- | ------------------------ | ---------------------------------------- |
@@ -1570,18 +1192,5 @@ to determine if a position is a 2D or 3D position.
 | **`Satellite`** | <code>'Satellite'</code> | Satellite imagery with no labels.        |
 | **`Terrain`**   | <code>'Terrain'</code>   | Topographic data.                        |
 | **`None`**      | <code>'None'</code>      | No base map tiles.                       |
-
-
-#### GoogleMapsEvent
-
-| Members               | Value                              |
-| --------------------- | ---------------------------------- |
-| **`MAP_READY`**       | <code>'onMapReady'</code>          |
-| **`MAP_CLICK`**       | <code>'onMapClick'</code>          |
-| **`POI_CLICK`**       | <code>'onPoiClick'</code>          |
-| **`CAMERA_MOVE_END`** | <code>'onCameraIdle'</code>        |
-| **`MARKER_CLICK`**    | <code>'onMarkerClick'</code>       |
-| **`MAP_DRAG`**        | <code>'onCameraMove'</code>        |
-| **`MAP_DRAG_START`**  | <code>'onCameraMoveStarted'</code> |
 
 </docgen-api>

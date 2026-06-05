@@ -102,22 +102,7 @@ public class Map {
         DispatchQueue.main.async {
             let zoom = self.config.camera?.zoom ?? 11.0
             var center = LatLng(lat: 0, lng: 0)
-            let target = self.config.camera?.target
-            
-            if case .point(let targetPoint) = target {
-                center = targetPoint
-            }
-
-            if case .points(let targetArray) = target {
-                var targets: [CLLocationCoordinate2D] = []
-               targetArray.forEach { target in
-                   let coordinate: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: target.lat, longitude: target.lng)
-                    targets.append(coordinate)
-                }
-                let bounds = GoogleMapsUtils.createLatLngBoundsFromLatLngArray(targets)
-                let centerBound = GoogleMapsUtils.getCenterFromBound(bounds)
-                center = LatLng(lat: centerBound.latitude, lng: centerBound.longitude)
-            }
+            let target = self.config.camera?.coordinate
             
             self.mapViewController.mapViewBounds = [
                 "width": self.config.width,
@@ -127,8 +112,8 @@ public class Map {
             ]
 
             self.mapViewController.cameraPosition = [
-                "latitude": center.lat,
-                "longitude": center.lng,
+                "latitude": target?.lat ?? self.mapViewController.GMapView.camera.target.latitude,
+                "longitude": target?.lng ?? self.mapViewController.GMapView.camera.target.longitude,
                 "zoom": Double(zoom)
             ]
 
@@ -151,7 +136,7 @@ public class Map {
             }
             
             setMapSettings(self.config, mapViewController: self.mapViewController)
-
+	
             self.delegate.notifyListeners("onMapReady", data: [
                 "mapId": self.id
             ])
@@ -277,73 +262,42 @@ public class Map {
         }
     }
 
-    func animateCamera(config: GoogleMapCameraConfig) throws {
-        DispatchQueue.main.sync {
-          let newCamera = setupCameraPosition(config: config)
-          let configDuration = config.duration ?? 1000
-          
-          CATransaction.begin()
-          CATransaction.setAnimationDuration(CFTimeInterval(configDuration/1000))
-          CATransaction.setAnimationTimingFunction(CAMediaTimingFunction(name: .easeInEaseOut))
-          CATransaction.setCompletionBlock({
-            self.mapViewController.GMapView.animate(to: newCamera)
-          })
-          CATransaction.commit()
+    func setCamera(config: GoogleMapCameraConfig) throws {
+        let currentCamera = self.mapViewController.GMapView.camera
+
+        let lat = config.coordinate?.lat ?? currentCamera.target.latitude
+        let lng = config.coordinate?.lng ?? currentCamera.target.longitude
+        
+        var zoom = currentCamera.zoom
+        if let configZoom = config.zoom {
+            zoom = Float(configZoom)
         }
-    }
-    
-    func moveCamera(config: GoogleMapCameraConfig) throws {
+
+        let bearing = config.bearing ?? Double(currentCamera.bearing)
+        let angle = config.angle ?? currentCamera.viewingAngle
+
+        let animate = config.animate ?? false
+
         DispatchQueue.main.sync {
-            let newCamera = setupCameraPosition(config: config)
-            let updateCamera = GMSCameraUpdate.setTarget(newCamera.target, zoom: newCamera.zoom)
-            self.mapViewController.GMapView.moveCamera(updateCamera)
+            let newCamera = GMSCameraPosition(latitude: lat, longitude: lng, zoom: zoom, bearing: bearing, viewingAngle: angle)
+
+            if animate {
+                self.mapViewController.GMapView.animate(to: newCamera)
+            } else {
+                self.mapViewController.GMapView.camera = newCamera
+            }
         }
 
     }
-    
+
     func getCameraZoom() -> Float {
         return self.mapViewController.GMapView.camera.zoom
     }
     
-    func getCameraTarget() -> LatLng {
-        return LatLng(lat:self.mapViewController.GMapView.camera.target.latitude, lng:self.mapViewController.GMapView.camera.target.longitude )
-    }
-
     func getMapType() -> GMSMapViewType {
         return self.mapViewController.GMapView.mapType
     }
 
-    func setCameraBearing(bearing: Double) throws {
-        DispatchQueue.main.async {
-            self.mapViewController.GMapView.animate(toBearing: bearing)
-        }
-    }
-    
-    func setCameraTarget(target: Any) throws {
-        let currentCamera = self.mapViewController.GMapView.camera
-        
-        DispatchQueue.main.sync {
-            if let singleTarget = target as? CLLocationCoordinate2D {
-                let cameraTarget = singleTarget
-                let updatedPosition = GMSCameraPosition.camera(
-                    withTarget: cameraTarget,
-                    zoom: currentCamera.zoom
-                )
-                self.mapViewController.GMapView.animate(to: updatedPosition)
-            }
-            if let targetArray = target as? [CLLocationCoordinate2D] {
-                let bounds = GoogleMapsUtils.createLatLngBoundsFromLatLngArray(targetArray)
-                let center: CLLocationCoordinate2D = GoogleMapsUtils.getCenterFromBound(bounds)
-                let coordinate: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude:  center.latitude, longitude: center.longitude)
-                let updatedPosition = GMSCameraPosition.camera(
-                    withTarget: coordinate,
-                    zoom: currentCamera.zoom
-                )
-                self.mapViewController.GMapView.animate(to: updatedPosition)
-            }
-        }
-    }
-    
     func setMapType(mapType: GMSMapViewType) throws {
         DispatchQueue.main.sync {
             self.mapViewController.GMapView.mapType = mapType
@@ -438,49 +392,12 @@ public class Map {
         }
     }
     
-    func getVisibleRegion() -> GMSVisibleRegion? {
-        return self.mapViewController.GMapView.projection.visibleRegion()
-    }
-    
-    func enableCompass(enabled: Bool) throws {
-        DispatchQueue.main.sync {
-            self.mapViewController.GMapView.settings.compassButton = enabled
-        }
-    }
-    
-    func enableMyLocation(isEnabled: Bool) throws {
-        DispatchQueue.main.sync {
-            self.mapViewController.GMapView.isMyLocationEnabled = isEnabled
-        }
-    }
-    
-    func enableTiltGesture(isEnabled: Bool) throws {
-        DispatchQueue.main.sync {
-            self.mapViewController.GMapView.settings.tiltGestures = isEnabled
-        }
-    }
-    
-    func enableTiltRotateGesture(isEnabled: Bool) throws {
-        DispatchQueue.main.sync {
-            self.mapViewController.GMapView.settings.rotateGestures = isEnabled
-        }
-    }
-    
     func enableAllGestures(isEnabled: Bool) throws {
         DispatchQueue.main.sync {
             self.mapViewController.GMapView.settings.rotateGestures = isEnabled
             self.mapViewController.GMapView.settings.tiltGestures = isEnabled
             self.mapViewController.GMapView.settings.scrollGestures = isEnabled
             self.mapViewController.GMapView.settings.zoomGestures = isEnabled
-        }
-    }
-    
-    func setMapPreferences(padding: GoogleMapPadding?, building: Bool?) throws {
-        DispatchQueue.main.sync {
-                let mapInsets = UIEdgeInsets(top: CGFloat(padding?.top ?? 0), left: CGFloat(padding?.left  ?? 0), bottom: CGFloat(padding?.bottom  ?? 0), right: CGFloat(padding?.right  ?? 0))
-                self.mapViewController.GMapView.padding = mapInsets
-                self.mapViewController.GMapView.isBuildingsEnabled = building ?? false
-            
         }
     }
     
@@ -789,22 +706,6 @@ public class Map {
         return pairsIdCircle
     }
     
-    func addCircle(options: CircleOptions) throws -> (Int, Circle) {
-        var circleHash:Int = 0
-        var newCircle: GMSCircle = GMSCircle()
-        let circle = try Circle(options: options)
-        
-        DispatchQueue.main.sync {
-            newCircle = self.buildCircle(circle: circle)
-            newCircle.map = self.mapViewController.GMapView
-
-            self.circles[newCircle.hash.hashValue] = newCircle
-            circleHash = newCircle.hash.hashValue
-        }
-
-        return (circleHash, circle)
-    }
-    
     func setCircleCenter(circleId: Int, center: LatLng) throws {
         guard let circle = self.circles[circleId] else {
             throw GoogleMapErrors.circleNotFound
@@ -918,25 +819,10 @@ public class Map {
     private func setupCameraPosition(config: GoogleMapCameraConfig) -> GMSCameraPosition {
         let currentCamera = self.mapViewController.GMapView.camera
         var zoom = currentCamera.zoom
-        var lat: Double = currentCamera.target.latitude
-        var lng: Double = currentCamera.target.longitude
-        if case .point(let targetPoint) = config.target {
-            lat = targetPoint.lat
-            lng = targetPoint.lng
-        }
-
-        if case .points(let targetArray) = config.target {
-            var locationCoordinates: [CLLocationCoordinate2D] = []
-            for coordinate in targetArray{
-                locationCoordinates.append(CLLocationCoordinate2D.init(latitude: coordinate.lat, longitude: coordinate.lng))
-            }
-            let latlngBounds = GoogleMapsUtils.createLatLngBoundsFromLatLngArray(locationCoordinates)
-            let center = GoogleMapsUtils.getCenterFromBound(latlngBounds)
-            lat = center.latitude
-            lng = center.longitude
-        }
+        var lat: Double = config.coordinate?.lat ?? currentCamera.target.latitude
+        var lng: Double = config.coordinate?.lng ?? currentCamera.target.longitude
         
-        if case .none = config.target {
+        if case .none = config.coordinate {
             lat = currentCamera.target.latitude
             lng = currentCamera.target.longitude
         }

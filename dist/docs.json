@@ -79,39 +79,37 @@
       },
       {
         "name": "addMarker",
-        "signature": "(options: MarkerOptions) => Promise<CapacitorMarker>",
+        "signature": "(marker: Marker) => Promise<string>",
         "parameters": [
           {
-            "name": "options",
+            "name": "marker",
             "docs": "",
-            "type": "MarkerOptions"
+            "type": "Marker"
           }
         ],
-        "returns": "Promise<CapacitorMarker>",
+        "returns": "Promise<string>",
         "tags": [],
         "docs": "",
         "complexTypes": [
-          "CapacitorMarker",
-          "MarkerOptions"
+          "Marker"
         ],
         "slug": "addmarker"
       },
       {
         "name": "addMarkers",
-        "signature": "(optionsList: MarkerOptions[]) => Promise<CapacitorMarker[]>",
+        "signature": "(markers: Marker[]) => Promise<string[]>",
         "parameters": [
           {
-            "name": "optionsList",
+            "name": "markers",
             "docs": "",
-            "type": "MarkerOptions[]"
+            "type": "Marker[]"
           }
         ],
-        "returns": "Promise<CapacitorMarker[]>",
+        "returns": "Promise<string[]>",
         "tags": [],
         "docs": "",
         "complexTypes": [
-          "CapacitorMarker",
-          "MarkerOptions"
+          "Marker"
         ],
         "slug": "addmarkers"
       },
@@ -148,24 +146,6 @@
         "slug": "removemarkers"
       },
       {
-        "name": "addPolygons",
-        "signature": "(polygons: Polygon[]) => Promise<string[]>",
-        "parameters": [
-          {
-            "name": "polygons",
-            "docs": "",
-            "type": "Polygon[]"
-          }
-        ],
-        "returns": "Promise<string[]>",
-        "tags": [],
-        "docs": "",
-        "complexTypes": [
-          "Polygon"
-        ],
-        "slug": "addpolygons"
-      },
-      {
         "name": "removePolygons",
         "signature": "(ids: string[]) => Promise<void>",
         "parameters": [
@@ -183,41 +163,21 @@
       },
       {
         "name": "addCircles",
-        "signature": "(optionsList: CircleOptions[]) => Promise<CapacitorCircle[]>",
+        "signature": "(circles: Circle[]) => Promise<string[]>",
         "parameters": [
           {
-            "name": "optionsList",
+            "name": "circles",
             "docs": "",
-            "type": "CircleOptions[]"
+            "type": "Circle[]"
           }
         ],
-        "returns": "Promise<CapacitorCircle[]>",
+        "returns": "Promise<string[]>",
         "tags": [],
         "docs": "",
         "complexTypes": [
-          "CapacitorCircle",
-          "CircleOptions"
+          "Circle"
         ],
         "slug": "addcircles"
-      },
-      {
-        "name": "addCircle",
-        "signature": "(options: CircleOptions) => Promise<CapacitorCircle>",
-        "parameters": [
-          {
-            "name": "options",
-            "docs": "",
-            "type": "CircleOptions"
-          }
-        ],
-        "returns": "Promise<CapacitorCircle>",
-        "tags": [],
-        "docs": "",
-        "complexTypes": [
-          "CapacitorCircle",
-          "CircleOptions"
-        ],
-        "slug": "addcircle"
       },
       {
         "name": "removeCircles",
@@ -237,41 +197,21 @@
       },
       {
         "name": "addPolylines",
-        "signature": "(optionsList: PolylineOptions[]) => Promise<CapacitorPolyline[]>",
+        "signature": "(polylines: Polyline[]) => Promise<string[]>",
         "parameters": [
           {
-            "name": "optionsList",
+            "name": "polylines",
             "docs": "",
-            "type": "PolylineOptions[]"
+            "type": "Polyline[]"
           }
         ],
-        "returns": "Promise<CapacitorPolyline[]>",
+        "returns": "Promise<string[]>",
         "tags": [],
         "docs": "",
         "complexTypes": [
-          "CapacitorPolyline",
-          "PolylineOptions"
+          "Polyline"
         ],
         "slug": "addpolylines"
-      },
-      {
-        "name": "addPolyline",
-        "signature": "(options: PolylineOptions) => Promise<CapacitorPolyline>",
-        "parameters": [
-          {
-            "name": "options",
-            "docs": "",
-            "type": "PolylineOptions"
-          }
-        ],
-        "returns": "Promise<CapacitorPolyline>",
-        "tags": [],
-        "docs": "",
-        "complexTypes": [
-          "CapacitorPolyline",
-          "PolylineOptions"
-        ],
-        "slug": "addpolyline"
       },
       {
         "name": "removePolylines",
@@ -300,68 +240,50 @@
         "slug": "destroy"
       },
       {
-        "name": "moveCamera",
-        "signature": "(config: CameraPosition) => Promise<void>",
+        "name": "setCamera",
+        "signature": "(config: CameraConfig) => Promise<void>",
         "parameters": [
           {
             "name": "config",
             "docs": "",
-            "type": "CameraPosition"
+            "type": "CameraConfig"
           }
         ],
         "returns": "Promise<void>",
         "tags": [],
         "docs": "",
         "complexTypes": [
-          "CameraPosition"
+          "CameraConfig"
         ],
-        "slug": "movecamera"
-      },
-      {
-        "name": "animateCamera",
-        "signature": "(config: CameraPosition) => Promise<void>",
-        "parameters": [
-          {
-            "name": "config",
-            "docs": "",
-            "type": "CameraPosition"
-          }
-        ],
-        "returns": "Promise<void>",
-        "tags": [],
-        "docs": "",
-        "complexTypes": [
-          "CameraPosition"
-        ],
-        "slug": "animatecamera"
+        "slug": "setcamera"
       },
       {
         "name": "getMapType",
-        "signature": "() => Promise<GoogleMapsMapTypeId>",
+        "signature": "() => Promise<MapType>",
         "parameters": [],
-        "returns": "Promise<GoogleMapsMapTypeId>",
+        "returns": "Promise<MapType>",
         "tags": [],
         "docs": "Get current map type",
         "complexTypes": [
-          "GoogleMapsMapTypeId"
+          "MapType"
         ],
         "slug": "getmaptype"
       },
       {
         "name": "setMapType",
-        "signature": "(mapType: GoogleMapsMapTypeId) => Promise<void>",
+        "signature": "(mapType: MapType) => Promise<void>",
         "parameters": [
           {
             "name": "mapType",
             "docs": "",
-            "type": "GoogleMapsMapTypeId"
+            "type": "MapType"
           }
         ],
         "returns": "Promise<void>",
         "tags": [],
         "docs": "",
         "complexTypes": [
-          "GoogleMapsMapTypeId"
+          "MapType"
         ],
         "slug": "setmaptype"
       },
@@ -553,25 +475,6 @@
         "slug": "setoncameramovestartedlistener"
       },
       {
-        "name": "setOnCameraMoveListener",
-        "signature": "(callback?: MapListenerCallback<CameraMoveCallbackData> | undefined) => Promise<void>",
-        "parameters": [
-          {
-            "name": "callback",
-            "docs": "",
-            "type": "MapListenerCallback<CameraMoveCallbackData> | undefined"
-          }
-        ],
-        "returns": "Promise<void>",
-        "tags": [],
-        "docs": "",
-        "complexTypes": [
-          "MapListenerCallback",
-          "CameraMoveCallbackData"
-        ],
-        "slug": "setoncameramovelistener"
-      },
-      {
         "name": "setOnClusterClickListener",
         "signature": "(callback?: MapListenerCallback<ClusterClickCallbackData> | undefined) => Promise<void>",
         "parameters": [
@@ -648,25 +551,6 @@
         "slug": "setonmapclicklistener"
       },
       {
-        "name": "setOnMapReadyListener",
-        "signature": "(callback?: MapListenerCallback<MapReadyCallbackData> | undefined) => Promise<void>",
-        "parameters": [
-          {
-            "name": "callback",
-            "docs": "",
-            "type": "MapListenerCallback<MapReadyCallbackData> | undefined"
-          }
-        ],
-        "returns": "Promise<void>",
-        "tags": [],
-        "docs": "",
-        "complexTypes": [
-          "MapListenerCallback",
-          "MapReadyCallbackData"
-        ],
-        "slug": "setonmapreadylistener"
-      },
-      {
         "name": "setOnMarkerClickListener",
         "signature": "(callback?: MapListenerCallback<MarkerClickCallbackData> | undefined) => Promise<void>",
         "parameters": [
@@ -703,25 +587,6 @@
           "PolygonClickCallbackData"
         ],
         "slug": "setonpolygonclicklistener"
-      },
-      {
-        "name": "setOnPoiClickListener",
-        "signature": "(callback?: MapListenerCallback<PoiClickCallbackData> | undefined) => Promise<void>",
-        "parameters": [
-          {
-            "name": "callback",
-            "docs": "",
-            "type": "MapListenerCallback<PoiClickCallbackData> | undefined"
-          }
-        ],
-        "returns": "Promise<void>",
-        "tags": [],
-        "docs": "",
-        "complexTypes": [
-          "MapListenerCallback",
-          "PoiClickCallbackData"
-        ],
-        "slug": "setonpoiclicklistener"
       },
       {
         "name": "setOnCircleClickListener",
@@ -855,248 +720,6 @@
           "MapClickCallbackData"
         ],
         "slug": "setonmylocationclicklistener"
-      },
-      {
-        "name": "getVisibleRegion",
-        "signature": "() => Promise<VisibleRegion>",
-        "parameters": [],
-        "returns": "Promise<VisibleRegion>",
-        "tags": [],
-        "docs": "",
-        "complexTypes": [
-          "VisibleRegion"
-        ],
-        "slug": "getvisibleregion"
-      },
-      {
-        "name": "enableCompass",
-        "signature": "(enabled: boolean) => Promise<void>",
-        "parameters": [
-          {
-            "name": "enabled",
-            "docs": "",
-            "type": "boolean"
-          }
-        ],
-        "returns": "Promise<void>",
-        "tags": [],
-        "docs": "",
-        "complexTypes": [],
-        "slug": "enablecompass"
-      },
-      {
-        "name": "enableToolbar",
-        "signature": "(isEnabled: boolean) => Promise<void>",
-        "parameters": [
-          {
-            "name": "isEnabled",
-            "docs": "",
-            "type": "boolean"
-          }
-        ],
-        "returns": "Promise<void>",
-        "tags": [],
-        "docs": "",
-        "complexTypes": [],
-        "slug": "enabletoolbar"
-      },
-      {
-        "name": "enableMyLocation",
-        "signature": "(isEnabled: boolean) => Promise<void>",
-        "parameters": [
-          {
-            "name": "isEnabled",
-            "docs": "",
-            "type": "boolean"
-          }
-        ],
-        "returns": "Promise<void>",
-        "tags": [],
-        "docs": "",
-        "complexTypes": [],
-        "slug": "enablemylocation"
-      },
-      {
-        "name": "enableAllGestures",
-        "signature": "(isEnabled: boolean) => Promise<void>",
-        "parameters": [
-          {
-            "name": "isEnabled",
-            "docs": "",
-            "type": "boolean"
-          }
-        ],
-        "returns": "Promise<void>",
-        "tags": [],
-        "docs": "",
-        "complexTypes": [],
-        "slug": "enableallgestures"
-      },
-      {
-        "name": "enableTiltGesture",
-        "signature": "(isEnabled: boolean) => Promise<void>",
-        "parameters": [
-          {
-            "name": "isEnabled",
-            "docs": "",
-            "type": "boolean"
-          }
-        ],
-        "returns": "Promise<void>",
-        "tags": [],
-        "docs": "",
-        "complexTypes": [],
-        "slug": "enabletiltgesture"
-      },
-      {
-        "name": "enableTiltRotateGesture",
-        "signature": "(isEnabled: boolean) => Promise<void>",
-        "parameters": [
-          {
-            "name": "isEnabled",
-            "docs": "",
-            "type": "boolean"
-          }
-        ],
-        "returns": "Promise<void>",
-        "tags": [],
-        "docs": "",
-        "complexTypes": [],
-        "slug": "enabletiltrotategesture"
-      },
-      {
-        "name": "setMapPreferences",
-        "signature": "(padding?: MapPadding | undefined, building?: boolean | undefined) => Promise<void>",
-        "parameters": [
-          {
-            "name": "padding",
-            "docs": "",
-            "type": "MapPadding | undefined"
-          },
-          {
-            "name": "building",
-            "docs": "",
-            "type": "boolean | undefined"
-          }
-        ],
-        "returns": "Promise<void>",
-        "tags": [],
-        "docs": "",
-        "complexTypes": [
-          "MapPadding"
-        ],
-        "slug": "setmappreferences"
-      },
-      {
-        "name": "setCameraBearing",
-        "signature": "(bearing: number) => Promise<void>",
-        "parameters": [
-          {
-            "name": "bearing",
-            "docs": "",
-            "type": "number"
-          }
-        ],
-        "returns": "Promise<void>",
-        "tags": [],
-        "docs": "",
-        "complexTypes": [],
-        "slug": "setcamerabearing"
-      },
-      {
-        "name": "setOptions",
-        "signature": "(config: GoogleMapsOptions) => Promise<void>",
-        "parameters": [
-          {
-            "name": "config",
-            "docs": "",
-            "type": "GoogleMapsOptions"
-          }
-        ],
-        "returns": "Promise<void>",
-        "tags": [],
-        "docs": "",
-        "complexTypes": [
-          "GoogleMapsOptions"
-        ],
-        "slug": "setoptions"
-      },
-      {
-        "name": "getCameraZoom",
-        "signature": "() => Promise<number>",
-        "parameters": [],
-        "returns": "Promise<number>",
-        "tags": [],
-        "docs": "",
-        "complexTypes": [],
-        "slug": "getcamerazoom"
-      },
-      {
-        "name": "setCameraTarget",
-        "signature": "(target: ILatLng | ILatLng[]) => Promise<void>",
-        "parameters": [
-          {
-            "name": "target",
-            "docs": "",
-            "type": "ILatLng | ILatLng[]"
-          }
-        ],
-        "returns": "Promise<void>",
-        "tags": [],
-        "docs": "",
-        "complexTypes": [
-          "ILatLng"
-        ],
-        "slug": "setcameratarget"
-      },
-      {
-        "name": "getCameraTarget",
-        "signature": "() => Promise<ILatLng>",
-        "parameters": [],
-        "returns": "Promise<ILatLng>",
-        "tags": [],
-        "docs": "",
-        "complexTypes": [
-          "ILatLng"
-        ],
-        "slug": "getcameratarget"
-      },
-      {
-        "name": "fromPointToLatLng",
-        "signature": "(points: number[]) => Promise<ILatLng>",
-        "parameters": [
-          {
-            "name": "points",
-            "docs": "",
-            "type": "number[]"
-          }
-        ],
-        "returns": "Promise<ILatLng>",
-        "tags": [],
-        "docs": "",
-        "complexTypes": [
-          "ILatLng"
-        ],
-        "slug": "frompointtolatlng"
-      },
-      {
-        "name": "on",
-        "signature": "(event: GoogleMapsEvent) => Observable<any>",
-        "parameters": [
-          {
-            "name": "event",
-            "docs": "",
-            "type": "GoogleMapsEvent"
-          }
-        ],
-        "returns": "Observable<any>",
-        "tags": [],
-        "docs": "",
-        "complexTypes": [
-          "Observable",
-          "GoogleMapsEvent"
-        ],
-        "slug": "on"
       }
     ],
     "properties": []
@@ -1205,6 +828,22 @@
           "type": "number | undefined"
         },
         {
+          "name": "center",
+          "tags": [],
+          "docs": "Default location on the Earth towards which the camera points.",
+          "complexTypes": [
+            "LatLng"
+          ],
+          "type": "LatLng"
+        },
+        {
+          "name": "zoom",
+          "tags": [],
+          "docs": "Sets the zoom of the map.",
+          "complexTypes": [],
+          "type": "number"
+        },
+        {
           "name": "androidLiteMode",
           "tags": [
             {
@@ -1232,8 +871,10 @@
             }
           ],
           "docs": "Styles to apply to each of the default map types. Note that for\nsatellite, hybrid and terrain modes,\nthese styles will only apply to labels and geometry.",
-          "complexTypes": [],
-          "type": "string | null | undefined"
+          "complexTypes": [
+            "google"
+          ],
+          "type": "MapTypeStyle[] | null | undefined"
         },
         {
           "name": "mapId",
@@ -1272,190 +913,47 @@
           "type": "string | undefined"
         },
         {
-          "name": "controls",
+          "name": "maxZoom",
           "tags": [],
-          "docs": "",
-          "complexTypes": [
-            "GoogleMapControls"
-          ],
-          "type": "GoogleMapControls"
+          "docs": "The maximum zoom level which will be displayed on the map. If omitted, or\nset to <code>null</code>, the maximum zoom from the current map type is\nused instead. Valid zoom values are numbers from zero up to the supported\n<a\nhref=\"https://developers.google.com/maps/documentation/javascript/maxzoom\">maximum\nzoom level</a>.",
+          "complexTypes": [],
+          "type": "number | null | undefined"
         },
         {
-          "name": "gestures",
+          "name": "minZoom",
           "tags": [],
-          "docs": "",
-          "complexTypes": [
-            "GoogleMapGestures"
-          ],
-          "type": "GoogleMapGestures"
+          "docs": "The minimum zoom level which will be displayed on the map. If omitted, or\nset to <code>null</code>, the minimum zoom from the current map type is\nused instead. Valid zoom values are numbers from zero up to the supported\n<a\nhref=\"https://developers.google.com/maps/documentation/javascript/maxzoom\">maximum\nzoom level</a>.",
+          "complexTypes": [],
+          "type": "number | null | undefined"
         },
         {
-          "name": "camera",
+          "name": "mapTypeId",
           "tags": [],
-          "docs": "",
-          "complexTypes": [
-            "CameraPosition"
-          ],
-          "type": "CameraPosition"
+          "docs": "The initial Map mapTypeId. Defaults to <code>ROADMAP</code>.",
+          "complexTypes": [],
+          "type": "string | null | undefined"
         },
         {
-          "name": "preferences",
+          "name": "heading",
           "tags": [],
-          "docs": "",
+          "docs": "The heading for aerial imagery in degrees measured clockwise from\ncardinal direction North. Headings are snapped to the nearest available\nangle for which imagery is available.",
+          "complexTypes": [],
+          "type": "number | null | undefined"
+        },
+        {
+          "name": "restriction",
+          "tags": [],
+          "docs": "Defines a boundary that restricts the area of the map accessible to\nusers. When set, a user can only pan and zoom while the camera view stays\ninside the limits of the boundary.",
           "complexTypes": [
-            "GoogleMapPreferences"
+            "google"
           ],
-          "type": "GoogleMapPreferences"
+          "type": "MapRestriction | null | undefined"
         }
       ]
     },
     {
-      "name": "GoogleMapControls",
-      "slug": "googlemapcontrols",
-      "docs": "",
-      "tags": [],
-      "methods": [],
-      "properties": [
-        {
-          "name": "compass",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "boolean | undefined"
-        },
-        {
-          "name": "myLocationButton",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "boolean | undefined"
-        },
-        {
-          "name": "myLocation",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "boolean | undefined"
-        },
-        {
-          "name": "indoorPicker",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "boolean | undefined"
-        },
-        {
-          "name": "zoom",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "boolean | undefined"
-        },
-        {
-          "name": "mapToolbar",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "boolean | undefined"
-        }
-      ]
-    },
-    {
-      "name": "GoogleMapGestures",
-      "slug": "googlemapgestures",
-      "docs": "",
-      "tags": [],
-      "methods": [],
-      "properties": [
-        {
-          "name": "scroll",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "boolean | undefined"
-        },
-        {
-          "name": "zoom",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "boolean | undefined"
-        },
-        {
-          "name": "tilt",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "boolean | undefined"
-        },
-        {
-          "name": "rotate",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "boolean | undefined"
-        }
-      ]
-    },
-    {
-      "name": "CameraPosition",
-      "slug": "cameraposition",
-      "docs": "Configuration properties for a Google Map Camera",
-      "tags": [],
-      "methods": [],
-      "properties": [
-        {
-          "name": "target",
-          "tags": [],
-          "docs": "Location on the Earth towards which the camera points or multiple locations towards which the camera points in the center .",
-          "complexTypes": [
-            "ILatLng"
-          ],
-          "type": "ILatLng | ILatLng[] | undefined"
-        },
-        {
-          "name": "zoom",
-          "tags": [],
-          "docs": "Sets the zoom of the map.",
-          "complexTypes": [],
-          "type": "number | undefined"
-        },
-        {
-          "name": "bearing",
-          "tags": [
-            {
-              "text": "0",
-              "name": "default"
-            }
-          ],
-          "docs": "Bearing of the camera, in degrees clockwise from true north.",
-          "complexTypes": [],
-          "type": "number | undefined"
-        },
-        {
-          "name": "tilt",
-          "tags": [
-            {
-              "text": "0",
-              "name": "default"
-            }
-          ],
-          "docs": "The angle, in degrees, of the camera from the nadir (directly facing the Earth).\n\nThe only allowed values are 0 and 45.",
-          "complexTypes": [],
-          "type": "number | undefined"
-        },
-        {
-          "name": "duration",
-          "tags": [],
-          "docs": "This configuration option is not being used.",
-          "complexTypes": [],
-          "type": "number | undefined"
-        }
-      ]
-    },
-    {
-      "name": "ILatLng",
-      "slug": "ilatlng",
+      "name": "LatLng",
+      "slug": "latlng",
       "docs": "An interface representing a pair of latitude and longitude coordinates.",
       "tags": [],
       "methods": [],
@@ -1477,109 +975,6 @@
       ]
     },
     {
-      "name": "GoogleMapPreferences",
-      "slug": "googlemappreferences",
-      "docs": "",
-      "tags": [],
-      "methods": [],
-      "properties": [
-        {
-          "name": "padding",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [
-            "MapPadding"
-          ],
-          "type": "MapPadding"
-        },
-        {
-          "name": "building",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "boolean | undefined"
-        },
-        {
-          "name": "gestureBounds",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [
-            "ILatLng"
-          ],
-          "type": "ILatLng[] | undefined"
-        },
-        {
-          "name": "zoom",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [
-            "GoogleMapZoomOptions"
-          ],
-          "type": "GoogleMapZoomOptions"
-        }
-      ]
-    },
-    {
-      "name": "MapPadding",
-      "slug": "mappadding",
-      "docs": "Controls for setting padding on the 'visible' region of the view.",
-      "tags": [],
-      "methods": [],
-      "properties": [
-        {
-          "name": "top",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "number | undefined"
-        },
-        {
-          "name": "left",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "number | undefined"
-        },
-        {
-          "name": "right",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "number | undefined"
-        },
-        {
-          "name": "bottom",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "number | undefined"
-        }
-      ]
-    },
-    {
-      "name": "GoogleMapZoomOptions",
-      "slug": "googlemapzoomoptions",
-      "docs": "",
-      "tags": [],
-      "methods": [],
-      "properties": [
-        {
-          "name": "minZoom",
-          "tags": [],
-          "docs": "The minimum zoom level of the map.",
-          "complexTypes": [],
-          "type": "number | undefined"
-        },
-        {
-          "name": "maxZoom",
-          "tags": [],
-          "docs": "The maximum zoom level of the map.",
-          "complexTypes": [],
-          "type": "number | undefined"
-        }
-      ]
-    },
-    {
       "name": "MapReadyCallbackData",
       "slug": "mapreadycallbackdata",
       "docs": "",
@@ -1596,145 +991,152 @@
       ]
     },
     {
-      "name": "MarkerOptions",
-      "slug": "markeroptions",
-      "docs": "",
+      "name": "Marker",
+      "slug": "marker",
+      "docs": "A marker is an icon placed at a particular point on the map's surface.",
       "tags": [],
       "methods": [],
       "properties": [
         {
-          "name": "icon",
+          "name": "coordinate",
           "tags": [],
-          "docs": "",
+          "docs": "Marker position",
           "complexTypes": [
-            "MarkerIcon"
+            "LatLng"
           ],
-          "type": "(MarkerIcon & { anchor?: number[] | undefined; }) | undefined"
+          "type": "LatLng"
+        },
+        {
+          "name": "opacity",
+          "tags": [
+            {
+              "text": "1",
+              "name": "default"
+            }
+          ],
+          "docs": "Sets the opacity of the marker, between 0 (completely transparent) and 1 inclusive.",
+          "complexTypes": [],
+          "type": "number | undefined"
         },
         {
           "name": "title",
           "tags": [],
-          "docs": "",
+          "docs": "Title, a short description of the overlay.",
           "complexTypes": [],
           "type": "string | undefined"
         },
         {
           "name": "snippet",
           "tags": [],
-          "docs": "",
+          "docs": "Snippet text, shown beneath the title in the info window when selected.",
           "complexTypes": [],
           "type": "string | undefined"
         },
         {
-          "name": "position",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [
-            "ILatLng"
+          "name": "isFlat",
+          "tags": [
+            {
+              "text": "false",
+              "name": "default"
+            }
           ],
-          "type": "ILatLng"
-        },
-        {
-          "name": "infoWindowAnchor",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "number[] | undefined"
-        },
-        {
-          "name": "anchor",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "number[] | undefined"
-        },
-        {
-          "name": "draggable",
-          "tags": [],
-          "docs": "",
+          "docs": "Controls whether this marker should be flat against the Earth's surface or a billboard facing the camera.",
           "complexTypes": [],
           "type": "boolean | undefined"
         },
         {
-          "name": "flat",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "boolean | undefined"
-        },
-        {
-          "name": "rotation",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "number | undefined"
-        },
-        {
-          "name": "visible",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "boolean | undefined"
-        },
-        {
-          "name": "animation",
-          "tags": [],
-          "docs": "",
+          "name": "iconUrl",
+          "tags": [
+            {
+              "text": "```typescript\n{\n...\n iconUrl: 'assets/icon/pin.png',\n ...\n}\n```",
+              "name": "usage"
+            },
+            {
+              "text": "4.2.0",
+              "name": "since"
+            }
+          ],
+          "docs": "Path to a marker icon to render. It can be relative to the web app public directory,\nor a https url of a remote marker icon.\n\n**SVGs are not supported on native platforms.**",
           "complexTypes": [],
           "type": "string | undefined"
         },
         {
-          "name": "zIndex",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "number | undefined"
-        },
-        {
-          "name": "disableAutoPan",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "boolean | undefined"
-        },
-        {
-          "name": "alpha",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "number | undefined"
-        },
-        {
-          "name": "clickable",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "boolean | undefined"
-        }
-      ]
-    },
-    {
-      "name": "MarkerIcon",
-      "slug": "markericon",
-      "docs": "",
-      "tags": [],
-      "methods": [],
-      "properties": [
-        {
-          "name": "url",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "string | undefined"
-        },
-        {
-          "name": "size",
-          "tags": [],
-          "docs": "",
+          "name": "iconSize",
+          "tags": [
+            {
+              "text": "4.2.0",
+              "name": "since"
+            }
+          ],
+          "docs": "Controls the scaled size of the marker image set in `iconUrl`.",
           "complexTypes": [
             "Size"
           ],
           "type": "Size"
+        },
+        {
+          "name": "iconOrigin",
+          "tags": [
+            {
+              "text": "4.2.0",
+              "name": "since"
+            }
+          ],
+          "docs": "The position of the image within a sprite, if any. By default, the origin is located at the top left corner of the image .",
+          "complexTypes": [
+            "Point"
+          ],
+          "type": "Point"
+        },
+        {
+          "name": "iconAnchor",
+          "tags": [
+            {
+              "text": "4.2.0",
+              "name": "since"
+            }
+          ],
+          "docs": "The position at which to anchor an image in correspondence to the location of the marker on the map. By default, the anchor is located along the center point of the bottom of the image.",
+          "complexTypes": [
+            "Point"
+          ],
+          "type": "Point"
+        },
+        {
+          "name": "tintColor",
+          "tags": [
+            {
+              "text": "4.2.0",
+              "name": "since"
+            }
+          ],
+          "docs": "Customizes the color of the default marker image.  Each value must be between 0 and 255.\n\nOnly for iOS and Android.",
+          "complexTypes": [],
+          "type": "{ r: number; g: number; b: number; a: number; } | undefined"
+        },
+        {
+          "name": "draggable",
+          "tags": [
+            {
+              "text": "false",
+              "name": "default"
+            }
+          ],
+          "docs": "Controls whether this marker can be dragged interactively",
+          "complexTypes": [],
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "zIndex",
+          "tags": [
+            {
+              "text": "0",
+              "name": "default"
+            }
+          ],
+          "docs": "Specifies the stack order of this marker, relative to other markers on the map.\nA marker with a high z-index is drawn on top of markers with lower z-indexes",
+          "complexTypes": [],
+          "type": "number | undefined"
         }
       ]
     },
@@ -1762,9 +1164,9 @@
       ]
     },
     {
-      "name": "Polygon",
-      "slug": "polygon",
-      "docs": "Polygon geometry object.\nhttps://tools.ietf.org/html/rfc7946#section-3.1.6",
+      "name": "Point",
+      "slug": "point",
+      "docs": "Point geometry object.\nhttps://tools.ietf.org/html/rfc7946#section-3.1.2",
       "tags": [],
       "methods": [],
       "properties": [
@@ -1773,7 +1175,7 @@
           "tags": [],
           "docs": "Specifies the type of GeoJSON object.",
           "complexTypes": [],
-          "type": "'Polygon'"
+          "type": "'Point'"
         },
         {
           "name": "coordinates",
@@ -1782,99 +1184,44 @@
           "complexTypes": [
             "Position"
           ],
-          "type": "Position[][]"
+          "type": "Position"
         }
       ]
     },
     {
-      "name": "CircleOptions",
-      "slug": "circleoptions",
-      "docs": "",
+      "name": "Circle",
+      "slug": "circle",
+      "docs": "For web, all the javascript Circle options are available as\nCircle extends google.maps.CircleOptions.\nFor iOS and Android only the config options declared on Circle are available.",
       "tags": [],
       "methods": [],
       "properties": [
         {
-          "name": "center",
+          "name": "fillColor",
           "tags": [],
-          "docs": "",
-          "complexTypes": [
-            "ILatLng"
-          ],
-          "type": "ILatLng"
-        },
-        {
-          "name": "radius",
-          "tags": [],
-          "docs": "",
+          "docs": "The fill color. All CSS3 colors are supported except for extended named\ncolors.",
           "complexTypes": [],
-          "type": "number"
+          "type": "string | undefined"
         },
         {
-          "name": "strokeWidth",
+          "name": "fillOpacity",
           "tags": [],
-          "docs": "",
+          "docs": "The fill opacity between 0.0 and 1.0.",
           "complexTypes": [],
           "type": "number | undefined"
         },
         {
           "name": "strokeColor",
           "tags": [],
-          "docs": "",
+          "docs": "The stroke color. All CSS3 colors are supported except for extended named\ncolors.",
           "complexTypes": [],
           "type": "string | undefined"
         },
         {
-          "name": "fillColor",
+          "name": "strokeWeight",
           "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "string | undefined"
-        },
-        {
-          "name": "clickable",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "boolean | undefined"
-        },
-        {
-          "name": "visible",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "boolean | undefined"
-        },
-        {
-          "name": "zIndex",
-          "tags": [],
-          "docs": "",
+          "docs": "The stroke width in pixels.",
           "complexTypes": [],
           "type": "number | undefined"
-        }
-      ]
-    },
-    {
-      "name": "PolylineOptions",
-      "slug": "polylineoptions",
-      "docs": "",
-      "tags": [],
-      "methods": [],
-      "properties": [
-        {
-          "name": "points",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [
-            "ILatLng"
-          ],
-          "type": "ILatLng[]"
-        },
-        {
-          "name": "visible",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "boolean | undefined"
         },
         {
           "name": "geodesic",
@@ -1884,32 +1231,213 @@
           "type": "boolean | undefined"
         },
         {
-          "name": "color",
+          "name": "clickable",
+          "tags": [],
+          "docs": "Indicates whether this <code>Circle</code> handles mouse events.",
+          "complexTypes": [],
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "title",
+          "tags": [],
+          "docs": "Title, a short description of the overlay. Some overlays, such as markers, will display the title on the map. The title is also the default accessibility text.\n\nOnly available on iOS.",
+          "complexTypes": [],
+          "type": "string | undefined"
+        },
+        {
+          "name": "tag",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "string | undefined"
+        }
+      ]
+    },
+    {
+      "name": "Polyline",
+      "slug": "polyline",
+      "docs": "For web, all the javascript Polyline options are available as\nPolyline extends google.maps.PolylineOptions.\nFor iOS and Android only the config options declared on Polyline are available.",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "strokeColor",
+          "tags": [],
+          "docs": "The stroke color. All CSS3 colors are supported except for extended named\ncolors.",
+          "complexTypes": [],
+          "type": "string | undefined"
+        },
+        {
+          "name": "strokeOpacity",
+          "tags": [],
+          "docs": "The stroke opacity between 0.0 and 1.0.",
+          "complexTypes": [],
+          "type": "number | undefined"
+        },
+        {
+          "name": "strokeWeight",
+          "tags": [],
+          "docs": "The stroke width in pixels.",
+          "complexTypes": [],
+          "type": "number | undefined"
+        },
+        {
+          "name": "geodesic",
+          "tags": [],
+          "docs": "When <code>true</code>, edges of the polygon are interpreted as geodesic\nand will follow the curvature of the Earth. When <code>false</code>,\nedges of the polygon are rendered as straight lines in screen space. Note\nthat the shape of a geodesic polygon may appear to change when dragged,\nas the dimensions are maintained relative to the surface of the earth.",
+          "complexTypes": [],
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "clickable",
+          "tags": [],
+          "docs": "Indicates whether this <code>Polyline</code> handles mouse events.",
+          "complexTypes": [],
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "tag",
           "tags": [],
           "docs": "",
           "complexTypes": [],
           "type": "string | undefined"
         },
         {
-          "name": "width",
+          "name": "styleSpans",
           "tags": [],
-          "docs": "",
+          "docs": "Used to specify the color of one or more segments of a polyline. The styleSpans property is an array of StyleSpan objects.\nSetting the spans property is the preferred way to change the color of a polyline.\n\nOnly on iOS and Android.",
+          "complexTypes": [
+            "StyleSpan"
+          ],
+          "type": "StyleSpan[] | undefined"
+        }
+      ]
+    },
+    {
+      "name": "StyleSpan",
+      "slug": "stylespan",
+      "docs": "Describes the style for some region of a polyline.",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "color",
+          "tags": [],
+          "docs": "The stroke color. All CSS3 colors are supported except for extended named colors.",
+          "complexTypes": [],
+          "type": "string"
+        },
+        {
+          "name": "segments",
+          "tags": [],
+          "docs": "The length of this span in number of segments.",
+          "complexTypes": [],
+          "type": "number | undefined"
+        }
+      ]
+    },
+    {
+      "name": "CameraConfig",
+      "slug": "cameraconfig",
+      "docs": "Configuration properties for a Google Map Camera",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "coordinate",
+          "tags": [],
+          "docs": "Location on the Earth towards which the camera points.",
+          "complexTypes": [
+            "LatLng"
+          ],
+          "type": "LatLng"
+        },
+        {
+          "name": "zoom",
+          "tags": [],
+          "docs": "Sets the zoom of the map.",
           "complexTypes": [],
           "type": "number | undefined"
         },
         {
-          "name": "zIndex",
-          "tags": [],
-          "docs": "",
+          "name": "bearing",
+          "tags": [
+            {
+              "text": "0",
+              "name": "default"
+            }
+          ],
+          "docs": "Bearing of the camera, in degrees clockwise from true north.",
           "complexTypes": [],
           "type": "number | undefined"
         },
         {
-          "name": "clickable",
-          "tags": [],
-          "docs": "",
+          "name": "angle",
+          "tags": [
+            {
+              "text": "0",
+              "name": "default"
+            }
+          ],
+          "docs": "The angle, in degrees, of the camera from the nadir (directly facing the Earth).\n\nThe only allowed values are 0 and 45.",
+          "complexTypes": [],
+          "type": "number | undefined"
+        },
+        {
+          "name": "animate",
+          "tags": [
+            {
+              "text": "false",
+              "name": "default"
+            }
+          ],
+          "docs": "Animate the transition to the new Camera properties.",
           "complexTypes": [],
           "type": "boolean | undefined"
+        },
+        {
+          "name": "animationDuration",
+          "tags": [],
+          "docs": "This configuration option is not being used.",
+          "complexTypes": [],
+          "type": "number | undefined"
+        }
+      ]
+    },
+    {
+      "name": "MapPadding",
+      "slug": "mappadding",
+      "docs": "Controls for setting padding on the 'visible' region of the view.",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "top",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "number"
+        },
+        {
+          "name": "left",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "number"
+        },
+        {
+          "name": "right",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "number"
+        },
+        {
+          "name": "bottom",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "number"
         }
       ]
     },
@@ -1970,42 +1498,6 @@
           "docs": "",
           "complexTypes": [],
           "type": "number"
-        },
-        {
-          "name": "nearLeft",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [
-            "ILatLng"
-          ],
-          "type": "ILatLng"
-        },
-        {
-          "name": "nearRight",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [
-            "ILatLng"
-          ],
-          "type": "ILatLng"
-        },
-        {
-          "name": "farLeft",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [
-            "ILatLng"
-          ],
-          "type": "ILatLng"
-        },
-        {
-          "name": "farRight",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [
-            "ILatLng"
-          ],
-          "type": "ILatLng"
         }
       ]
     },
@@ -2029,22 +1521,6 @@
           "docs": "",
           "complexTypes": [],
           "type": "boolean"
-        }
-      ]
-    },
-    {
-      "name": "CameraMoveCallbackData",
-      "slug": "cameramovecallbackdata",
-      "docs": "",
-      "tags": [],
-      "methods": [],
-      "properties": [
-        {
-          "name": "mapId",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "string"
         }
       ]
     },
@@ -2215,43 +1691,6 @@
       ]
     },
     {
-      "name": "PoiClickCallbackData",
-      "slug": "poiclickcallbackdata",
-      "docs": "",
-      "tags": [],
-      "methods": [],
-      "properties": [
-        {
-          "name": "mapId",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "string"
-        },
-        {
-          "name": "poiId",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "string"
-        },
-        {
-          "name": "latitude",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "number"
-        },
-        {
-          "name": "longitude",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "number"
-        }
-      ]
-    },
-    {
       "name": "CircleClickCallbackData",
       "slug": "circleclickcallbackdata",
       "docs": "",
@@ -2319,136 +1758,12 @@
           "type": "string"
         }
       ]
-    },
-    {
-      "name": "VisibleRegion",
-      "slug": "visibleregion",
-      "docs": "",
-      "tags": [],
-      "methods": [],
-      "properties": [
-        {
-          "name": "nearLeft",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [
-            "ILatLng"
-          ],
-          "type": "ILatLng"
-        },
-        {
-          "name": "nearRight",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [
-            "ILatLng"
-          ],
-          "type": "ILatLng"
-        },
-        {
-          "name": "farLeft",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [
-            "ILatLng"
-          ],
-          "type": "ILatLng"
-        },
-        {
-          "name": "farRight",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [
-            "ILatLng"
-          ],
-          "type": "ILatLng"
-        },
-        {
-          "name": "southwest",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [
-            "ILatLng"
-          ],
-          "type": "ILatLng"
-        },
-        {
-          "name": "northeast",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [
-            "ILatLng"
-          ],
-          "type": "ILatLng"
-        }
-      ]
-    },
-    {
-      "name": "GoogleMapsOptions",
-      "slug": "googlemapsoptions",
-      "docs": "",
-      "tags": [],
-      "methods": [],
-      "properties": [
-        {
-          "name": "mapType",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [
-            "GoogleMapsMapTypeId"
-          ],
-          "type": "GoogleMapsMapTypeId"
-        },
-        {
-          "name": "controls",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [
-            "GoogleMapControls"
-          ],
-          "type": "GoogleMapControls"
-        },
-        {
-          "name": "gestures",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [
-            "GoogleMapGestures"
-          ],
-          "type": "GoogleMapGestures"
-        },
-        {
-          "name": "styles",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "any[] | undefined"
-        },
-        {
-          "name": "camera",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [
-            "CameraPosition"
-          ],
-          "type": "CameraPosition"
-        },
-        {
-          "name": "preferences",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [
-            "GoogleMapPreferences"
-          ],
-          "type": "GoogleMapPreferences"
-        }
-      ]
     }
   ],
   "enums": [
     {
-      "name": "GoogleMapsMapTypeId",
-      "slug": "googlemapsmaptypeid",
+      "name": "MapType",
+      "slug": "maptype",
       "members": [
         {
           "name": "Normal",
@@ -2481,54 +1796,6 @@
           "docs": "No base map tiles."
         }
       ]
-    },
-    {
-      "name": "GoogleMapsEvent",
-      "slug": "googlemapsevent",
-      "members": [
-        {
-          "name": "MAP_READY",
-          "value": "'onMapReady'",
-          "tags": [],
-          "docs": ""
-        },
-        {
-          "name": "MAP_CLICK",
-          "value": "'onMapClick'",
-          "tags": [],
-          "docs": ""
-        },
-        {
-          "name": "POI_CLICK",
-          "value": "'onPoiClick'",
-          "tags": [],
-          "docs": ""
-        },
-        {
-          "name": "CAMERA_MOVE_END",
-          "value": "'onCameraIdle'",
-          "tags": [],
-          "docs": ""
-        },
-        {
-          "name": "MARKER_CLICK",
-          "value": "'onMarkerClick'",
-          "tags": [],
-          "docs": ""
-        },
-        {
-          "name": "MAP_DRAG",
-          "value": "'onCameraMove'",
-          "tags": [],
-          "docs": ""
-        },
-        {
-          "name": "MAP_DRAG_START",
-          "value": "'onCameraMoveStarted'",
-          "tags": [],
-          "docs": ""
-        }
-      ]
     }
   ],
   "typeAliases": [
@@ -2553,6 +1820,25 @@
         {
           "text": "number[]",
           "complexTypes": []
+        }
+      ]
+    },
+    {
+      "name": "Marker",
+      "slug": "marker",
+      "docs": "Supports markers of either either \"legacy\" or \"advanced\" types.",
+      "types": [
+        {
+          "text": "google.maps.Marker",
+          "complexTypes": [
+            "google"
+          ]
+        },
+        {
+          "text": "google.maps.marker.AdvancedMarkerElement",
+          "complexTypes": [
+            "google"
+          ]
         }
       ]
     }

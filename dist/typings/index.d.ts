@@ -1,6 +1,7 @@
-import { ILatLngBounds, LatLngBounds, GoogleMapsMapTypeId, GoogleMapsEvent, Marker, MarkerOptions, CapacitorMarker, Polygon, PolygonOptions, CapacitorPolygon, Circle, CircleOptions, CapacitorCircle, Polyline, PolylineOptions, CapacitorPolyline, StyleSpan, VisibleRegion, GoogleMapsOptions, GoogleMapControls, GoogleMapZoomOptions, GoogleMapGestures, GoogleMapPreferences, LatLng, ILatLng, CameraPosition } from './definitions';
-import { GoogleMap } from './map';
-export { GoogleMap, ILatLngBounds, LatLngBounds, GoogleMapsMapTypeId, GoogleMapsEvent, Marker, MarkerOptions, CapacitorMarker, Polygon, PolygonOptions, CapacitorPolygon, Circle, CircleOptions, CapacitorCircle, Polyline, PolylineOptions, CapacitorPolyline, StyleSpan, VisibleRegion, GoogleMapsOptions, GoogleMapControls, GoogleMapZoomOptions, GoogleMapGestures, GoogleMapPreferences, LatLng, ILatLng, CameraPosition };
+import { LatLngBounds, GoogleMapsEvent, IMarker, MarkerOptions, CapacitorMarker, IPolygon, PolygonOptions, CapacitorPolygon, ICircle, CircleOptions, CapacitorCircle, IPolyline, PolylineOptions, CapacitorPolyline, VisibleRegion, GoogleMapsOptions, GoogleMapControls, GoogleMapZoomOptions, GoogleMapGestures, GoogleMapPreferences, LatLngImpl, CameraPosition } from './definitions';
+import { MapType, StyleSpan, LatLng, LatLngBoundsInterface } from './original-plugin/definitions';
+import { GoogleMapNavi as GoogleMap } from './map-navi';
+export { GoogleMap, LatLngBounds, MapType, GoogleMapsEvent, IMarker, MarkerOptions, CapacitorMarker, IPolygon, PolygonOptions, CapacitorPolygon, ICircle, CircleOptions, CapacitorCircle, IPolyline, PolylineOptions, CapacitorPolyline, StyleSpan, VisibleRegion, GoogleMapsOptions, GoogleMapControls, GoogleMapZoomOptions, GoogleMapGestures, GoogleMapPreferences, LatLng, LatLngImpl, CameraPosition, LatLngBoundsInterface, };
 declare global {
     export namespace JSX {
         interface IntrinsicElements {

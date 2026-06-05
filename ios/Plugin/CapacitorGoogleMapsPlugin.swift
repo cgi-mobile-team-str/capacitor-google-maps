@@ -247,54 +247,6 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
         }
     }
 
-    @objc func animateCamera(_ call: CAPPluginCall) {
-        do {
-            guard let id = call.getString("id") else {
-                throw GoogleMapErrors.invalidMapId
-            }
-
-            guard let map = self.maps[id] else {
-                throw GoogleMapErrors.mapNotFound
-            }
-
-            guard let configObj = call.getObject("config") else {
-                throw GoogleMapErrors.invalidArguments("config object is missing")
-            }
-
-            let config = try GoogleMapCameraConfig(fromJSObject: configObj)
-
-            try map.animateCamera(config: config)
-
-            call.resolve()
-        } catch {
-            handleError(call, error: error)
-        }
-    }
-    
-    @objc func moveCamera(_ call: CAPPluginCall) {
-        do {
-            guard let id = call.getString("id") else {
-                throw GoogleMapErrors.invalidMapId
-            }
-
-            guard let map = self.maps[id] else {
-                throw GoogleMapErrors.mapNotFound
-            }
-
-            guard let configObj = call.getObject("config") else {
-                throw GoogleMapErrors.invalidArguments("config object is missing")
-            }
-
-            let config = try GoogleMapCameraConfig(fromJSObject: configObj)
-
-            try map.moveCamera(config: config)
-
-            call.resolve()
-        } catch {
-            handleError(call, error: error)
-        }
-    }
-    
     @objc func getCameraZoom(_ call: CAPPluginCall) {
         do {
             guard let id = call.getString("id") else {
@@ -315,7 +267,7 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
         }
     }
     
-    @objc func getCameraTarget(_ call: CAPPluginCall) {
+    @objc func setCamera(_ call: CAPPluginCall) {
         do {
             guard let id = call.getString("id") else {
                 throw GoogleMapErrors.invalidMapId
@@ -325,19 +277,20 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
                 throw GoogleMapErrors.mapNotFound
             }
 
-            let cameraTarget = map.getCameraTarget()
+            guard let configObj = call.getObject("config") else {
+                throw GoogleMapErrors.invalidArguments("config object is missing")
+            }
 
-            call.resolve([
-                "cameraTarget":  [
-                    "lat": cameraTarget.lat,
-                    "lng": cameraTarget.lng
-                ]
-            ])
+            let config = try GoogleMapCameraConfig(fromJSObject: configObj)
+
+            try map.setCamera(config: config)
+
+            call.resolve()
         } catch {
             handleError(call, error: error)
         }
     }
-
+    
     @objc func getMapType(_ call: CAPPluginCall) {
         do {
             guard let id = call.getString("id") else {
@@ -353,66 +306,6 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
             call.resolve([
                 "type": mapType
             ])
-        } catch {
-            handleError(call, error: error)
-        }
-    }
-    
-    @objc func setCameraBearing(_ call: CAPPluginCall) {
-        do {
-            guard let id = call.getString("id") else {
-                throw GoogleMapErrors.invalidMapId
-            }
-
-            guard let map = self.maps[id] else {
-                throw GoogleMapErrors.mapNotFound
-            }
-
-            guard let bearing = call.getDouble("bearing") else {
-                throw GoogleMapErrors.invalidArguments("bearing is missing")
-            }
-            
-            try map.setCameraBearing(bearing: bearing)
-
-            call.resolve()
-        } catch {
-            handleError(call, error: error)
-        }
-    }
-    
-    @objc func setCameraTarget(_ call: CAPPluginCall) {
-        do {
-            guard let id = call.getString("id") else {
-                throw GoogleMapErrors.invalidMapId
-            }
-
-            guard let map = self.maps[id] else {
-                throw GoogleMapErrors.mapNotFound
-            }
-
-            let targetObj = call.getObject("target")
-            let targetArray = call.getArray("target")
-
-            if(targetObj == nil && targetArray == nil) {
-                throw GoogleMapErrors.invalidArguments("target is missing")
-            }
-            
-            if(targetObj != nil) {
-                let target: CLLocationCoordinate2D = try GoogleMapsUtils.getCLLocationCoordinate(targetObj!)
-                try map.setCameraTarget(target: target)
-                call.resolve()
-            }
-            
-            if(targetArray != nil) {
-                var targets: [CLLocationCoordinate2D] = []
-               try targetArray!.forEach { target in
-                   let coordinate: CLLocationCoordinate2D = try GoogleMapsUtils.getCLLocationCoordinate(target as! JSObject)
-                    targets.append(coordinate)
-                }
-                try map.setCameraTarget(target: targets)
-                call.resolve()
-            }
-   
         } catch {
             handleError(call, error: error)
         }
@@ -701,124 +594,6 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
         }
     }
     
-    @objc func getVisibleRegion(_ call: CAPPluginCall) {
-        do {
-            guard let id = call.getString("id") else {
-                throw GoogleMapErrors.invalidMapId
-            }
-
-            guard let map = self.maps[id] else {
-                throw GoogleMapErrors.mapNotFound
-            }
-
-            try DispatchQueue.main.sync {
-                guard let bounds = map.getMapLatLngBounds() else {
-                    throw GoogleMapErrors.unhandledError("Google Map Bounds could not be found.")
-                }
-                guard let visibleRegion = map.getVisibleRegion() else {
-                    throw GoogleMapErrors.unhandledError("Google Visible Region could not be found.")
-                }
-
-                call.resolve(
-                    formatVisibleRegionForResponse(
-                        visibleRegion: visibleRegion,
-                        bounds: bounds
-                    )
-                )
-            }
-        } catch {
-            handleError(call, error: error)
-        }
-    }
-    
-    @objc func enableCompass(_ call: CAPPluginCall) {
-        do {
-            guard let id = call.getString("id") else {
-                throw GoogleMapErrors.invalidMapId
-            }
-
-            guard let map = self.maps[id] else {
-                throw GoogleMapErrors.mapNotFound
-            }
-
-            guard let enabled = call.getBool("enabled") else {
-                throw GoogleMapErrors.invalidArguments("enabled is missing")
-            }
-
-            try map.enableCompass(enabled: enabled)
-
-            call.resolve()
-        } catch {
-            handleError(call, error: error)
-        }
-    }
-
-    @objc func enableMyLocation(_ call: CAPPluginCall) {
-        do {
-            guard let id = call.getString("id") else {
-                throw GoogleMapErrors.invalidMapId
-            }
-
-            guard let map = self.maps[id] else {
-                throw GoogleMapErrors.mapNotFound
-            }
-
-            guard let isEnabled = call.getBool("isEnabled") else {
-                throw GoogleMapErrors.invalidArguments("isEnabled is missing")
-            }
-
-            try map.enableMyLocation(isEnabled: isEnabled)
-
-            call.resolve()
-        } catch {
-            handleError(call, error: error)
-        }
-    }
-    
-    @objc func enableTiltGesture(_ call: CAPPluginCall) {
-        do {
-            guard let id = call.getString("id") else {
-                throw GoogleMapErrors.invalidMapId
-            }
-
-            guard let map = self.maps[id] else {
-                throw GoogleMapErrors.mapNotFound
-            }
-
-            guard let isEnabled = call.getBool("isEnabled") else {
-                throw GoogleMapErrors.invalidArguments("isEnabled is missing")
-            }
-
-            try map.enableTiltGesture(isEnabled: isEnabled)
-
-            call.resolve()
-        } catch {
-            handleError(call, error: error)
-        }
-    }
-    
-    @objc func enableTiltRotateGesture(_ call: CAPPluginCall) {
-        do {
-            guard let id = call.getString("id") else {
-                throw GoogleMapErrors.invalidMapId
-            }
-
-            guard let map = self.maps[id] else {
-                throw GoogleMapErrors.mapNotFound
-            }
-
-            guard let isEnabled = call.getBool("isEnabled") else {
-                throw GoogleMapErrors.invalidArguments("isEnabled is missing")
-            }
-
-            try map.enableTiltRotateGesture(isEnabled: isEnabled)
-
-            call.resolve()
-        } catch {
-            handleError(call, error: error)
-        }
-    }
-    
     @objc func enableAllGestures(_ call: CAPPluginCall) {
         do {
             guard let id = call.getString("id") else {
@@ -835,29 +610,6 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
 
             try map.enableAllGestures(isEnabled: isEnabled)
 
-            call.resolve()
-        } catch {
-            handleError(call, error: error)
-        }
-    }
-    
-    @objc func setMapPreferences(_ call: CAPPluginCall) {
-        do {
-            guard let id = call.getString("id") else {
-                throw GoogleMapErrors.invalidMapId
-            }
-
-            guard let map = self.maps[id] else {
-                throw GoogleMapErrors.mapNotFound
-            }
-
-            let building = call.getBool("building")
-            let paddingObj = call.getObject("padding")
-            var padding: GoogleMapPadding? = nil
-            if(paddingObj != nil) {
-                padding = try GoogleMapPadding.init(fromJSObject: paddingObj!)
-            }
-            try map.setMapPreferences(padding: padding, building: building)
             call.resolve()
         } catch {
             handleError(call, error: error)
@@ -1211,7 +963,8 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
         let mapId = self.findMapIdByMapView(mapView)
         let map = self.maps[mapId]
         let bounds = map?.getMapLatLngBounds()
-        let visibleRegion = map?.getVisibleRegion()
+        let ne = bounds?.northEast
+        let sw = bounds?.southWest
         
         let data: PluginCallResultData = [
             "mapId": mapId,
@@ -1225,20 +978,20 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
             "tilt": cameraPosition.viewingAngle,
             "zoom": cameraPosition.zoom,
             "nearLeft": [
-                "lat": visibleRegion?.nearLeft.latitude,
-                "lng": visibleRegion?.nearLeft.longitude
+                "lat": sw?.latitude,
+                "lng": sw?.longitude
             ],
             "nearRight": [
-                "lat": visibleRegion?.nearRight.latitude,
-                "lng": visibleRegion?.nearRight.longitude
+                "lat": sw?.latitude,
+                "lng": ne?.longitude
             ],
             "farLeft": [
-                "lat": visibleRegion?.farLeft.latitude,
-                "lng": visibleRegion?.farLeft.longitude
+                "lat": ne?.latitude,
+                "lng": sw?.longitude
             ],
             "farRight": [
-                "lat": visibleRegion?.farRight.latitude,
-                "lng": visibleRegion?.farRight.longitude
+                "lat": ne?.latitude,
+                "lng": ne?.longitude
             ],
         ]
 
@@ -1932,30 +1685,6 @@ public class CapacitorGoogleMapsPlugin: CAPPlugin, GMSMapViewDelegate {
             call.resolve(["circles": pairsIdCircle.map({ pair in
                 return formatCircleForResponse(circleId: pair.0, mapId: id, circle: pair.1)
             })])
-        } catch {
-            handleError(call, error: error)
-        }
-    }
-    
-    @objc func addCircle(_ call: CAPPluginCall) {
-        do {
-            guard let id = call.getString("id") else {
-                throw GoogleMapErrors.invalidMapId
-            }
-            
-            guard let optionsObj = call.getObject("options") else {
-                throw GoogleMapErrors.invalidArguments("options object is missing")
-            }
-            
-            let options = try CircleOptions(fromJSObject: optionsObj)
-            
-            guard let map = self.maps[id] else {
-                throw GoogleMapErrors.mapNotFound
-            }
-            
-            let (circleId, addedCircle) = try map.addCircle(options: options)
-            call.resolve(formatCircleForResponse(circleId: circleId, mapId: id, circle: addedCircle))
-            
         } catch {
             handleError(call, error: error)
         }

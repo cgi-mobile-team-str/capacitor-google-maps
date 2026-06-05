@@ -25,25 +25,8 @@ export class LatLngBounds {
             this.northeast = arg.northeast;
         }
     }
-    async contains(point) {
-        const result = await CapacitorGoogleMaps.mapBoundsContains({
-            bounds: this,
-            point,
-        });
-        return result['contains'];
-    }
-    async extend(point) {
-        const result = await CapacitorGoogleMaps.mapBoundsExtend({
-            bounds: this,
-            point,
-        });
-        this.southwest = result['bounds']['southwest'];
-        this.center = result['bounds']['center'];
-        this.northeast = result['bounds']['northeast'];
-        return this;
-    }
 }
-export class LatLng {
+export class LatLngImpl {
     constructor(lat, lng) {
         this.lat = lat;
         this.lng = lng;
@@ -125,29 +108,6 @@ export class CapacitorPolyline {
         return CapacitorGoogleMaps.removePolyline({ id: this.mapId, polylineId: this.id });
     }
 }
-export var GoogleMapsMapTypeId;
-(function (GoogleMapsMapTypeId) {
-    /**
-     * Basic map.
-     */
-    GoogleMapsMapTypeId["Normal"] = "Normal";
-    /**
-     * Satellite imagery with roads and labels.
-     */
-    GoogleMapsMapTypeId["Hybrid"] = "Hybrid";
-    /**
-     * Satellite imagery with no labels.
-     */
-    GoogleMapsMapTypeId["Satellite"] = "Satellite";
-    /**
-     * Topographic data.
-     */
-    GoogleMapsMapTypeId["Terrain"] = "Terrain";
-    /**
-     * No base map tiles.
-     */
-    GoogleMapsMapTypeId["None"] = "None";
-})(GoogleMapsMapTypeId || (GoogleMapsMapTypeId = {}));
 export var GoogleMapsEvent;
 (function (GoogleMapsEvent) {
     GoogleMapsEvent["MAP_READY"] = "onMapReady";

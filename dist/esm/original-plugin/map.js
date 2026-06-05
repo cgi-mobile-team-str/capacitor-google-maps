@@ -1,8 +1,6 @@
 import { Capacitor } from '@capacitor/core';
-import { CapacitorMarker, CapacitorPolyline, CapacitorCircle, CapacitorPolygon, GoogleMapsEvent, } from './definitions';
-import { LatLngBounds, GoogleMapsMapTypeId } from './definitions';
+import { LatLngBounds, MapType } from './definitions';
 import { CapacitorGoogleMaps } from './implementation';
-import { fromEventPattern } from 'rxjs';
 class MapCustomElement extends HTMLElement {
     constructor() {
         super();
@@ -210,13 +208,12 @@ export class GoogleMap {
      * @param marker
      * @returns created marker id
      */
-    async addMarker(options) {
+    async addMarker(marker) {
         const res = await CapacitorGoogleMaps.addMarker({
             id: this.id,
-            options,
+            marker,
         });
-        const markerObj = new CapacitorMarker(res, this.id);
-        return markerObj;
+        return res.id;
     }
     /**
      * Adds multiple markers to the map
@@ -224,16 +221,12 @@ export class GoogleMap {
      * @param markers
      * @returns array of created marker IDs
      */
-    async addMarkers(optionsList) {
+    async addMarkers(markers) {
         const res = await CapacitorGoogleMaps.addMarkers({
             id: this.id,
-            optionsList,
+            markers,
         });
-        const markers = [];
-        res.markers.forEach((r) => {
-            markers.push(new CapacitorMarker(r, this.id));
-        });
-        return markers;
+        return res.ids;
     }
     /**
      * Remove marker from the map
@@ -259,46 +252,12 @@ export class GoogleMap {
             markerIds: ids,
         });
     }
-    async clearMarkers() {
-        return CapacitorGoogleMaps.clearMarkers({ id: this.id });
-    }
-    async addPolygons(optionsList) {
-        const res = await CapacitorGoogleMaps.addPolygons({
-            id: this.id,
-            optionsList,
-        });
-        const polygons = [];
-        res.polygons.forEach((r) => {
-            polygons.push(new CapacitorPolygon(r, this.id));
-        });
-        return polygons;
-    }
-    async addPolygon(options) {
-        const res = await CapacitorGoogleMaps.addPolygon({
-            id: this.id,
-            options,
-        });
-        const polygonObj = new CapacitorPolygon(res, this.id);
-        return polygonObj;
-    }
-    async addPolylines(optionsList) {
+    async addPolylines(polylines) {
         const res = await CapacitorGoogleMaps.addPolylines({
             id: this.id,
-            optionsList,
+            polylines,
         });
-        const polylines = [];
-        res.polylines.forEach((r) => {
-            polylines.push(new CapacitorPolyline(r, this.id));
-        });
-        return polylines;
-    }
-    async addPolyline(options) {
-        const res = await CapacitorGoogleMaps.addPolyline({
-            id: this.id,
-            options,
-        });
-        const polylineObj = new CapacitorPolyline(res, this.id);
-        return polylineObj;
+        return res.ids;
     }
     async removePolygons(ids) {
         return CapacitorGoogleMaps.removePolygons({
@@ -306,24 +265,12 @@ export class GoogleMap {
             polygonIds: ids,
         });
     }
-    async addCircles(optionsList) {
+    async addCircles(circles) {
         const res = await CapacitorGoogleMaps.addCircles({
             id: this.id,
-            optionsList,
+            circles,
         });
-        const circles = [];
-        res.circles.forEach((r) => {
-            circles.push(new CapacitorCircle(r, this.id));
-        });
-        return circles;
-    }
-    async addCircle(options) {
-        const res = await CapacitorGoogleMaps.addCircle({
-            id: this.id,
-            options,
-        });
-        const circleObj = new CapacitorCircle(res, this.id);
-        return circleObj;
+        return res.ids;
     }
     async removeCircles(ids) {
         return CapacitorGoogleMaps.removeCircles({
@@ -354,68 +301,20 @@ export class GoogleMap {
         });
     }
     /**
-     * Update the map camera configuration with animation
+     * Update the map camera configuration
      *
      * @param config
      * @returns
      */
-    async animateCamera(config) {
-        return CapacitorGoogleMaps.animateCamera({
-            id: this.id,
-            config,
-        });
-    }
-    /**
-     * Update the map camera configuration without animation
-     *
-     * @param config
-     * @returns
-     */
-    async moveCamera(config) {
-        return CapacitorGoogleMaps.moveCamera({
-            id: this.id,
-            config,
-        });
-    }
-    /**
-     * Update the map camera bearing
-     *
-     * @param bearing
-     * @returns
-     */
-    async setCameraBearing(bearing) {
-        return CapacitorGoogleMaps.setCameraBearing({
-            id: this.id,
-            bearing,
-        });
-    }
-    async setCameraTarget(target) {
-        return CapacitorGoogleMaps.setCameraTarget({
-            id: this.id,
-            target,
-        });
-    }
-    async setOptions(config) {
-        return CapacitorGoogleMaps.setOptions({
+    async setCamera(config) {
+        return CapacitorGoogleMaps.setCamera({
             id: this.id,
             config,
         });
     }
     async getMapType() {
         const { type } = await CapacitorGoogleMaps.getMapType({ id: this.id });
-        return GoogleMapsMapTypeId[type];
-    }
-    async getCameraZoom() {
-        const { cameraZoom } = await CapacitorGoogleMaps.getCameraZoom({ id: this.id });
-        return cameraZoom;
-    }
-    async getCameraTarget() {
-        const { cameraTarget } = await CapacitorGoogleMaps.getCameraTarget({ id: this.id });
-        return cameraTarget;
-    }
-    async fromPointToLatLng(points) {
-        const { latLng } = await CapacitorGoogleMaps.fromPointToLatLng({ id: this.id, points });
-        return latLng;
+        return MapType[type];
     }
     /**
      * Sets the type of map tiles that should be displayed.
@@ -500,44 +399,6 @@ export class GoogleMap {
         return new LatLngBounds(await CapacitorGoogleMaps.getMapBounds({
             id: this.id,
         }));
-    }
-    /**
-     * Get the current Viewport
-     *
-     * @returns {VisibleRegion}
-     */
-    async getVisibleRegion() {
-        return CapacitorGoogleMaps.getVisibleRegion({ id: this.id });
-    }
-    /**
-     * Enable or disable the compass
-     *
-     * @returns
-     */
-    async enableCompass(enabled) {
-        return CapacitorGoogleMaps.enableCompass({ id: this.id, enabled });
-    }
-    async enableToolbar(isEnabled) {
-        return CapacitorGoogleMaps.enableToolbar({ id: this.id, isEnabled });
-    }
-    async enableMyLocation(isEnabled) {
-        return CapacitorGoogleMaps.enableMyLocation({ id: this.id, isEnabled });
-    }
-    async enableAllGestures(isEnabled) {
-        return CapacitorGoogleMaps.enableAllGestures({ id: this.id, isEnabled });
-    }
-    async enableTiltGesture(isEnabled) {
-        return CapacitorGoogleMaps.enableTiltGesture({ id: this.id, isEnabled });
-    }
-    async enableTiltRotateGesture(isEnabled) {
-        return CapacitorGoogleMaps.enableTiltRotateGesture({ id: this.id, isEnabled });
-    }
-    async setMapPreferences(padding, building) {
-        return CapacitorGoogleMaps.setMapPreferences({
-            id: this.id,
-            padding,
-            building,
-        });
     }
     async fitBounds(bounds, padding) {
         return CapacitorGoogleMaps.fitBounds({
@@ -665,23 +526,6 @@ export class GoogleMap {
         }
     }
     /**
-     * Set the event listener on the map for 'onCameraMove' events.
-     *
-     * @param callback
-     * @returns
-     */
-    async setOnCameraMoveListener(callback) {
-        if (this.onCameraMoveListener) {
-            this.onCameraMoveListener.remove();
-        }
-        if (callback) {
-            this.onCameraMoveListener = await CapacitorGoogleMaps.addListener('onCameraMove', this.generateCallback(callback));
-        }
-        else {
-            this.onCameraMoveListener = undefined;
-        }
-    }
-    /**
      * Set the event listener on the map for 'onClusterClick' events.
      *
      * @param callback
@@ -750,23 +594,6 @@ export class GoogleMap {
         }
     }
     /**
-     * Set the event listener on the map for 'onMapReady' events.
-     *
-     * @param callback
-     * @returns
-     */
-    async setOnMapReadyListener(callback) {
-        if (this.onMapReadyListener) {
-            this.onMapReadyListener.remove();
-        }
-        if (callback) {
-            this.onMapReadyListener = await CapacitorGoogleMaps.addListener('onMapReady', this.generateCallback(callback));
-        }
-        else {
-            this.onMapReadyListener = undefined;
-        }
-    }
-    /**
      * Set the event listener on the map for 'onPolygonClick' events.
      *
      * @param callback
@@ -781,23 +608,6 @@ export class GoogleMap {
         }
         else {
             this.onPolygonClickListener = undefined;
-        }
-    }
-    /**
-     * Set the event listener on the map for 'onPoiClick' events.
-     *
-     * @param callback
-     * @returns
-     */
-    async setOnPoiClickListener(callback) {
-        if (this.onPoiClickListener) {
-            this.onPoiClickListener.remove();
-        }
-        if (callback) {
-            this.onPoiClickListener = await CapacitorGoogleMaps.addListener('onPoiClick', this.generateCallback(callback));
-        }
-        else {
-            this.onPoiClickListener = undefined;
         }
     }
     /**
@@ -982,10 +792,6 @@ export class GoogleMap {
             this.onPolygonClickListener.remove();
             this.onPolygonClickListener = undefined;
         }
-        if (this.onPoiClickListener) {
-            this.onPoiClickListener.remove();
-            this.onPoiClickListener = undefined;
-        }
         if (this.onCircleClickListener) {
             this.onCircleClickListener.remove();
             this.onCircleClickListener = undefined;
@@ -1009,34 +815,6 @@ export class GoogleMap {
         if (this.onMyLocationClickListener) {
             this.onMyLocationClickListener.remove();
             this.onMyLocationClickListener = undefined;
-        }
-    }
-    on(event) {
-        return fromEventPattern((handler) => this.onPromise(event, handler));
-    }
-    async onPromise(event, callback) {
-        switch (event) {
-            case GoogleMapsEvent.MAP_READY:
-                this.setOnMapReadyListener(callback);
-                break;
-            case GoogleMapsEvent.MAP_CLICK:
-                this.setOnMapClickListener(callback);
-                break;
-            case GoogleMapsEvent.POI_CLICK:
-                this.setOnPoiClickListener(callback);
-                break;
-            case GoogleMapsEvent.CAMERA_MOVE_END:
-                this.setOnCameraIdleListener(callback);
-                break;
-            case GoogleMapsEvent.MARKER_CLICK:
-                this.setOnMarkerClickListener(callback);
-                break;
-            case GoogleMapsEvent.MAP_DRAG:
-                this.setOnCameraMoveListener(callback);
-                break;
-            case GoogleMapsEvent.MAP_DRAG_START:
-                this.setOnCameraMoveStartedListener(callback);
-                break;
         }
     }
     generateCallback(callback) {

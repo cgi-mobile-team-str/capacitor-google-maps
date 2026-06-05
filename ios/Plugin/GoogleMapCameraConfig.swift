@@ -28,18 +28,32 @@ enum TargetType: Codable {
 }
 
 public struct GoogleMapCameraConfig: Codable {
+    let coordinate: LatLng?
     var target: TargetType
     let zoom: Double?
     let bearing: Double?
     let angle: Double?
     let duration: Double?
+    let animate: Bool?
+    let animationDuration: Double?
 
     init(fromJSObject: JSObject) throws {
         self.zoom = fromJSObject["zoom"] as? Double
         self.bearing = fromJSObject["bearing"] as? Double
-        self.angle = fromJSObject["tilt"] as? Double
+        self.angle = fromJSObject["angle"] as? Double
         self.duration = fromJSObject["duration"] as? Double
-        
+        self.animate = fromJSObject["animate"] as? Bool
+        self.animationDuration = fromJSObject["animationDuration"] as? Double
+
+        if let latLngObj = fromJSObject["coordinate"] as? JSObject {
+            guard let lat = latLngObj["lat"] as? Double, let lng = latLngObj["lng"] as? Double else {
+                throw GoogleMapErrors.invalidArguments("LatLng object is missing the required 'lat' and/or 'lng' property")
+            }
+            self.coordinate = LatLng(lat: lat, lng: lng)
+        } else {
+            self.coordinate = nil
+        }
+
         let rawTarget = fromJSObject["target"]
 
         if let targetObj = rawTarget as? JSObject {
